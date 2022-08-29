@@ -1,0 +1,473 @@
+/* overload of built-in modified by bootstrap */
+body {
+  margin: 0 auto;
+}
+
+/* overload of bootstrap */
+.list-group {
+  font-size: small;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.form-group {
+  margin-right: 2rem;
+  margin-left: 2rem;
+}
+
+.dropdown-menu {
+  right: 0;
+  left: auto; 
+}
+
+.navbar-expand-lg {
+  justify-content: space-between;
+}
+
+/* my-quote styles */
+
+/* pre-defined */
+
+.App {
+  text-align: center;
+/*   display: flex;
+  flex-direction: column;
+ */  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* custom */
+
+.Splash {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.RootContainer {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+ }
+
+ /* children of a RootContainer */
+
+.HomeScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+ }
+
+.HomeBanner {
+  margin: 6px;
+  font-size: larger;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.Screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* children of a Screen */
+
+.Header {
+  align-self: normal;
+}
+
+.Container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+ }
+
+ .LoginContainer {
+   height: 80vh;
+ }
+
+ .AuthBox {
+   margin-top: 15vh;
+ }
+
+ .SupportDisclaimerBox {
+  border-color: #6c757d;
+  border-style: double;
+  font-size: xx-small;
+  font-weight: bold;
+  margin-top: auto;
+  margin-left: 5rem;
+  margin-right: 5rem;
+}
+
+ .LogoutContainer {
+  height: 60vh;
+}
+
+ /* children of a Container */
+
+ .TitleBanner {
+  display: flex;
+  flex-direction: row;
+  align-self: stretch;
+  justify-content: center;
+  align-items: center;
+}
+ .Title {
+  margin: 6px;
+  font-size: larger;
+}
+
+.BackIcon {
+  color: blue;
+  cursor: pointer;
+  align-self: center;
+  position: relative;
+  right: -50pt;
+}
+
+
+.Banner {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.Instructions {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.Block {
+  align-self: stretch;
+}
+
+.HomeLink {
+  margin: 20px;
+}
+
+.Form {
+  font-size: 80%;
+  align-self: stretch;
+}
+
+.ShareBlock {
+  display: flex;
+  flex-direction: row;
+}
+
+.ShareLink {
+  color: blue;
+  cursor: pointer;
+  font-size: xx-small;
+  word-wrap: break-word;
+  width: 60vw;
+  display: block;
+}
+
+.ShareIcon {
+  color: blue;
+  cursor: pointer;
+  width: 20vw;
+  font-size: xx-large;
+}
+
+
+.Link {
+  color: blue;
+  cursor: pointer;
+}
+
+.Separator {
+  position: relative;
+  color: #191616b8;
+  z-index: 1;
+  overflow: hidden;
+  text-align: center;
+}
+.Separator:before, .Separator:after {
+  position: absolute;
+  top: 51%;
+  overflow: hidden;
+  width: 50%;
+  height: 1px;
+  content: '\a0';
+  background-color:#0000001a;
+}
+.Separator:before {
+  margin-left: -50%;
+  text-align: right;
+}
+
+.TextBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-size: calc(8px + 0.5vmin);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-right: 2rem;
+  margin-left: 2rem;
+
+}
+
+.Proposal {
+  display: flex;
+}
+
+span.Proposal {
+  margin: 15px;
+}
+
+span.ProposalCol {
+  margin: 15px;
+  width: 50vw;
+}
+
+.CurrencyCard {
+   display: flex;
+}
+
+span.CardAddressCol {
+  width: 60vw;
+  margin-right: 10px;
+}
+
+input.CardAddressCol {
+  font-size: xx-small;
+}
+
+span.CardIconCol {
+  width: 50vw;
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+
+}
+
+span.CardBalanceCol {
+  width: 30vw;
+}
+
+input.CardBalanceCol {
+  font-size: xx-small;
+}
+
+span.CardCreditUnitsCol {
+  width: 30vw;
+}
+
+input.CardBalanceCol {
+  font-size: xx-small;
+}
+
+span.CurrencyCardIconCol {
+  width: 2vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+span.CurrencyCardIconCol span{
+  margin-top: 5pt;
+  margin-left: 5pt;
+}
+
+.ListContainer {
+  border: 1px;
+}
+
+/* children of a ListContainer */
+
+.ListHeader {
+  font-weight: bold;
+}
+
+.ListItem {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: xx-small;
+  cursor: pointer;
+}
+
+.DevInfo {
+  font-size: xx-small
+}
+
+/* Header bard */
+span.Lock {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  text-align: center;
+  vertical-align: -0.125em;
+  width: 1em;
+}
+
+.LockIcon {
+  font-size: 18pt;
+  color: #343a40;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.DeviceIcon {
+  font-size: 6pt;
+  color: white;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+}
+
+/* Currency Card List */
+
+.PickCurrencyLine {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.CurrencyName {
+  max-width: 40vw;
+}
+
+.AddCardLine {
+  display: flex;
+  flex-direction: row;
+  font-size: xx-small;
+  justify-content: space-between;
+}
+
+.CardPrivateKeyInput {
+  width: 60vw;
+}
+
+.AddCardButton {
+  width: 10vw;
+  padding-left: 10pt;
+}
+
+/* Currency Card */
+
+.CurrencyCardAddress {
+  width: 160%;
+}
+
+.CurrencyCardBalance {
+  width: 70%;
+  display: inline-block;
+}
+
+span.CurrencyCardIcons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* Bounty */
+.Bounty {
+  display: flex;
+}
+
+span.Bounty {
+  margin: 15px;
+}
+
+span.BountyNumberCol {
+  margin: 15px;
+  width: 50vw;
+}
+
+span.BountyAnswerCheckCol {
+  margin: 15px;
+  width: 50vw;
+}
+
+.BountyAnswerCheckboxLine {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+span.input-group-text {
+  padding: 0rem;
+}
+
+.BountyAnswerCheckboxCheck {
+  min-width: 5vw;
+}
+
+.BountyAnswerCheckboxLabel {
+  font-size: xx-small;
+  flex: 1 0 50%;
+}
+
+/* Claim */
+.ClaimerCardLine {
+  display: flex;
+  flex-direction: row;
+  font-size: xx-small;
+  justify-content: space-between;
+}
+
+.GenerateCardIcon {
+  width: 10vw;
+  padding-left: 10pt;
+}
+
+span.AcceptReject {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+button.AcceptReject{
+  width: 140px;
+  margin: 10px;
+}
+

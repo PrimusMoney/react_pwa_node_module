@@ -186,6 +186,12 @@ body {
   margin: 20px;
 }
 
+.Component {
+  font-size: 80%;
+  align-self: stretch;
+}
+
+
 .Form {
   font-size: 80%;
   align-self: stretch;

@@ -27,12 +27,12 @@ class App extends React.Component {
 		console.log('App constructor called');
 		
 		this.exec_env = App.EXEC_ENV;
-		this.current_version = '0.15.32.2022.08.24';
+		this.current_version = '0.15.35.2022.09.08';
 
 		App.theapp = this;
 
-		this.basename = (App.BASE_NAME ? App.BASE_NAME : "my-app");
-		this.updatetime = 'April 30, 2021';
+		this.basename = (App.BASE_NAME ? App.BASE_NAME : "my-pwa");
+		this.updatetime = 'August 30, 2022';
 
 		this.App = App;
 		this.mvcmodule = null;

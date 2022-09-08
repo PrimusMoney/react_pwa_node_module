@@ -150,4 +150,6 @@ class BrowserLoad {
 
 }
 
-module.exports = BrowserLoad;
+//module.exports = BrowserLoad;
+// Note: webpack does not handle well import on module.exports
+export default BrowserLoad;

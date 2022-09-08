@@ -1627,7 +1627,7 @@ var Module = class {
 	}
 
 
-	async registerTransaction(sessionuuid, walletuuid, carduuid, dataobj, assignto) {
+	async registerTransaction(sessionuuid, walletuuid, carduuid, dataobj, assignto, feelevel) {
 		if (!sessionuuid)
 			return Promise.reject('session uuid is undefined');
 		
@@ -1673,7 +1673,18 @@ var Module = class {
 		//var transaction = _apicontrollers.createEthereumTransaction(cardsession, fromaccount);
 		var transaction = await this._createMonitoredEthereumTransaction(wallet, card, cardsession, fromaccount);
 		
-		var fee = _apicontrollers.createFee();
+		// fee
+		var fee;
+		
+		if (feelevel) {
+			let from_card_scheme = card.getScheme();
+
+			fee = await _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
+		}
+		else {
+			fee =  _apicontrollers.createFee();
+		}
+
 		
 		transaction.setToAddress(toaddress);
 		transaction.setValue(0);

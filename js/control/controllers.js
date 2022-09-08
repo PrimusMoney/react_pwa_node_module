@@ -2,12 +2,22 @@
 
 var modulecontrollers;
 
+var _globalscope;
+
+if ( typeof window !== 'undefined') {
+	_globalscope = window;
+} else if (typeof global !== 'undefined') {
+	// nodejs
+	_globalscope = global;
+}
+
 var ModuleControllers = class {
 	
 	constructor() {
 		this.module = null;
 		
-		this.react_pwa = require('../../../react_pwa').getObject();
+		const ReactPWA = _globalscope.simplestore.ReactPWA;
+		this.react_pwa = ReactPWA.getObject();
 		this.ethereum_core = this.react_pwa.ethereum_core;
 		
 		this.global = this.react_pwa.getGlobalObject();

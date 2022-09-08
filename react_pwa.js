@@ -55,7 +55,7 @@ class React_PWA {
 				// we are in a browser
 				console.log('loading for browser');
 				
-				var BrowserLoad = require( './js/browser-load.js');
+				var BrowserLoad = require( './js/browser-load.js').default; // BrowserLoad does export instead of module.export
 
 				this.load = new BrowserLoad(this);
 			}
@@ -176,4 +176,13 @@ class React_PWA {
 	}
 }
 
-module.exports = React_PWA;
+var simplestore;
+
+if ( typeof window !== 'undefined') {
+	simplestore = window.simplestore;
+} else if ((typeof global !== 'undefined') && (typeof global.simplestore === 'undefined')) {
+	// nodejs
+	simplestore = global.simplestore;
+}
+
+simplestore.React_PWA = React_PWA;

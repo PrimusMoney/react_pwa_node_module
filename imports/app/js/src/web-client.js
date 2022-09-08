@@ -13,7 +13,7 @@ class WebClient {
 		
 		this.execution_env = ( (typeof WebClient.EXEC_ENV !== 'undefined') ? WebClient.EXEC_ENV : 'prod');
 		
-		var WebClientConfig = require('./webclient-config.js');
+		var WebClientConfig = require('./webclient-config.js').default;
 
 		if ((WebClientConfig.execution_env == 'dev') || (this.execution_env == 'dev')) {
 			this.execution_env = 'dev';
@@ -1044,7 +1044,7 @@ class WebClient {
 			return {};
 		}
 		else {
-			return require('./currencies.js');
+			return require('./currencies.js').default;
 		}
 	}
 

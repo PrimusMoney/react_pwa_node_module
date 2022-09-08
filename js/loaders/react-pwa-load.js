@@ -1,7 +1,16 @@
 console.log('react-pwa-load.js loader');
 
-var Bootstrap = window.simplestore.Bootstrap;
-var ScriptLoader = window.simplestore.ScriptLoader;
+var _globalscope;
+
+if ( typeof window !== 'undefined') {
+	_globalscope = window;
+} else if (typeof global !== 'undefined') {
+	// nodejs
+	_globalscope = global;
+}
+
+var Bootstrap = _globalscope.simplestore.Bootstrap;
+var ScriptLoader = _globalscope.simplestore.ScriptLoader;
 
 var bootstrapobject = Bootstrap.getBootstrapObject();
 var rootscriptloader = ScriptLoader.getRootScriptLoader();

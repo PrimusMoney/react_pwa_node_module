@@ -23,8 +23,21 @@ if ( typeof window !== 'undefined' && window && (typeof window.simplestore === '
 	global.simplestore = {};
 }
 
+var _globalscope;
+
+if ( typeof window !== 'undefined') {
+	_globalscope = window;
+} else if (typeof global !== 'undefined') {
+	// nodejs
+	_globalscope = global;
+}
+
+
 // default
-const React_PWA = require('./react_pwa.js');
+//const React_PWA = require('./react_pwa.js');
+require('./react_pwa.js');
+const React_PWA = _globalscope.simplestore.React_PWA; // using simplestore to avoid problems with webpack packaging
+
 
 module.exports = React_PWA;
 

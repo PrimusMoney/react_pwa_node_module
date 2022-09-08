@@ -240,4 +240,6 @@ WebClientConfig.builtin_remote_schemes = {
 
 };
 
-module.exports = WebClientConfig;
+//module.exports = WebClientConfig;
+// Note: webpack does not handle well import on module.exports
+export default WebClientConfig;

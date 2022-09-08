@@ -15,4 +15,6 @@ var Currencies = {
 	
 };
 
-module.exports = Currencies;
+//module.exports = Currencies;
+// Note: webpack does not handle well import on module.exports
+export default Currencies;

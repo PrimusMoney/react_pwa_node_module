@@ -1,10 +1,10 @@
-import './module.js';
+"use strict";
 
-// currencies module
-import './currencies/module-load.js';
+require("./module.js");
 
-// uniswap module
-import './uniswap/module-load.js';
+require("./currencies/module-load.js");
 
-// api gateway
-import './control/controllers.js';
+require("./uniswap/module-load.js");
+
+require("./control/controllers.js");
+//# sourceMappingURL=module-load.js.map

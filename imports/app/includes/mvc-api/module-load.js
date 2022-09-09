@@ -1,6 +1,6 @@
-import './module.js';
+"use strict";
 
-// all currencies modules
-import '../modules/module-load.js';
+require("./module.js");
 
-
+require("../modules/module-load.js");
+//# sourceMappingURL=module-load.js.map

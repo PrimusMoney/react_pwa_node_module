@@ -1,29 +1,50 @@
-import React, { Component } from 'react';
+"use strict";
 
-import PropTypes from 'prop-types';
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-import { faMobileAlt, faGlobe, faCreditCard } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
 
-const CurrencyCardIcon = ({ app, currency, card }) => {
-	var theapp = app
-	var thecurrency = currency
-	var thecard = card
+var _react = _interopRequireWildcard(require("react"));
 
-	const onShowCurrencyCard = () => {
-		let params = {currencyuuid: thecurrency.uuid, carduuid: (thecard ? thecard.uuid : null), cardaddress: (thecard ? thecard.address : null)};
-		theapp.gotoRoute('currencycard', params);
-	}
+var _propTypes = _interopRequireDefault(require("prop-types"));
 
-	return (
-		<FontAwesomeIcon 
-			icon={faCreditCard}
-			size="3x"
-			onClick={onShowCurrencyCard}
-		/>
+var _freeSolidSvgIcons = require("@fortawesome/free-solid-svg-icons");
 
-	);
+var _reactFontawesome = require("@fortawesome/react-fontawesome");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+var CurrencyCardIcon = function CurrencyCardIcon(_ref) {
+  var app = _ref.app,
+      currency = _ref.currency,
+      card = _ref.card;
+  var theapp = app;
+  var thecurrency = currency;
+  var thecard = card;
+
+  var onShowCurrencyCard = function onShowCurrencyCard() {
+    var params = {
+      currencyuuid: thecurrency.uuid,
+      carduuid: thecard ? thecard.uuid : null,
+      cardaddress: thecard ? thecard.address : null
+    };
+    theapp.gotoRoute('currencycard', params);
+  };
+
+  return /*#__PURE__*/_react["default"].createElement(_reactFontawesome.FontAwesomeIcon, {
+    icon: _freeSolidSvgIcons.faCreditCard,
+    size: "3x",
+    onClick: onShowCurrencyCard
+  });
 };
-  
 
-export default CurrencyCardIcon;
+var _default = CurrencyCardIcon;
+exports["default"] = _default;
+//# sourceMappingURL=currency-card-icon.js.map

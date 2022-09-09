@@ -1,9 +1,12 @@
-import './module.js';
+"use strict";
 
-import './model/uniswap-access.js';
+require("./module.js");
 
-import './model/interface/v2/factory-contract-interface.js';
-import './model/interface/v2/pair-contract-interface.js';
-import './model/interface/v2/router02-contract-interface.js';
+require("./model/uniswap-access.js");
 
-//import './model/interface/v1/exchange-contract-interface.js';
+require("./model/interface/v2/factory-contract-interface.js");
+
+require("./model/interface/v2/pair-contract-interface.js");
+
+require("./model/interface/v2/router02-contract-interface.js");
+//# sourceMappingURL=module-load.js.map

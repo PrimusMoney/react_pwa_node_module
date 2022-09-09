@@ -1,5 +1,8 @@
-import './module.js';
+"use strict";
 
-import './model/locker.js';
-import './model/minter.js';
+require("./module.js");
 
+require("./model/locker.js");
+
+require("./model/minter.js");
+//# sourceMappingURL=module-load.js.map

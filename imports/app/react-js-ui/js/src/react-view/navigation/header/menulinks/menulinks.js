@@ -1,47 +1,72 @@
-class MenuLinks {
+"use strict";
 
-	static getMenuLinks(app) {
-		var menulinks = [];
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
 
-		const appconfig = app.getConfig();
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-		// xtra routes
-		let boot_webapp = app.boot_webapp;
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-		if (boot_webapp && boot_webapp.routes && boot_webapp.menulinks && boot_webapp.menulinks.xtra_menulinks) {
-			try {
-				const xtra_menulinks = boot_webapp.menulinks.xtra_menulinks;
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-				for (var i = 0; i < xtra_menulinks.length; i++) {
-					let menulink_def = xtra_menulinks[i];
+var MenuLinks = /*#__PURE__*/function () {
+  function MenuLinks() {
+    _classCallCheck(this, MenuLinks);
+  }
 
-					if (menulink_def.disabled === true)
-						continue;
+  _createClass(MenuLinks, null, [{
+    key: "getMenuLinks",
+    value: function getMenuLinks(app) {
+      var menulinks = [];
+      var appconfig = app.getConfig(); // xtra routes
 
-					switch(menulink_def.type) {
-						case 'separator':
-							menulinks.push({type:'separator'});
-							break;
-						case 'link': {
-								let route = menulink_def.route;
-								let label = app.t(menulink_def.label);
-								menulinks.push({type:'link', route, label});
-							}
-							break;
-						default:
-							break;
-					}
+      var boot_webapp = app.boot_webapp;
 
-				}
+      if (boot_webapp && boot_webapp.routes && boot_webapp.menulinks && boot_webapp.menulinks.xtra_menulinks) {
+        try {
+          var xtra_menulinks = boot_webapp.menulinks.xtra_menulinks;
 
-			}
-			catch(e) {
-				console.log('exception in MenuLinks.getMenuLinks for xtra menu links: ' + e);
-			}
-		}
+          for (var i = 0; i < xtra_menulinks.length; i++) {
+            var menulink_def = xtra_menulinks[i];
+            if (menulink_def.disabled === true) continue;
 
-		return menulinks;
-	}
-}
+            switch (menulink_def.type) {
+              case 'separator':
+                menulinks.push({
+                  type: 'separator'
+                });
+                break;
 
-export default MenuLinks;
+              case 'link':
+                {
+                  var route = menulink_def.route;
+                  var label = app.t(menulink_def.label);
+                  menulinks.push({
+                    type: 'link',
+                    route: route,
+                    label: label
+                  });
+                }
+                break;
+
+              default:
+                break;
+            }
+          }
+        } catch (e) {
+          console.log('exception in MenuLinks.getMenuLinks for xtra menu links: ' + e);
+        }
+      }
+
+      return menulinks;
+    }
+  }]);
+
+  return MenuLinks;
+}();
+
+var _default = MenuLinks;
+exports["default"] = _default;
+//# sourceMappingURL=menulinks.js.map

@@ -1473,25 +1473,45 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getDataObjectFromComposedHash",
     value: function () {
       var _getDataObjectFromComposedHash2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(txhash, currencyuuid) {
-        var dataobject, arr, stub, minteraddress, tokenid, deed, index, clause;
+        var mvcmyquote, result, params, ret, dataobject, arr, stub, minteraddress, tokenid, deed, index, clause;
         return _regeneratorRuntime().wrap(function _callee24$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
               case 0:
+                // invoke async hook to let client treat the composed hash
+                mvcmyquote = this.getMvcMyQuoteObject();
+                result = [];
+                params = [];
+                params.push(txhash);
+                params.push(currencyuuid);
+                _context24.next = 7;
+                return mvcmyquote.invokeAsyncHooks('getDataObjectFromComposedHash_asynchook', result, params);
+
+              case 7:
+                ret = _context24.sent;
+
+                if (!(ret && result.dataobject)) {
+                  _context24.next = 10;
+                  break;
+                }
+
+                return _context24.abrupt("return", result.dataobject);
+
+              case 10:
                 arr = txhash ? txhash.split('-') : [];
                 stub = arr[0];
 
                 if (!(stub == 'dd')) {
-                  _context24.next = 11;
+                  _context24.next = 21;
                   break;
                 }
 
                 minteraddress = arr[1];
                 tokenid = arr[2];
-                _context24.next = 7;
+                _context24.next = 17;
                 return this._getDeedDataObjectFromMinter(currencyuuid, minteraddress, tokenid);
 
-              case 7:
+              case 17:
                 deed = _context24.sent;
 
                 if (arr.length < 4) {
@@ -1508,16 +1528,16 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   }
                 }
 
-                _context24.next = 12;
+                _context24.next = 22;
                 break;
 
-              case 11:
+              case 21:
                 return _context24.abrupt("return", Promise.reject('do not recognize transaction hash stub: ' + stub));
 
-              case 12:
+              case 22:
                 return _context24.abrupt("return", dataobject);
 
-              case 13:
+              case 23:
               case "end":
                 return _context24.stop();
             }
@@ -1672,13 +1692,93 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectRoutes",
     value: function _getDataObjectRoutes() {
-      return ['quote', 'order', 'invoice', 'paymentnotice', 'bounty', 'claim', 'deed', 'clause'];
+      var arr = ['quote', 'order', 'invoice', 'paymentnotice', 'bounty', 'claim', 'deed', 'clause']; // built-in
+      // add routes that are marked as linked to data objects
+
+      var routes = Root.routes;
+
+      for (var i = 0; i < Root.routes.length; i++) {
+        var item = Root.routes[i];
+        if (item.dataobject) arr.push(item.name);
+      }
+
+      return arr;
+    }
+  }, {
+    key: "_getDataObjectRoutings",
+    value: function _getDataObjectRoutings() {
+      var map = {}; // built-in
+
+      map['quote'] = {
+        type: 'quote',
+        path: 'quote',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['order'] = {
+        type: 'order',
+        path: 'order',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['invoice'] = {
+        type: 'invoice',
+        path: 'invoice',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['paymentnotice'] = {
+        type: 'paymentnotice',
+        path: 'paymentnotice',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['bounty'] = {
+        type: 'bounty',
+        path: 'bounty',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['claim'] = {
+        type: 'claim',
+        path: 'claim',
+        action: 'view',
+        params: ['txhash', 'currencyuuid']
+      };
+      map['deed'] = {
+        type: 'deed',
+        path: 'deed',
+        action: 'view',
+        params: ['txhash', 'currencyuuid', 'minter', 'tokenid']
+      };
+      map['clause'] = {
+        type: 'clause',
+        path: 'clause',
+        action: 'view',
+        params: ['txhash', 'currencyuuid', 'minter', 'tokenid', 'index']
+      }; // add dataobject routing for routes that are marked as linked to data objects
+
+      var routes = Root.routes;
+
+      for (var i = 0; i < Root.routes.length; i++) {
+        var item = Root.routes[i];
+
+        if (item.dataobject) {
+          var routing = {};
+          routing.type = item.dataobject.type;
+          routing.action = item.dataobject.action;
+          routing.params = item.dataobject.params;
+          map[item.dataobject.type] = routing;
+        }
+      }
+
+      return map;
     }
   }, {
     key: "_gotoUrl",
     value: function () {
       var _gotoUrl2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27(url) {
-        var cleanurl, URL, queryobject, dataobject_routes, sessionuuid, route, params, urlParams, dataobject, querystring, app_start_conditions, _params;
+        var cleanurl, URL, queryobject, dataobject_routes, sessionuuid, route, params, urlParams, dataobject, querystring, app_start_conditions, _params, routings, types, routing, i, param_name;
 
         return _regeneratorRuntime().wrap(function _callee27$(_context27) {
           while (1) {
@@ -1721,7 +1821,8 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context27.abrupt("return");
 
               case 14:
-                // following a route
+                //
+                // following a route given in the param "route" in the url
                 route = queryobject.route;
 
                 if (!(route && dataobject_routes.includes(route) !== true)) {
@@ -1730,73 +1831,96 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 }
 
                 // a route indicates the way
+                // and we don't follow routes reserved for dataobject here
                 params = Object.assign({}, queryobject);
                 this.app.gotoRoute(route, params);
                 return _context27.abrupt("return");
 
               case 19:
                 if (!url) {
-                  _context27.next = 27;
+                  _context27.next = 28;
                   break;
                 }
 
-                querystring = url.indexOf('?') > 0 ? url.slice(url.indexOf('?')) : url;
+                querystring = url.indexOf('?') > 0 ? url.slice(url.indexOf('?')) : url; // after ?
+
+                querystring = querystring.indexOf('#') > 0 ? querystring.split('#')[0] : querystring; // remove trailing anchor
+
                 urlParams = new URLSearchParams(querystring);
-                _context27.next = 24;
+                _context27.next = 25;
                 return this._getDataObjectFromUrlParams(urlParams);
 
-              case 24:
+              case 25:
                 dataobject = _context27.sent;
-                _context27.next = 32;
+                _context27.next = 33;
                 break;
 
-              case 27:
+              case 28:
                 // initial url
                 app_start_conditions = this.app.getVariable('start_conditions');
                 urlParams = app_start_conditions.urlParams;
-                _context27.next = 31;
+                _context27.next = 32;
                 return this.app.getStartDataObject();
 
-              case 31:
+              case 32:
                 dataobject = _context27.sent;
 
-              case 32:
+              case 33:
                 if (!dataobject) {
-                  _context27.next = 84;
+                  _context27.next = 86;
                   break;
                 }
 
                 _params = {
                   dataobject: dataobject
                 };
+
+                if (dataobject.type) {
+                  routings = this._getDataObjectRoutings();
+                  types = Object.keys(routings);
+
+                  if (types.includes(dataobject.type)) {
+                    routing = routings[dataobject.type];
+                    _params.action = routing.action;
+
+                    for (i = 0; i < (routing.params ? routing.params.length : 0); i++) {
+                      param_name = routing.params[i];
+                      _params[param_name] = dataobject[param_name];
+                    }
+
+                    this.app.gotoRoute(routing.path, _params);
+                  }
+                } // legacy, to remove
+
+
                 _context27.t0 = dataobject.type;
-                _context27.next = _context27.t0 === 'bounty' ? 37 : _context27.t0 === 'claim' ? 42 : _context27.t0 === 'deed' ? 47 : _context27.t0 === 'clause' ? 54 : _context27.t0 === 'quote' ? 62 : _context27.t0 === 'order' ? 67 : _context27.t0 === 'invoice' ? 72 : _context27.t0 === 'paymentnotice' ? 77 : 82;
+                _context27.next = _context27.t0 === 'bounty' ? 39 : _context27.t0 === 'claim' ? 44 : _context27.t0 === 'deed' ? 49 : _context27.t0 === 'clause' ? 56 : _context27.t0 === 'quote' ? 64 : _context27.t0 === 'order' ? 69 : _context27.t0 === 'invoice' ? 74 : _context27.t0 === 'paymentnotice' ? 79 : 84;
                 break;
 
-              case 37:
+              case 39:
                 _params.action = 'create';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 42:
+              case 44:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 47:
+              case 49:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 _params.address = dataobject.minter;
                 _params.tokenid = dataobject.tokenid;
                 this.app.gotoRoute('deed', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 54:
+              case 56:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
@@ -1804,43 +1928,43 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 _params.tokenid = dataobject.tokenid;
                 _params.index = dataobject.index;
                 this.app.gotoRoute('clause', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 62:
+              case 64:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('quote', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 67:
+              case 69:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('order', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 72:
+              case 74:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('invoice', _params);
-                return _context27.abrupt("break", 83);
+                return _context27.abrupt("break", 85);
 
-              case 77:
+              case 79:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('paymentnotice', _params);
-                return _context27.abrupt("break", 83);
-
-              case 82:
-                return _context27.abrupt("break", 83);
-
-              case 83:
-                return _context27.abrupt("return");
+                return _context27.abrupt("break", 85);
 
               case 84:
+                return _context27.abrupt("break", 85);
+
+              case 85:
+                return _context27.abrupt("return");
+
+              case 86:
               case "end":
                 return _context27.stop();
             }

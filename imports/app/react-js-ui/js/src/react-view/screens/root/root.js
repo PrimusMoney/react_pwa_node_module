@@ -1609,6 +1609,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   break;
                 }
 
+                // not txhash, but a currency, a card and a tokenid
                 tokenid = urlParams.get('tokenid');
 
                 if (!tokenid) {
@@ -1800,10 +1801,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context27.abrupt("return");
 
               case 6:
-                // look if a transaction is defined in the url
+                // look if a session, route or transaction is defined in the url
                 URL = require("url");
                 queryobject = url ? URL.parse(url, true).query : {};
-                dataobject_routes = this._getDataObjectRoutes(); // reconnecting to a session
+                dataobject_routes = this._getDataObjectRoutes(); //
+                // reconnecting to a session
 
                 sessionuuid = queryobject.sessionuuid;
 
@@ -1867,7 +1869,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 33:
                 if (!dataobject) {
-                  _context27.next = 86;
+                  _context27.next = 96;
                   break;
                 }
 
@@ -1875,52 +1877,59 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   dataobject: dataobject
                 };
 
-                if (dataobject.type) {
-                  routings = this._getDataObjectRoutings();
-                  types = Object.keys(routings);
+                if (!dataobject.type) {
+                  _context27.next = 44;
+                  break;
+                }
 
-                  if (types.includes(dataobject.type)) {
-                    routing = routings[dataobject.type];
-                    _params.action = routing.action;
+                routings = this._getDataObjectRoutings();
+                types = Object.keys(routings);
 
-                    for (i = 0; i < (routing.params ? routing.params.length : 0); i++) {
-                      param_name = routing.params[i];
-                      _params[param_name] = dataobject[param_name];
-                    }
+                if (!types.includes(dataobject.type)) {
+                  _context27.next = 44;
+                  break;
+                }
 
-                    this.app.gotoRoute(routing.path, _params);
-                  }
-                } // legacy, to remove
+                routing = routings[dataobject.type];
+                _params.action = routing.action;
 
+                for (i = 0; i < (routing.params ? routing.params.length : 0); i++) {
+                  param_name = routing.params[i];
+                  _params[param_name] = dataobject[param_name];
+                }
 
+                this.app.gotoRoute(routing.path, _params);
+                return _context27.abrupt("return");
+
+              case 44:
                 _context27.t0 = dataobject.type;
-                _context27.next = _context27.t0 === 'bounty' ? 39 : _context27.t0 === 'claim' ? 44 : _context27.t0 === 'deed' ? 49 : _context27.t0 === 'clause' ? 56 : _context27.t0 === 'quote' ? 64 : _context27.t0 === 'order' ? 69 : _context27.t0 === 'invoice' ? 74 : _context27.t0 === 'paymentnotice' ? 79 : 84;
+                _context27.next = _context27.t0 === 'bounty' ? 47 : _context27.t0 === 'claim' ? 52 : _context27.t0 === 'deed' ? 57 : _context27.t0 === 'clause' ? 64 : _context27.t0 === 'quote' ? 72 : _context27.t0 === 'order' ? 77 : _context27.t0 === 'invoice' ? 82 : _context27.t0 === 'paymentnotice' ? 87 : 92;
                 break;
 
-              case 39:
+              case 47:
                 _params.action = 'create';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 44:
+              case 52:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 49:
+              case 57:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 _params.address = dataobject.minter;
                 _params.tokenid = dataobject.tokenid;
                 this.app.gotoRoute('deed', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 56:
+              case 64:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
@@ -1928,43 +1937,47 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 _params.tokenid = dataobject.tokenid;
                 _params.index = dataobject.index;
                 this.app.gotoRoute('clause', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 64:
+              case 72:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('quote', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 69:
+              case 77:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('order', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 74:
+              case 82:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('invoice', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 79:
+              case 87:
                 _params.action = 'view';
                 _params.txhash = dataobject.txhash;
                 _params.currencyuuid = dataobject.currencyuuid;
                 this.app.gotoRoute('paymentnotice', _params);
-                return _context27.abrupt("break", 85);
+                return _context27.abrupt("break", 93);
 
-              case 84:
-                return _context27.abrupt("break", 85);
+              case 92:
+                return _context27.abrupt("break", 93);
 
-              case 85:
+              case 93:
                 return _context27.abrupt("return");
 
-              case 86:
+              case 96:
+                // no route and no data object
+                this.app.gotoRoute('home');
+
+              case 97:
               case "end":
                 return _context27.stop();
             }
@@ -2064,7 +2077,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getMyQuoteDataObject",
     value: function () {
       var _getMyQuoteDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee29(txhash, currencyuuid) {
-        var mvcmyquote, rootsessionuuid, walletuuid, dataobject;
+        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, dataobject;
         return _regeneratorRuntime().wrap(function _callee29$(_context29) {
           while (1) {
             switch (_context29.prev = _context29.next) {
@@ -2074,20 +2087,39 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context29.next = 10;
+                  _context29.next = 19;
                   break;
                 }
 
-                _context29.next = 6;
+                // give opportunity to client to overload fetchCurrencyTransaction
+                result = [];
+                params = [];
+                params.push(txhash);
+                params.push(currencyuuid);
+                _context29.next = 10;
+                return mvcmyquote.invokeAsyncHooks('getDataObjectFromCurrencyTransaction_asynchook', result, params);
+
+              case 10:
+                ret = _context29.sent;
+
+                if (!(ret && result.dataobject)) {
+                  _context29.next = 13;
+                  break;
+                }
+
+                return _context29.abrupt("return", result.dataobject);
+
+              case 13:
+                _context29.next = 15;
                 return mvcmyquote.fetchCurrencyTransaction(rootsessionuuid, walletuuid, currencyuuid, txhash)["catch"](function (err) {
                   console.log('error in Root._getMyQuoteDataObject:' + err);
                 });
 
-              case 6:
+              case 15:
                 dataobject = _context29.sent;
 
                 if (!dataobject) {
-                  _context29.next = 10;
+                  _context29.next = 19;
                   break;
                 }
 
@@ -2095,7 +2127,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 dataobject.txhash = txhash;
                 return _context29.abrupt("return", dataobject);
 
-              case 10:
+              case 19:
               case "end":
                 return _context29.stop();
             }
@@ -2315,7 +2347,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getDeedDataObjectFromCard",
     value: function () {
       var _getDeedDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(currencyuuid, cardaddress, tokenid) {
-        var mvcmyquote, rootsessionuuid, walletuuid, minter, dataobject;
+        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, minter, dataobject;
         return _regeneratorRuntime().wrap(function _callee33$(_context33) {
           while (1) {
             switch (_context33.prev = _context33.next) {
@@ -2325,34 +2357,54 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context33.next = 13;
+                  _context33.next = 23;
                   break;
                 }
 
-                _context33.next = 6;
+                // invoke async hook to let client treat the from card case
+                result = [];
+                params = [];
+                params.push(currencyuuid);
+                params.push(cardaddress);
+                params.push(tokenid);
+                _context33.next = 11;
+                return mvcmyquote.invokeAsyncHooks('getDataObjectFromCard_asynchook', result, params);
+
+              case 11:
+                ret = _context33.sent;
+
+                if (!(ret && result.dataobject)) {
+                  _context33.next = 14;
+                  break;
+                }
+
+                return _context33.abrupt("return", result.dataobject);
+
+              case 14:
+                _context33.next = 16;
                 return mvcmyquote.fetchDeedMinterFromOwner(rootsessionuuid, walletuuid, currencyuuid, cardaddress);
 
-              case 6:
+              case 16:
                 minter = _context33.sent;
 
                 if (minter) {
-                  _context33.next = 9;
+                  _context33.next = 19;
                   break;
                 }
 
                 return _context33.abrupt("return", Promise.reject('could not find minter linked to address ' + cardaddress));
 
-              case 9:
-                _context33.next = 11;
+              case 19:
+                _context33.next = 21;
                 return mvcmyquote.fetchDeed(rootsessionuuid, walletuuid, currencyuuid, minter, tokenid)["catch"](function (err) {
                   console.log('error in Root._getDeedDataObjectFromCard:' + err);
                 });
 
-              case 11:
+              case 21:
                 dataobject = _context33.sent;
                 return _context33.abrupt("return", dataobject);
 
-              case 13:
+              case 23:
               case "end":
                 return _context33.stop();
             }

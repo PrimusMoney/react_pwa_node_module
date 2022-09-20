@@ -1473,7 +1473,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getDataObjectFromComposedHash",
     value: function () {
       var _getDataObjectFromComposedHash2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(txhash, currencyuuid) {
-        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, dataobject, arr, stub, minteraddress, tokenid, deed, index, clause;
+        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret;
         return _regeneratorRuntime().wrap(function _callee24$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
@@ -1502,46 +1502,6 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context24.abrupt("return", result.dataobject);
 
               case 14:
-                arr = txhash ? txhash.split('-') : [];
-                stub = arr[0];
-
-                if (!(stub == 'dd')) {
-                  _context24.next = 25;
-                  break;
-                }
-
-                minteraddress = arr[1];
-                tokenid = arr[2];
-                _context24.next = 21;
-                return this._getDeedDataObjectFromMinter(currencyuuid, minteraddress, tokenid);
-
-              case 21:
-                deed = _context24.sent;
-
-                if (arr.length < 4) {
-                  dataobject = deed;
-                } else {
-                  index = arr[3];
-
-                  if (deed.clauses && deed.clauses.length >= index) {
-                    clause = deed.clauses[index];
-                    dataobject = clause;
-                  } else {
-                    // we could not make sense of this hash, stick to the deed
-                    dataobject = deed;
-                  }
-                }
-
-                _context24.next = 26;
-                break;
-
-              case 25:
-                return _context24.abrupt("return", Promise.reject('do not recognize transaction hash stub: ' + stub));
-
-              case 26:
-                return _context24.abrupt("return", dataobject);
-
-              case 27:
               case "end":
                 return _context24.stop();
             }
@@ -1697,7 +1657,9 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectRoutes",
     value: function _getDataObjectRoutes() {
-      var arr = ['quote', 'order', 'invoice', 'paymentnotice', 'bounty', 'claim', 'deed', 'clause']; // built-in
+      var arr = [
+        /* 'quote', 'order', 'invoice', 'paymentnotice', 'bounty', 'claim', 'deed', 'clause' */
+      ]; // built-in
       // add routes that are marked as linked to data objects
 
       var routes = Root.routes;
@@ -1714,54 +1676,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
     value: function _getDataObjectRoutings() {
       var map = {}; // built-in
 
-      map['quote'] = {
-        type: 'quote',
-        path: 'quote',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['order'] = {
-        type: 'order',
-        path: 'order',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['invoice'] = {
-        type: 'invoice',
-        path: 'invoice',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['paymentnotice'] = {
-        type: 'paymentnotice',
-        path: 'paymentnotice',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['bounty'] = {
-        type: 'bounty',
-        path: 'bounty',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['claim'] = {
-        type: 'claim',
-        path: 'claim',
-        action: 'view',
-        params: ['txhash', 'currencyuuid']
-      };
-      map['deed'] = {
-        type: 'deed',
-        path: 'deed',
-        action: 'view',
-        params: ['txhash', 'currencyuuid', 'minter', 'tokenid']
-      };
-      map['clause'] = {
-        type: 'clause',
-        path: 'clause',
-        action: 'view',
-        params: ['txhash', 'currencyuuid', 'minter', 'tokenid', 'index']
-      }; // add dataobject routing for routes that are marked as linked to data objects
+      /*		map['quote'] = {type: 'quote', path: 'quote', action: 'view', params: ['txhash', 'currencyuuid']};
+      		map['order'] = {type: 'order', path: 'order', action: 'view', params: ['txhash', 'currencyuuid']};
+      		map['invoice'] = {type: 'invoice', path: 'invoice', action: 'view', params: ['txhash', 'currencyuuid']};
+      		map['paymentnotice'] = {type: 'paymentnotice', path: 'paymentnotice', action: 'view', params: ['txhash', 'currencyuuid']};
+      
+      		map['bounty'] = {type: 'bounty', path: 'bounty', action: 'view', params: ['txhash', 'currencyuuid']};
+      		map['claim'] = {type: 'claim', path: 'claim', action: 'view', params: ['txhash', 'currencyuuid']};
+      
+       		map['deed'] = {type: 'deed', path: 'deed', action: 'view', params: ['txhash', 'currencyuuid', 'minter', 'tokenid']};
+      		map['clause'] = {type: 'clause', path: 'clause', action: 'view', params: ['txhash', 'currencyuuid', 'minter', 'tokenid', 'index']};
+       */
+      // add dataobject routing for routes that are marked as linked to data objects
 
       var routes = Root.routes;
 
@@ -1771,6 +1697,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
         if (item.dataobject) {
           var routing = {};
           routing.type = item.dataobject.type;
+          routing.path = item.dataobject.path;
           routing.action = item.dataobject.action;
           routing.params = item.dataobject.params;
           map[item.dataobject.type] = routing;
@@ -1873,7 +1800,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 33:
                 if (!dataobject) {
-                  _context27.next = 96;
+                  _context27.next = 47;
                   break;
                 }
 
@@ -1906,82 +1833,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context27.abrupt("return");
 
               case 44:
-                _context27.t0 = dataobject.type;
-                _context27.next = _context27.t0 === 'bounty' ? 47 : _context27.t0 === 'claim' ? 52 : _context27.t0 === 'deed' ? 57 : _context27.t0 === 'clause' ? 64 : _context27.t0 === 'quote' ? 72 : _context27.t0 === 'order' ? 77 : _context27.t0 === 'invoice' ? 82 : _context27.t0 === 'paymentnotice' ? 87 : 92;
-                break;
-
-              case 47:
-                _params.action = 'create';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 93);
-
-              case 52:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('claim', _params);
-                return _context27.abrupt("break", 93);
-
-              case 57:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                _params.address = dataobject.minter;
-                _params.tokenid = dataobject.tokenid;
-                this.app.gotoRoute('deed', _params);
-                return _context27.abrupt("break", 93);
-
-              case 64:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                _params.address = dataobject.minter;
-                _params.tokenid = dataobject.tokenid;
-                _params.index = dataobject.index;
-                this.app.gotoRoute('clause', _params);
-                return _context27.abrupt("break", 93);
-
-              case 72:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('quote', _params);
-                return _context27.abrupt("break", 93);
-
-              case 77:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('order', _params);
-                return _context27.abrupt("break", 93);
-
-              case 82:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('invoice', _params);
-                return _context27.abrupt("break", 93);
-
-              case 87:
-                _params.action = 'view';
-                _params.txhash = dataobject.txhash;
-                _params.currencyuuid = dataobject.currencyuuid;
-                this.app.gotoRoute('paymentnotice', _params);
-                return _context27.abrupt("break", 93);
-
-              case 92:
-                return _context27.abrupt("break", 93);
-
-              case 93:
                 return _context27.abrupt("return");
 
-              case 96:
+              case 47:
                 // no route and no data object
                 this.app.gotoRoute('home');
 
-              case 97:
+              case 48:
               case "end":
                 return _context27.stop();
             }
@@ -2353,7 +2211,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getDataObjectFromCard",
     value: function () {
       var _getDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(currencyuuid, cardaddress, tokenid) {
-        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, minter, dataobject;
+        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret;
         return _regeneratorRuntime().wrap(function _callee33$(_context33) {
           while (1) {
             switch (_context33.prev = _context33.next) {
@@ -2363,7 +2221,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context33.next = 25;
+                  _context33.next = 16;
                   break;
                 }
 
@@ -2389,30 +2247,6 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context33.abrupt("return", result.dataobject);
 
               case 16:
-                _context33.next = 18;
-                return mvcmyquote.fetchDeedMinterFromOwner(rootsessionuuid, walletuuid, currencyuuid, cardaddress);
-
-              case 18:
-                minter = _context33.sent;
-
-                if (minter) {
-                  _context33.next = 21;
-                  break;
-                }
-
-                return _context33.abrupt("return", Promise.reject('could not find minter linked to address ' + cardaddress));
-
-              case 21:
-                _context33.next = 23;
-                return mvcmyquote.fetchDeed(rootsessionuuid, walletuuid, currencyuuid, minter, tokenid)["catch"](function (err) {
-                  console.log('error in Root._getDataObjectFromCard:' + err);
-                });
-
-              case 23:
-                dataobject = _context33.sent;
-                return _context33.abrupt("return", dataobject);
-
-              case 25:
               case "end":
                 return _context33.stop();
             }
@@ -2427,78 +2261,45 @@ var Root = /*#__PURE__*/function (_React$Component) {
       return _getDataObjectFromCard;
     }() // deed legacy
 
-  }, {
-    key: "_getDeedDataObjectFromMinter",
-    value: function () {
-      var _getDeedDataObjectFromMinter2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34(currencyuuid, minteraddress, tokenid) {
-        var mvcmyquote, rootsessionuuid, walletuuid, minter, dataobject;
-        return _regeneratorRuntime().wrap(function _callee34$(_context34) {
-          while (1) {
-            switch (_context34.prev = _context34.next) {
-              case 0:
-                mvcmyquote = this.getMvcMyQuoteObject();
-                rootsessionuuid = this.props.rootsessionuuid;
-                walletuuid = this.props.currentwalletuuid;
-
-                if (!currencyuuid) {
-                  _context34.next = 13;
-                  break;
-                }
-
-                _context34.next = 6;
-                return mvcmyquote.fetchDeedMinterFromAddress(rootsessionuuid, walletuuid, currencyuuid, minteraddress);
-
-              case 6:
-                minter = _context34.sent;
-
-                if (minter) {
-                  _context34.next = 9;
-                  break;
-                }
-
-                return _context34.abrupt("return", Promise.reject('could not find minter linked to address ' + minteraddress));
-
-              case 9:
-                _context34.next = 11;
-                return mvcmyquote.fetchDeed(rootsessionuuid, walletuuid, currencyuuid, minter, tokenid)["catch"](function (err) {
-                  console.log('error in Root.async_getDeedDataObjectFromMinter:' + err);
-                });
-
-              case 11:
-                dataobject = _context34.sent;
-                return _context34.abrupt("return", dataobject);
-
-              case 13:
-              case "end":
-                return _context34.stop();
-            }
-          }
-        }, _callee34, this);
-      }));
-
-      function _getDeedDataObjectFromMinter(_x43, _x44, _x45) {
-        return _getDeedDataObjectFromMinter2.apply(this, arguments);
-      }
-
-      return _getDeedDataObjectFromMinter;
-    }() // legacy
+    /* 	async _getDeedDataObjectFromMinter(currencyuuid, minteraddress, tokenid) {
+    		let mvcmyquote = this.getMvcMyQuoteObject();
+    
+    		let rootsessionuuid = this.props.rootsessionuuid;
+    		let walletuuid = this.props.currentwalletuuid;
+    
+    		if (currencyuuid) {
+    
+    			let minter = await mvcmyquote.fetchDeedMinterFromAddress(rootsessionuuid, walletuuid, currencyuuid, minteraddress);
+    
+    			if (!minter)
+    				return Promise.reject('could not find minter linked to address ' + minteraddress);
+    
+    			var dataobject = await mvcmyquote.fetchDeed(rootsessionuuid, walletuuid, currencyuuid, minter, tokenid)
+    			.catch(err => {
+    				console.log('error in Root.async_getDeedDataObjectFromMinter:' + err);
+    			});
+    
+    			return dataobject;
+    		}		
+    	} */
+    // legacy
 
   }, {
     key: "_logout",
     value: function () {
-      var _logout2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35() {
-        return _regeneratorRuntime().wrap(function _callee35$(_context35) {
+      var _logout2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34() {
+        return _regeneratorRuntime().wrap(function _callee34$(_context34) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context34.prev = _context34.next) {
               case 0:
                 this.props.doResetSession();
 
               case 1:
               case "end":
-                return _context35.stop();
+                return _context34.stop();
             }
           }
-        }, _callee35, this);
+        }, _callee34, this);
       }));
 
       function _logout() {
@@ -2526,18 +2327,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "loadRoutes",
     value: function () {
-      var _loadRoutes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee36(app) {
+      var _loadRoutes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35(app) {
         var Routes, extra_routes, i;
-        return _regeneratorRuntime().wrap(function _callee36$(_context36) {
+        return _regeneratorRuntime().wrap(function _callee35$(_context35) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context35.prev = _context35.next) {
               case 0:
                 Routes = require('./routes/routes.js');
-                _context36.next = 3;
+                _context35.next = 3;
                 return Routes["default"].getRoutes(app);
 
               case 3:
-                extra_routes = _context36.sent;
+                extra_routes = _context35.sent;
 
                 for (i = 0; i < extra_routes.length; i++) {
                   Root.routes.push(extra_routes[i]);
@@ -2545,13 +2346,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 5:
               case "end":
-                return _context36.stop();
+                return _context35.stop();
             }
           }
-        }, _callee36);
+        }, _callee35);
       }));
 
-      function loadRoutes(_x46) {
+      function loadRoutes(_x43) {
         return _loadRoutes.apply(this, arguments);
       }
 

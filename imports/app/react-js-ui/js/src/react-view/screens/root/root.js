@@ -1473,45 +1473,49 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_getDataObjectFromComposedHash",
     value: function () {
       var _getDataObjectFromComposedHash2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(txhash, currencyuuid) {
-        var mvcmyquote, result, params, ret, dataobject, arr, stub, minteraddress, tokenid, deed, index, clause;
+        var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, dataobject, arr, stub, minteraddress, tokenid, deed, index, clause;
         return _regeneratorRuntime().wrap(function _callee24$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
               case 0:
-                // invoke async hook to let client treat the composed hash
                 mvcmyquote = this.getMvcMyQuoteObject();
+                rootsessionuuid = this.props.rootsessionuuid;
+                walletuuid = this.props.currentwalletuuid; // invoke async hook to let client treat the composed hash
+
                 result = [];
                 params = [];
+                params.push(rootsessionuuid);
+                params.push(walletuuid);
                 params.push(txhash);
                 params.push(currencyuuid);
-                _context24.next = 7;
+                _context24.next = 11;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromComposedHash_asynchook', result, params);
 
-              case 7:
+              case 11:
                 ret = _context24.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context24.next = 10;
+                  _context24.next = 14;
                   break;
                 }
 
                 return _context24.abrupt("return", result.dataobject);
 
-              case 10:
+              case 14:
                 arr = txhash ? txhash.split('-') : [];
                 stub = arr[0];
 
                 if (!(stub == 'dd')) {
-                  _context24.next = 21;
+                  _context24.next = 25;
                   break;
                 }
 
                 minteraddress = arr[1];
                 tokenid = arr[2];
-                _context24.next = 17;
+                _context24.next = 21;
                 return this._getDeedDataObjectFromMinter(currencyuuid, minteraddress, tokenid);
 
-              case 17:
+              case 21:
                 deed = _context24.sent;
 
                 if (arr.length < 4) {
@@ -1528,16 +1532,16 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   }
                 }
 
-                _context24.next = 22;
+                _context24.next = 26;
                 break;
 
-              case 21:
+              case 25:
                 return _context24.abrupt("return", Promise.reject('do not recognize transaction hash stub: ' + stub));
 
-              case 22:
+              case 26:
                 return _context24.abrupt("return", dataobject);
 
-              case 23:
+              case 27:
               case "end":
                 return _context24.stop();
             }
@@ -1618,7 +1622,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 }
 
                 _context25.next = 23;
-                return this._getDeedDataObjectFromCard(currencyuuid, card, tokenid);
+                return this._getDataObjectFromCard(currencyuuid, card, tokenid);
 
               case 23:
                 dataobject = _context25.sent;
@@ -2087,39 +2091,41 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context29.next = 19;
+                  _context29.next = 21;
                   break;
                 }
 
                 // give opportunity to client to overload fetchCurrencyTransaction
                 result = [];
                 params = [];
+                params.push(rootsessionuuid);
+                params.push(walletuuid);
                 params.push(txhash);
                 params.push(currencyuuid);
-                _context29.next = 10;
+                _context29.next = 12;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromCurrencyTransaction_asynchook', result, params);
 
-              case 10:
+              case 12:
                 ret = _context29.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context29.next = 13;
+                  _context29.next = 15;
                   break;
                 }
 
                 return _context29.abrupt("return", result.dataobject);
 
-              case 13:
-                _context29.next = 15;
+              case 15:
+                _context29.next = 17;
                 return mvcmyquote.fetchCurrencyTransaction(rootsessionuuid, walletuuid, currencyuuid, txhash)["catch"](function (err) {
                   console.log('error in Root._getMyQuoteDataObject:' + err);
                 });
 
-              case 15:
+              case 17:
                 dataobject = _context29.sent;
 
                 if (!dataobject) {
-                  _context29.next = 19;
+                  _context29.next = 21;
                   break;
                 }
 
@@ -2127,7 +2133,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 dataobject.txhash = txhash;
                 return _context29.abrupt("return", dataobject);
 
-              case 19:
+              case 21:
               case "end":
                 return _context29.stop();
             }
@@ -2344,9 +2350,9 @@ var Root = /*#__PURE__*/function (_React$Component) {
       return _onEmptyStartDataObject;
     }()
   }, {
-    key: "_getDeedDataObjectFromCard",
+    key: "_getDataObjectFromCard",
     value: function () {
-      var _getDeedDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(currencyuuid, cardaddress, tokenid) {
+      var _getDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(currencyuuid, cardaddress, tokenid) {
         var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, minter, dataobject;
         return _regeneratorRuntime().wrap(function _callee33$(_context33) {
           while (1) {
@@ -2357,54 +2363,56 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context33.next = 23;
+                  _context33.next = 25;
                   break;
                 }
 
                 // invoke async hook to let client treat the from card case
                 result = [];
                 params = [];
+                params.push(rootsessionuuid);
+                params.push(walletuuid);
                 params.push(currencyuuid);
                 params.push(cardaddress);
                 params.push(tokenid);
-                _context33.next = 11;
+                _context33.next = 13;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromCard_asynchook', result, params);
 
-              case 11:
+              case 13:
                 ret = _context33.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context33.next = 14;
+                  _context33.next = 16;
                   break;
                 }
 
                 return _context33.abrupt("return", result.dataobject);
 
-              case 14:
-                _context33.next = 16;
+              case 16:
+                _context33.next = 18;
                 return mvcmyquote.fetchDeedMinterFromOwner(rootsessionuuid, walletuuid, currencyuuid, cardaddress);
 
-              case 16:
+              case 18:
                 minter = _context33.sent;
 
                 if (minter) {
-                  _context33.next = 19;
+                  _context33.next = 21;
                   break;
                 }
 
                 return _context33.abrupt("return", Promise.reject('could not find minter linked to address ' + cardaddress));
 
-              case 19:
-                _context33.next = 21;
+              case 21:
+                _context33.next = 23;
                 return mvcmyquote.fetchDeed(rootsessionuuid, walletuuid, currencyuuid, minter, tokenid)["catch"](function (err) {
-                  console.log('error in Root._getDeedDataObjectFromCard:' + err);
+                  console.log('error in Root._getDataObjectFromCard:' + err);
                 });
 
-              case 21:
+              case 23:
                 dataobject = _context33.sent;
                 return _context33.abrupt("return", dataobject);
 
-              case 23:
+              case 25:
               case "end":
                 return _context33.stop();
             }
@@ -2412,12 +2420,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
         }, _callee33, this);
       }));
 
-      function _getDeedDataObjectFromCard(_x40, _x41, _x42) {
-        return _getDeedDataObjectFromCard2.apply(this, arguments);
+      function _getDataObjectFromCard(_x40, _x41, _x42) {
+        return _getDataObjectFromCard2.apply(this, arguments);
       }
 
-      return _getDeedDataObjectFromCard;
-    }()
+      return _getDataObjectFromCard;
+    }() // deed legacy
+
   }, {
     key: "_getDeedDataObjectFromMinter",
     value: function () {
@@ -2472,7 +2481,8 @@ var Root = /*#__PURE__*/function (_React$Component) {
       }
 
       return _getDeedDataObjectFromMinter;
-    }()
+    }() // legacy
+
   }, {
     key: "_logout",
     value: function () {

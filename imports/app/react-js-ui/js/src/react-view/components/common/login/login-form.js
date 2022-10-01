@@ -946,27 +946,96 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     key: "onClickItem",
     value: function () {
       var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(item) {
-        var schemeuuid;
+        var type, schemeuuid, mvcmyquote, rootsessionuuid, result, params, ret;
         return _regeneratorRuntime().wrap(function _callee12$(_context12) {
           while (1) {
             switch (_context12.prev = _context12.next) {
               case 0:
+                type = item.type;
                 schemeuuid = item.uuid;
 
-                if (!(item.credentials !== true)) {
-                  _context12.next = 4;
-                  break;
-                }
-
-                _context12.next = 4;
-                return this.oauth2Login(item.provider, schemeuuid);
-
-              case 4:
                 this._setState({
                   schemeuuid: schemeuuid
                 });
 
-              case 5:
+                if (!(item.credentials === true)) {
+                  _context12.next = 18;
+                  break;
+                }
+
+                // we give a chance for hooks to fill the credentials
+                mvcmyquote = this.getMvcMyQuoteObject();
+                rootsessionuuid = this.props.rootsessionuuid;
+                result = [];
+                params = [];
+                params.push(rootsessionuuid);
+                params.push(item);
+                _context12.next = 12;
+                return mvcmyquote.invokeAsyncHooks('getLoginCredentials_asynchook', result, params);
+
+              case 12:
+                ret = _context12.sent;
+
+                if (!(ret && result.credentials)) {
+                  _context12.next = 18;
+                  break;
+                }
+
+                this._setState({
+                  username: result.credentials.username,
+                  password: result.credentials.password,
+                  schemeuuid: result.credentials.schemeuuid
+                }); // call onSubmit if requested
+
+
+                if (!result.credentials.automatic_submit) {
+                  _context12.next = 18;
+                  break;
+                }
+
+                _context12.next = 18;
+                return this.onSubmit();
+
+              case 18:
+                _context12.t0 = type;
+                _context12.next = _context12.t0 === 0 ? 21 : _context12.t0 === 1 ? 24 : 24;
+                break;
+
+              case 21:
+                if (!(item.credentials !== true)) {
+                  _context12.next = 23;
+                  break;
+                }
+
+                return _context12.abrupt("return", Promise.reject('alernative authentication mode to with credentials not supported for local authentication'));
+
+              case 23:
+                return _context12.abrupt("break", 33);
+
+              case 24:
+                if (!(item.credentials !== true)) {
+                  _context12.next = 32;
+                  break;
+                }
+
+                _context12.t1 = item.mode;
+                _context12.next = _context12.t1 === 'oauth2' ? 28 : 31;
+                break;
+
+              case 28:
+                _context12.next = 30;
+                return this.oauth2Login(item.provider, schemeuuid);
+
+              case 30:
+                return _context12.abrupt("break", 32);
+
+              case 31:
+                return _context12.abrupt("return", Promise.reject('authentication mode is not supported: ' + item.mode));
+
+              case 32:
+                return _context12.abrupt("break", 33);
+
+              case 33:
               case "end":
                 return _context12.stop();
             }
@@ -1023,21 +1092,33 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       var type = item.type;
       var label = item.label;
 
-      switch (item.name) {
-        case 'facebook':
-          return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
-            src: _facebookLogin573x["default"],
-            fluid: true
-          }));
+      if (item.image) {
+        // display a logo
+        switch (item.name) {
+          // built-in
+          case 'facebook':
+            return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
+              src: _facebookLogin573x["default"],
+              fluid: true
+            }));
 
-        case 'google':
-          return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
-            src: _googleLogin573x["default"],
-            fluid: true
-          }));
+          case 'google':
+            return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
+              src: _googleLogin573x["default"],
+              fluid: true
+            }));
+          // webapp additional
 
-        default:
-          return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("span", null, label));
+          default:
+            // path in item.image
+            return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
+              src: item.image,
+              fluid: true
+            }));
+        }
+      } else {
+        // standard text line
+        return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement("span", null, label));
       }
     }
   }, {
@@ -1046,14 +1127,16 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       // built-in logins
 
       /*let schemeList = [
-      	{name: 'facebook', label: 'facebook', type: 1, provider: 'facebook', uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'}, 
-      	{name: 'google', label: 'google', type: 1, provider: 'google', uuid: '47b0806f-c3fa-65f6-b356-8715a2bcfa0c'},
+      	{name: 'facebook', label: 'facebook', image: 'inline', type: 1, mode: 'oauth2', provider: 'facebook', uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'}, 
+      	{name: 'google', label: 'google', image: 'inline', type: 1, mode: 'oauth2', provider: 'google', uuid: '47b0806f-c3fa-65f6-b356-8715a2bcfa0c'},
       	{name: 'primusmoney', label: 'connect with primus money', type: 1, credentials: true, uuid: 'd3b4fa61-ed65-11f6-4877-b169441dbe58'}
       ];*/
       var schemeList = [{
         name: 'facebook',
         label: 'facebook',
+        image: 'inline',
         type: 1,
+        mode: 'oauth2',
         provider: 'facebook',
         uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'
       }, {
@@ -1077,9 +1160,19 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             schemeList.push(this.login_scheme_list_dev[i]);
           }
         }
+      } // put schemes with image first
+
+
+      var image_schemes = [];
+      var label_schemes = [];
+
+      for (var i = 0; i < schemeList.length; i++) {
+        if (schemeList[i].image) image_schemes.push(schemeList[i]);else label_schemes.push(schemeList[i]);
       }
 
-      return schemeList;
+      var _schemeList = image_schemes.concat(label_schemes);
+
+      return _schemeList;
     }
   }, {
     key: "_isCredentialsScheme",

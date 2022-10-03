@@ -84,6 +84,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     _this.closing = false;
     _this.login_scheme_list_webapp = null;
     _this.login_scheme_list_dev = null;
+    _this.default_local_schemeuuid = null;
     _this.state = {
       processinginfo: 'processing authentication',
       processing: logging_pending ? true : false,
@@ -137,7 +138,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     key: "checkNavigationState",
     value: function () {
       var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var mvcmyquote, rootsessionuuid, app_nav_state, app_nav_target, startconditions, urlParams, txhash, currencyuuid, sessionuuid, schemeuuid, params, wallet, dataobj, _params;
+        var mvcmyquote, rootsessionuuid, localscheme, app_nav_state, app_nav_target, startconditions, urlParams, txhash, currencyuuid, sessionuuid, schemeuuid, params, wallet, dataobj, _params;
 
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
@@ -156,12 +157,18 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
               case 7:
                 this.login_scheme_list_dev = _context.sent;
-                // look if a transaction is defined in the url
+                _context.next = 10;
+                return mvcmyquote.getDefaultLocalSchemeInfo(rootsessionuuid);
+
+              case 10:
+                localscheme = _context.sent;
+                this.default_local_schemeuuid = localscheme.uuid; // look if a transaction is defined in the url
+
                 app_nav_state = this.app.getNavigationState();
                 app_nav_target = app_nav_state.target;
 
                 if (!(app_nav_target && app_nav_target.route == 'login' && app_nav_target.reached == false)) {
-                  _context.next = 16;
+                  _context.next = 20;
                   break;
                 }
 
@@ -171,17 +178,17 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 //await this.setProcessing(false);
 
                 app_nav_target.reached = true;
-                _context.next = 61;
+                _context.next = 65;
                 break;
 
-              case 16:
+              case 20:
                 console.log('LoginForm.checkNavigationState starting from a clean slate'); // starting from a clean slate
 
                 startconditions = this.app.getVariable('start_conditions');
                 urlParams = startconditions.urlParams;
 
                 if (!urlParams) {
-                  _context.next = 61;
+                  _context.next = 65;
                   break;
                 }
 
@@ -191,7 +198,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 schemeuuid = urlParams.get('schemeuuid');
 
                 if (!sessionuuid) {
-                  _context.next = 48;
+                  _context.next = 52;
                   break;
                 }
 
@@ -200,7 +207,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 console.log('LoginForm.checkNavigationState reconnecting to session:' + sessionuuid);
 
                 if (!schemeuuid) {
-                  _context.next = 46;
+                  _context.next = 50;
                   break;
                 }
 
@@ -210,99 +217,99 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(startconditions.walletforscheme_treating !== true)) {
-                  _context.next = 46;
+                  _context.next = 50;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState looking for a wallet for scheme ' + schemeuuid);
                 startconditions.walletforscheme_treating = true; // set processing flag on
 
-                _context.next = 33;
+                _context.next = 37;
                 return this.setProcessing(true);
 
-              case 33:
-                _context.next = 35;
+              case 37:
+                _context.next = 39;
                 return this._getWalletForScheme(params)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
-              case 35:
+              case 39:
                 wallet = _context.sent;
 
                 if (!wallet) {
-                  _context.next = 43;
+                  _context.next = 47;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState found wallet for session:' + sessionuuid);
-                _context.next = 40;
+                _context.next = 44;
                 return this.postLogin('bootstrap');
 
-              case 40:
+              case 44:
                 startconditions.walletforscheme_treated = true;
-                _context.next = 46;
+                _context.next = 50;
                 break;
 
-              case 43:
+              case 47:
                 console.log('LoginForm.checkNavigationState reset url, could not find wallet for session:' + sessionuuid); // we restart on a clean url
 
-                _context.next = 46;
+                _context.next = 50;
                 return this.app.resetHref();
 
-              case 46:
-                _context.next = 61;
+              case 50:
+                _context.next = 65;
                 break;
 
-              case 48:
+              case 52:
                 if (!(txhash && currencyuuid)) {
-                  _context.next = 61;
+                  _context.next = 65;
                   break;
                 }
 
-                _context.next = 51;
+                _context.next = 55;
                 return this.app.getStartDataObject()["catch"](function (err) {
                   console.log('error calling App.getStartDataObject: ' + err);
                 });
 
-              case 51:
+              case 55:
                 dataobj = _context.sent;
 
                 if (!dataobj) {
-                  _context.next = 59;
+                  _context.next = 63;
                   break;
                 }
 
                 if (!(dataobj.viewed !== true)) {
-                  _context.next = 57;
+                  _context.next = 61;
                   break;
                 }
 
                 _params = {
                   dataobject: dataobj
                 };
-                _context.next = 57;
+                _context.next = 61;
                 return this.app.gotoMyQuotePage(_params)["catch"](function (err) {
                   console.log('error calling App.gotoMyQuotePage: ' + err);
                 });
 
-              case 57:
-                _context.next = 61;
+              case 61:
+                _context.next = 65;
                 break;
 
-              case 59:
-                _context.next = 61;
+              case 63:
+                _context.next = 65;
                 return this.app.onEmptyStartDataObject(txhash, currencyuuid)["catch"](function (err) {
                   console.log('error calling App.onEmptyStartDataObject: ' + err);
                 });
 
-              case 61:
+              case 65:
                 console.log('LoginForm.checkNavigationState loaded');
 
                 this._setState({
                   loaded: true
                 });
 
-              case 63:
+              case 67:
               case "end":
                 return _context.stop();
             }
@@ -988,7 +995,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 }); // call onSubmit if requested
 
 
-                if (!result.credentials.automatic_submit) {
+                if (!(result.credentials.automatic_submit !== false)) {
                   _context12.next = 18;
                   break;
                 }
@@ -1170,7 +1177,18 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         if (schemeList[i].image) image_schemes.push(schemeList[i]);else label_schemes.push(schemeList[i]);
       }
 
-      var _schemeList = image_schemes.concat(label_schemes);
+      var _schemeList = image_schemes.concat(label_schemes); // filter login schemes that have been disabled (if any)
+
+
+      var boot_webapp = this.app.getConfig();
+      var logins_config = boot_webapp.logins;
+      var disabled = logins_config && logins_config.disable ? logins_config.disable : [];
+
+      if (disabled && disabled.length) {
+        _schemeList = _schemeList.filter(function (scheme) {
+          return disabled.includes(scheme.name) !== true;
+        });
+      }
 
       return _schemeList;
     }
@@ -1189,7 +1207,12 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         }
       }
 
-      if (!scheme) return false;
+      if (!scheme) {
+        // check if it is the default local scheme
+        if (schemeuuid === this.default_local_schemeuuid) return true;
+        return false;
+      }
+
       if (scheme.credentials === true) return true;
       return false;
     }

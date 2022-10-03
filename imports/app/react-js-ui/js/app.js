@@ -72,7 +72,7 @@ var App = /*#__PURE__*/function (_React$Component) {
     _this = _super.call(this, props);
     console.log('App constructor called');
     _this.exec_env = App.EXEC_ENV;
-    _this.current_version = '0.15.41.2022.10.01';
+    _this.current_version = '0.15.42.2022.10.03';
     App.theapp = _assertThisInitialized(_this);
     _this.basename = App.BASE_NAME ? App.BASE_NAME : "my-pwa";
     _this.updatetime = 'August 30, 2022';

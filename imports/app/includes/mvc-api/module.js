@@ -2866,7 +2866,7 @@ var Module = /*#__PURE__*/function () {
     key: "createCurrencyCard",
     value: function () {
       var _createCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34(sessionuuid, walletuuid, currencyuuid, privatekey) {
-        var currency, global, _apicontrollers, session, scheme, wallet, card, xtradata, bSave, currencycards, mvcclientwalletmodule, cardinfo;
+        var currency, global, _apicontrollers, session, scheme, wallet, sessionaccount, card_address, sibling_cards, card, _xtradata, _currencyuuid, _old_card, _old_xtradata, xtradata, bSave, currencycards, mvcclientwalletmodule, cardinfo;
 
         return _regeneratorRuntime().wrap(function _callee34$(_context34) {
           while (1) {
@@ -2946,63 +2946,134 @@ var Module = /*#__PURE__*/function () {
 
               case 26:
                 _context34.next = 28;
-                return this._createWalletCard(session, wallet, scheme, privatekey);
+                return _apicontrollers.getSessionAccountFromPrivateKey(session, wallet, privatekey);
 
               case 28:
+                sessionaccount = _context34.sent;
+                card_address = sessionaccount.getAddress();
+                _context34.next = 32;
+                return wallet.getCardsWithAddress(card_address)["catch"](function (err) {});
+
+              case 32:
+                sibling_cards = _context34.sent;
+                sibling_cards = sibling_cards ? sibling_cards : []; // TODO: replace by _apicontrollers.createWalletCard for version >= 0.20.18
+
+                _context34.next = 36;
+                return this._createWalletCard(session, wallet, scheme, privatekey);
+
+              case 36:
                 card = _context34.sent;
 
+                if (!(sibling_cards.length > 0)) {
+                  _context34.next = 62;
+                  break;
+                }
+
+                _context34.prev = 38;
+                // we already had a currency card with same address
+                _xtradata = card.getXtraData('myquote');
+                _xtradata = _xtradata ? _xtradata : {};
+                _currencyuuid = _xtradata.currencyuuid;
+
+                if (!(_currencyuuid != currencyuuid)) {
+                  _context34.next = 56;
+                  break;
+                }
+
+                _context34.next = 45;
+                return wallet.cloneCard(card, scheme)["catch"](function (err) {});
+
+              case 45:
+                _old_card = _context34.sent;
+
+                if (!_old_card) {
+                  _context34.next = 56;
+                  break;
+                }
+
+                if (!_old_card.isLocked()) {
+                  _context34.next = 50;
+                  break;
+                }
+
+                _context34.next = 50;
+                return _old_card.unlock();
+
+              case 50:
+                _old_xtradata = Object.assign({}, _xtradata);
+                xtradata = xtradata ? xtradata : {};
+                _old_xtradata.currencyuuid = _currencyuuid;
+
+                _old_card.putXtraData('myquote', _old_xtradata);
+
+                _context34.next = 56;
+                return _old_card.save();
+
+              case 56:
+                _context34.next = 61;
+                break;
+
+              case 58:
+                _context34.prev = 58;
+                _context34.t0 = _context34["catch"](38);
+                console.log('could not re-insert pre-existing currency card: ' + card_address);
+
+              case 61:
+                ;
+
+              case 62:
                 if (card) {
-                  _context34.next = 31;
+                  _context34.next = 64;
                   break;
                 }
 
                 return _context34.abrupt("return", Promise.reject('could not create card'));
 
-              case 31:
+              case 64:
                 if (!card.isLocked()) {
-                  _context34.next = 34;
+                  _context34.next = 67;
                   break;
                 }
 
-                _context34.next = 34;
+                _context34.next = 67;
                 return card.unlock();
 
-              case 34:
+              case 67:
                 // set it's associated to currencyuuid in XtraData
                 xtradata = card.getXtraData('myquote');
                 xtradata = xtradata ? xtradata : {};
                 xtradata.currencyuuid = currencyuuid;
                 card.putXtraData('myquote', xtradata); // save
 
-                _context34.next = 40;
+                _context34.next = 73;
                 return card.save();
 
-              case 40:
+              case 73:
                 bSave = _context34.sent;
 
                 if (bSave) {
-                  _context34.next = 43;
+                  _context34.next = 76;
                   break;
                 }
 
                 return _context34.abrupt("return", Promise.reject('could not save card'));
 
-              case 43:
-                _context34.next = 45;
+              case 76:
+                _context34.next = 78;
                 return this._getCurrencyCardList(session, wallet, currency)["catch"](function (err) {});
 
-              case 45:
+              case 78:
                 currencycards = _context34.sent;
 
                 if (!(!currencycards || currencycards.length == 1)) {
-                  _context34.next = 49;
+                  _context34.next = 82;
                   break;
                 }
 
-                _context34.next = 49;
+                _context34.next = 82;
                 return this.setCurrencyCard(sessionuuid, walletuuid, currencyuuid, card.uuid);
 
-              case 49:
+              case 82:
                 // return cardinfo
                 mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
                 cardinfo = {};
@@ -3011,12 +3082,12 @@ var Module = /*#__PURE__*/function () {
 
                 return _context34.abrupt("return", cardinfo);
 
-              case 53:
+              case 86:
               case "end":
                 return _context34.stop();
             }
           }
-        }, _callee34, this);
+        }, _callee34, this, [[38, 58]]);
       }));
 
       function createCurrencyCard(_x101, _x102, _x103, _x104) {

@@ -6523,58 +6523,61 @@ var Module = /*#__PURE__*/function () {
 
       return saveClaim;
     }() //
-    // Deeds
+    // Quotes
     //
 
   }, {
-    key: "_getMonitoredERC721TokenSession",
+    key: "readQuotes",
     value: function () {
-      var _getMonitoredERC721TokenSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee126(session, wallet, currency) {
-        var global, _apicontrollers, currencyscheme, childsession, ethnodemodule, ethereumnodeaccessinstance;
+      var _readQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee126(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, quote_list;
 
         return _regeneratorRuntime().wrap(function _callee126$(_context126) {
           while (1) {
             switch (_context126.prev = _context126.next) {
               case 0:
+                if (sessionuuid) {
+                  _context126.next = 2;
+                  break;
+                }
+
+                return _context126.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context126.next = 4;
-                return this._getCurrencyScheme(session, currency);
+                _context126.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 4:
-                currencyscheme = _context126.sent;
-                _context126.next = 7;
-                return this._getMonitoredSchemeSession(session, wallet, currencyscheme);
+              case 6:
+                session = _context126.sent;
 
-              case 7:
-                childsession = _context126.sent;
-
-                if (!(currencyscheme.isRemote() === true)) {
-                  _context126.next = 16;
+                if (session) {
+                  _context126.next = 9;
                   break;
                 }
 
-                // remote (or at least for authkey, we could check that ehtnodeserver is indeed remote)
-                ethnodemodule = global.getModuleObject('ethnode');
-                ethereumnodeaccessinstance = ethnodemodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
-                // var ethereumnodeaccessinstance = _apicontrollers.getEthereumNodeAccessInstance(childsession);
+                return _context126.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-                if (!(this.contract_path_root_uri && ethereumnodeaccessinstance.web3_setArtifactRootUri)) {
-                  _context126.next = 14;
-                  break;
-                }
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'quotes']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'quotes']; // shared keys, also we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let quote_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
-                _context126.next = 14;
-                return ethereumnodeaccessinstance.web3_setArtifactRootUri(this.contract_path_root_uri);
 
-              case 14:
-                _context126.next = 16;
-                break;
+                _context126.next = 12;
+                return this._readClientSideJson(session, keys);
 
-              case 16:
-                return _context126.abrupt("return", childsession);
+              case 12:
+                quote_list = _context126.sent;
+                if (!quote_list) quote_list = [];
+                return _context126.abrupt("return", quote_list);
 
-              case 17:
+              case 15:
               case "end":
                 return _context126.stop();
             }
@@ -6582,33 +6585,96 @@ var Module = /*#__PURE__*/function () {
         }, _callee126, this);
       }));
 
-      function _getMonitoredERC721TokenSession(_x386, _x387, _x388) {
-        return _getMonitoredERC721TokenSession2.apply(this, arguments);
+      function readQuotes(_x386, _x387) {
+        return _readQuotes.apply(this, arguments);
       }
 
-      return _getMonitoredERC721TokenSession;
-    }() // minter
-
+      return readQuotes;
+    }()
   }, {
-    key: "_createERC721TokenObject",
+    key: "fetchQuotes",
     value: function () {
-      var _createERC721TokenObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee127(session, currency, data) {
-        var global, mvcerc721module, erc721token;
+      var _fetchQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee127(sessionuuid, walletuuid, currencyuuid, vendor_address) {
+        var global, _apicontrollers, session, wallet, currency, transactions, quotelist, i, tx, dataobject;
+
         return _regeneratorRuntime().wrap(function _callee127$(_context127) {
           while (1) {
             switch (_context127.prev = _context127.next) {
               case 0:
-                // for local contract objects (before deployment)
-                global = this.global;
-                mvcerc721module = global.getModuleObject('mvc-erc721');
-                _context127.next = 4;
-                return mvcerc721module.createERC721TokenObject(session, currency, data);
+                if (sessionuuid) {
+                  _context127.next = 2;
+                  break;
+                }
 
-              case 4:
-                erc721token = _context127.sent;
-                return _context127.abrupt("return", erc721token);
+                return _context127.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context127.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
 
               case 6:
+                session = _context127.sent;
+
+                if (session) {
+                  _context127.next = 9;
+                  break;
+                }
+
+                return _context127.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                _context127.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+
+              case 11:
+                wallet = _context127.sent;
+                _context127.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+
+              case 14:
+                currency = _context127.sent;
+
+                if (currency) {
+                  _context127.next = 17;
+                  break;
+                }
+
+                return _context127.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context127.next = 19;
+                  break;
+                }
+
+                return _context127.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context127.next = 21;
+                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+
+              case 21:
+                transactions = _context127.sent;
+                // we filter quotes
+                quotelist = [];
+
+                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
+                  tx = transactions[i];
+                  dataobject = {};
+
+                  this._fillTransactionDataObject(dataobject, tx);
+
+                  if (dataobject.type == 'quote' && dataobject.owner == vendor_address) {
+                    //await this.saveQuote(sessionuuid, null, dataobject);
+                    quotelist.push(dataobject);
+                  }
+                }
+
+                return _context127.abrupt("return", quotelist);
+
+              case 25:
               case "end":
                 return _context127.stop();
             }
@@ -6616,167 +6682,101 @@ var Module = /*#__PURE__*/function () {
         }, _callee127, this);
       }));
 
-      function _createERC721TokenObject(_x389, _x390, _x391) {
-        return _createERC721TokenObject2.apply(this, arguments);
+      function fetchQuotes(_x388, _x389, _x390, _x391) {
+        return _fetchQuotes.apply(this, arguments);
       }
 
-      return _createERC721TokenObject;
+      return fetchQuotes;
     }()
   }, {
-    key: "deployDeedMinter",
+    key: "saveQuote",
     value: function () {
-      var _deployDeedMinter = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee128(sessionuuid, walletuuid, currencyuuid, carduuid, minter, feelevel) {
-        var global, _apicontrollers, session, wallet, currency, card, childsession, data, erc721token, fromaccount, from_card_scheme, ethereumnodeaccessmodule, ethereumtransaction, fee, contractaddress, erc721tokenaddress, txhash;
+      var _saveQuote = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee128(sessionuuid, walletuuid, quote) {
+        var global, _apicontrollers, quote_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, title, amount, currency, keys, localjson;
 
         return _regeneratorRuntime().wrap(function _callee128$(_context128) {
           while (1) {
             switch (_context128.prev = _context128.next) {
               case 0:
-                if (sessionuuid) {
-                  _context128.next = 2;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context128.next = 4;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                if (currencyuuid) {
-                  _context128.next = 6;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 6:
-                if (carduuid) {
-                  _context128.next = 8;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('card uuid is undefined'));
-
-              case 8:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context128.next = 12;
+                _context128.next = 4;
+                return this.readQuotes(sessionuuid, walletuuid);
+
+              case 4:
+                quote_list = _context128.sent;
+                // look not in list
+                bInList = false;
+                i = 0;
+
+              case 7:
+                if (!(i < quote_list.length)) {
+                  _context128.next = 14;
+                  break;
+                }
+
+                if (!(quote_list[i].txhash == quote.txhash)) {
+                  _context128.next = 11;
+                  break;
+                }
+
+                bInList = true;
+                return _context128.abrupt("break", 14);
+
+              case 11:
+                i++;
+                _context128.next = 7;
+                break;
+
+              case 14:
+                if (bInList) {
+                  _context128.next = 28;
+                  break;
+                }
+
+                _context128.next = 17;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 12:
+              case 17:
                 session = _context128.sent;
 
                 if (session) {
-                  _context128.next = 15;
+                  _context128.next = 20;
                   break;
                 }
 
                 return _context128.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 15:
-                _context128.next = 17;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 17:
-                wallet = _context128.sent;
-
-                if (wallet) {
-                  _context128.next = 20;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
               case 20:
-                _context128.next = 22;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+                // quote parameters to be saved
+                txhash = quote.txhash, blocknumber = quote.blocknumber, currencyuuid = quote.currencyuuid, owner = quote.owner, title = quote.title, amount = quote.amount, currency = quote.currency;
 
-              case 22:
-                currency = _context128.sent;
-
-                if (currency) {
-                  _context128.next = 25;
-                  break;
+                if (!walletuuid) {
+                  keys = ['myquote', 'quotes']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'quotes']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet			
                 }
 
-                return _context128.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+                localjson = {
+                  txhash: txhash,
+                  blocknumber: blocknumber,
+                  currencyuuid: currencyuuid,
+                  owner: owner,
+                  title: title,
+                  amount: amount,
+                  currency: currency
+                };
+                localjson.savetime = Date.now();
+                quote_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, quote_list);
 
-              case 25:
-                _context128.next = 27;
-                return wallet.getCardFromUUID(carduuid);
+                return _context128.abrupt("return", this._saveClientSideJson(session, keys, quote_list));
 
-              case 27:
-                card = _context128.sent;
+              case 28:
+                return _context128.abrupt("return", quote_list);
 
-                if (card) {
-                  _context128.next = 30;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('could not find card ' + carduuid));
-
-              case 30:
-                _context128.next = 32;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 32:
-                childsession = _context128.sent;
-                // create contract object (local)
-                data = Object.create(null);
-                data['name'] = minter.name;
-                data['symbol'] = minter.symbol;
-                data['basetokenuri'] = minter.basetokenuri;
-                _context128.next = 39;
-                return this._createERC721TokenObject(childsession, currency, data);
-
-              case 39:
-                erc721token = _context128.sent;
-                fromaccount = card._getSessionAccountObject();
-                from_card_scheme = card.getScheme();
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumtransaction = ethereumnodeaccessmodule.getEthereumTransactionObject(childsession, fromaccount); // fee
-
-                _context128.next = 46;
-                return _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
-
-              case 46:
-                fee = _context128.sent;
-                ethereumtransaction.setGas(fee.gaslimit);
-                ethereumtransaction.setGasPrice(fee.gasPrice);
-                _context128.next = 51;
-                return erc721token.deploy(ethereumtransaction);
-
-              case 51:
-                contractaddress = _context128.sent;
-                erc721tokenaddress = erc721token.getAddress();
-
-                if (erc721tokenaddress) {
-                  _context128.next = 55;
-                  break;
-                }
-
-                return _context128.abrupt("return", Promise.reject('could not generate a minter for currency ' + currencyuuid));
-
-              case 55:
-                minter.address = erc721tokenaddress;
-                minter.card_uuid = carduuid;
-                minter.card_address = card.getAddress(); // we save the mapping
-
-                _context128.next = 60;
-                return this._putAddressLockerContent(session, wallet, currency, card, erc721tokenaddress);
-
-              case 60:
-                txhash = _context128.sent;
-                minter.txhash = txhash;
-                return _context128.abrupt("return", minter);
-
-              case 63:
+              case 29:
               case "end":
                 return _context128.stop();
             }
@@ -6784,55 +6784,64 @@ var Module = /*#__PURE__*/function () {
         }, _callee128, this);
       }));
 
-      function deployDeedMinter(_x392, _x393, _x394, _x395, _x396, _x397) {
-        return _deployDeedMinter.apply(this, arguments);
+      function saveQuote(_x392, _x393, _x394) {
+        return _saveQuote.apply(this, arguments);
       }
 
-      return deployDeedMinter;
+      return saveQuote;
     }()
   }, {
-    key: "_putAddressLockerContent",
+    key: "readOrders",
     value: function () {
-      var _putAddressLockerContent2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee129(session, wallet, currency, card, contentstring) {
-        var global, _apicontrollers, childsession, mvcerc721module, fromaccount, from_card_scheme, ethereumnodeaccessmodule, ethereumtransaction, tx_fee, minter_cost_units, _feelevel, fee;
+      var _readOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee129(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, order_list;
 
         return _regeneratorRuntime().wrap(function _callee129$(_context129) {
           while (1) {
             switch (_context129.prev = _context129.next) {
               case 0:
+                if (sessionuuid) {
+                  _context129.next = 2;
+                  break;
+                }
+
+                return _context129.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
                 global = this.global;
-                _apicontrollers = this._getClientAPI(); // get proper session to access erc21token for currency
+                _apicontrollers = this._getClientAPI();
+                _context129.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
 
-                _context129.next = 4;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
+              case 6:
+                session = _context129.sent;
 
-              case 4:
-                childsession = _context129.sent;
-                mvcerc721module = global.getModuleObject('mvc-erc721');
-                fromaccount = card._getSessionAccountObject();
-                from_card_scheme = card.getScheme();
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumtransaction = ethereumnodeaccessmodule.getEthereumTransactionObject(childsession, fromaccount); // compute feelevel then create fee
+                if (session) {
+                  _context129.next = 9;
+                  break;
+                }
 
-                tx_fee = {};
-                tx_fee.transferred_credit_units = 0;
-                minter_cost_units = currency.deeds_v1.locker_put_cost_units ? parseInt(currency.deeds_v1.locker_put_cost_units) : 2;
-                tx_fee.estimated_cost_units = minter_cost_units;
-                _context129.next = 16;
-                return this._getRecommendedFeeLevel(session, wallet, card, tx_fee);
+                return _context129.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 16:
-                _feelevel = _context129.sent;
-                _context129.next = 19;
-                return _apicontrollers.createSchemeFee(from_card_scheme, _feelevel);
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'orders']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'orders']; // shared keys, otherwise we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let order_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
-              case 19:
-                fee = _context129.sent;
-                ethereumtransaction.setGas(fee.gaslimit);
-                ethereumtransaction.setGasPrice(fee.gasPrice);
-                return _context129.abrupt("return", mvcerc721module.putLockerContent(childsession, currency, contentstring, ethereumtransaction));
 
-              case 23:
+                _context129.next = 12;
+                return this._readClientSideJson(session, keys);
+
+              case 12:
+                order_list = _context129.sent;
+                if (!order_list) order_list = [];
+                return _context129.abrupt("return", order_list);
+
+              case 15:
               case "end":
                 return _context129.stop();
             }
@@ -6840,34 +6849,103 @@ var Module = /*#__PURE__*/function () {
         }, _callee129, this);
       }));
 
-      function _putAddressLockerContent(_x398, _x399, _x400, _x401, _x402) {
-        return _putAddressLockerContent2.apply(this, arguments);
+      function readOrders(_x395, _x396) {
+        return _readOrders.apply(this, arguments);
       }
 
-      return _putAddressLockerContent;
+      return readOrders;
     }()
   }, {
-    key: "_getAddressLockerContent",
+    key: "fetchOrders",
     value: function () {
-      var _getAddressLockerContent2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee130(session, wallet, currency, card_address) {
-        var global, _apicontrollers, childsession, mvcerc721module;
+      var _fetchOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee130(sessionuuid, walletuuid, currencyuuid, quotehash) {
+        var global, _apicontrollers, session, wallet, currency, quote, vendor_address, transactions, orderlist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee130$(_context130) {
           while (1) {
             switch (_context130.prev = _context130.next) {
               case 0:
+                if (sessionuuid) {
+                  _context130.next = 2;
+                  break;
+                }
+
+                return _context130.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
                 global = this.global;
-                _apicontrollers = this._getClientAPI(); // get proper session to access erc21token for currency
+                _apicontrollers = this._getClientAPI();
+                _context130.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
 
-                _context130.next = 4;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
+              case 6:
+                session = _context130.sent;
 
-              case 4:
-                childsession = _context130.sent;
-                mvcerc721module = global.getModuleObject('mvc-erc721');
-                return _context130.abrupt("return", mvcerc721module.getLockerContent(childsession, currency, card_address));
+                if (session) {
+                  _context130.next = 9;
+                  break;
+                }
 
-              case 7:
+                return _context130.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                _context130.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+
+              case 11:
+                wallet = _context130.sent;
+                _context130.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+
+              case 14:
+                currency = _context130.sent;
+
+                if (currency) {
+                  _context130.next = 17;
+                  break;
+                }
+
+                return _context130.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context130.next = 19;
+                  break;
+                }
+
+                return _context130.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context130.next = 21;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
+
+              case 21:
+                quote = _context130.sent;
+                vendor_address = quote.owner; // use explorer to fetch transactions for vendor's address
+
+                _context130.next = 25;
+                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+
+              case 25:
+                transactions = _context130.sent;
+                // we filter orders
+                orderlist = [];
+
+                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
+                  tx = transactions[i];
+                  dataobject = {};
+
+                  this._fillTransactionDataObject(dataobject, tx);
+
+                  if (dataobject.type == 'order' && dataobject.quote == quotehash) {
+                    //await this.saveOrder(sessionuuid, null, dataobject);
+                    orderlist.push(dataobject);
+                  }
+                }
+
+                return _context130.abrupt("return", orderlist);
+
+              case 29:
               case "end":
                 return _context130.stop();
             }
@@ -6875,66 +6953,158 @@ var Module = /*#__PURE__*/function () {
         }, _callee130, this);
       }));
 
-      function _getAddressLockerContent(_x403, _x404, _x405, _x406) {
-        return _getAddressLockerContent2.apply(this, arguments);
+      function fetchOrders(_x397, _x398, _x399, _x400) {
+        return _fetchOrders.apply(this, arguments);
       }
 
-      return _getAddressLockerContent;
+      return fetchOrders;
     }()
   }, {
-    key: "_fetchDeedMinterFromAddress",
+    key: "scanNextBlockForOrders",
     value: function () {
-      var _fetchDeedMinterFromAddress2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee131(session, wallet, currency, minteraddress) {
-        var global, childsession, minter, data, mvcerc721module, erc721token, name, symbol;
+      var _scanNextBlockForOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee131(sessionuuid, walletuuid, currencyuuid, quotehash, blockshift) {
+        var global, _apicontrollers, session, keys, scan, quote, new_orders, pretradeweb3rurl, childsession, current_blocknumber, start_block_number, last_block_number, ordernum, ethereumnodeaccessmodule, ethereumnodeaccessinstance, blocknumber, block, transactions, i, tx, dataobject;
+
         return _regeneratorRuntime().wrap(function _callee131$(_context131) {
           while (1) {
             switch (_context131.prev = _context131.next) {
               case 0:
-                if (minteraddress) {
+                if (sessionuuid) {
                   _context131.next = 2;
                   break;
                 }
 
-                return _context131.abrupt("return", Promise.reject('can only instantiate minters already on the chain'));
+                return _context131.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
-                global = this.global; // get proper session to access erc721token for currency
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context131.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
 
-                _context131.next = 5;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
+              case 6:
+                session = _context131.sent;
 
-              case 5:
-                childsession = _context131.sent;
-                // we read the token elements
-                minter = {
-                  address: minteraddress
-                }; // create contract object (already deployed)
+                if (session) {
+                  _context131.next = 9;
+                  break;
+                }
 
-                data = Object.create(null);
-                data['address'] = minteraddress;
-                mvcerc721module = global.getModuleObject('mvc-erc721');
+                return _context131.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                keys = ['myquote', 'scan', 'orders', quotehash]; //let scan = await _apicontrollers.getLocalJsonLeaf(session, keys);
+
                 _context131.next = 12;
-                return mvcerc721module.createERC721TokenObject(childsession, currency, data);
+                return this._readClientSideJson(session, keys);
 
               case 12:
-                erc721token = _context131.sent;
-                _context131.next = 15;
-                return erc721token.getChainName();
+                scan = _context131.sent;
+                if (!scan) scan = {};
+                _context131.next = 16;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
 
-              case 15:
-                name = _context131.sent;
-                _context131.next = 18;
-                return erc721token.getChainSymbol();
+              case 16:
+                quote = _context131.sent;
+                new_orders = []; // get a childsession on currency pretrade web3provider
 
-              case 18:
-                symbol = _context131.sent;
-                minter.name = name;
-                minter.symbol = symbol;
-                minter.currencyuuid = currency.uuid;
-                minter.address = minteraddress;
-                return _context131.abrupt("return", minter);
+                _context131.next = 20;
+                return this.getPretradeWeb3Url(sessionuuid, currencyuuid);
 
-              case 24:
+              case 20:
+                pretradeweb3rurl = _context131.sent;
+                _context131.next = 23;
+                return this._getChildSessionOnWeb3Url(session, pretradeweb3rurl);
+
+              case 23:
+                childsession = _context131.sent;
+                _context131.next = 26;
+                return _apicontrollers.readCurrentBlockNumber(childsession);
+
+              case 26:
+                current_blocknumber = _context131.sent;
+                start_block_number = (scan.last_block_number ? scan.last_block_number : quote.blocknumber) + 1;
+                last_block_number = start_block_number + blockshift < current_blocknumber ? start_block_number + blockshift : current_blocknumber;
+                ordernum = scan.ordernum ? scan.ordernum : 0; // read transactions for each block
+
+                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
+                ethereumnodeaccessinstance = ethereumnodeaccessmodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
+                // var ethereumnodeaccessinstance = _apicontrollers.getEthereumNodeAccessInstance(childsession);
+
+                blocknumber = start_block_number;
+
+              case 33:
+                if (!(blocknumber < last_block_number + 1)) {
+                  _context131.next = 59;
+                  break;
+                }
+
+                _context131.next = 36;
+                return new Promise(function (resolve, reject) {
+                  ethereumnodeaccessinstance.web3_getBlock(blocknumber, true, function (err, res) {
+                    if (err) reject(err);else resolve(res);
+                  });
+                })["catch"](function (err) {
+                  console.log('error in scanNextBlockForOrders: ' + err);
+                });
+
+              case 36:
+                block = _context131.sent;
+                transactions = block.transactions;
+                i = 0;
+
+              case 39:
+                if (!(i < (transactions ? transactions.length : 0))) {
+                  _context131.next = 56;
+                  break;
+                }
+
+                tx = transactions[i]; // fake ethchainreader
+
+                tx.input_decoded_utf8 = ethereumnodeaccessmodule.web3ToUTF8(childsession, tx.input);
+                tx.block = {};
+                tx.block.blocknumber = tx.blockNumber;
+                tx.block.timestamp = tx.timeStamp;
+                dataobject = {};
+
+                this._fillTransactionDataObject(dataobject, tx);
+
+                console.log('found one transaction at ' + blocknumber);
+
+                if (!(dataobject.type == 'order')) {
+                  _context131.next = 53;
+                  break;
+                }
+
+                _context131.next = 51;
+                return this.saveOrder(sessionuuid, null, dataobject);
+
+              case 51:
+                new_orders.push(dataobject);
+                ordernum++;
+
+              case 53:
+                i++;
+                _context131.next = 39;
+                break;
+
+              case 56:
+                blocknumber++;
+                _context131.next = 33;
+                break;
+
+              case 59:
+                // save where we are
+                scan.last_block_number = last_block_number;
+                scan.ordernum = ordernum; //await _apicontrollers.saveLocalJson(session, keys, scan);
+
+                _context131.next = 63;
+                return this._saveClientSideJson(session, keys, scan);
+
+              case 63:
+                return _context131.abrupt("return", new_orders);
+
+              case 64:
               case "end":
                 return _context131.stop();
             }
@@ -6942,81 +7112,114 @@ var Module = /*#__PURE__*/function () {
         }, _callee131, this);
       }));
 
-      function _fetchDeedMinterFromAddress(_x407, _x408, _x409, _x410) {
-        return _fetchDeedMinterFromAddress2.apply(this, arguments);
+      function scanNextBlockForOrders(_x401, _x402, _x403, _x404, _x405) {
+        return _scanNextBlockForOrders.apply(this, arguments);
       }
 
-      return _fetchDeedMinterFromAddress;
+      return scanNextBlockForOrders;
     }()
   }, {
-    key: "fetchDeedMinterFromAddress",
+    key: "saveOrder",
     value: function () {
-      var _fetchDeedMinterFromAddress3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee132(sessionuuid, walletuuid, currencyuuid, minteraddress) {
-        var global, _apicontrollers, session, wallet, currency, minter;
+      var _saveOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee132(sessionuuid, walletuuid, order) {
+        var global, _apicontrollers, order_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, quote, amount, currency, hadfunds, pretradescheme_info, quoteobject, title, keys, localjson;
 
         return _regeneratorRuntime().wrap(function _callee132$(_context132) {
           while (1) {
             switch (_context132.prev = _context132.next) {
               case 0:
-                if (sessionuuid) {
-                  _context132.next = 2;
-                  break;
-                }
-
-                return _context132.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (currencyuuid) {
-                  _context132.next = 4;
-                  break;
-                }
-
-                return _context132.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context132.next = 8;
+                _context132.next = 4;
+                return this.readOrders(sessionuuid, walletuuid);
+
+              case 4:
+                order_list = _context132.sent;
+                bInList = false;
+                i = 0;
+
+              case 7:
+                if (!(i < order_list.length)) {
+                  _context132.next = 14;
+                  break;
+                }
+
+                if (!(order_list[i].txhash == order.txhash)) {
+                  _context132.next = 11;
+                  break;
+                }
+
+                bInList = true;
+                return _context132.abrupt("break", 14);
+
+              case 11:
+                i++;
+                _context132.next = 7;
+                break;
+
+              case 14:
+                if (bInList) {
+                  _context132.next = 35;
+                  break;
+                }
+
+                _context132.next = 17;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 8:
+              case 17:
                 session = _context132.sent;
 
                 if (session) {
-                  _context132.next = 11;
+                  _context132.next = 20;
                   break;
                 }
 
                 return _context132.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 11:
-                _context132.next = 13;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+              case 20:
+                // order parameters
+                txhash = order.txhash, blocknumber = order.blocknumber, currencyuuid = order.currencyuuid, owner = order.owner, quote = order.quote, amount = order.amount, currency = order.currency, hadfunds = order.hadfunds; // read quote to get title
 
-              case 13:
-                wallet = _context132.sent;
-                _context132.next = 16;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 16:
-                currency = _context132.sent;
-
-                if (currency) {
-                  _context132.next = 19;
-                  break;
-                }
-
-                return _context132.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 19:
-                _context132.next = 21;
-                return this._fetchDeedMinterFromAddress(session, wallet, currency, minteraddress);
-
-              case 21:
-                minter = _context132.sent;
-                return _context132.abrupt("return", minter);
+                _context132.next = 23;
+                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
 
               case 23:
+                pretradescheme_info = _context132.sent;
+                _context132.next = 26;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, quote)["catch"](function (err) {});
+
+              case 26:
+                quoteobject = _context132.sent;
+                title = quoteobject ? quoteobject.title : null;
+
+                if (!walletuuid) {
+                  keys = ['myquote', 'orders']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'orders']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet
+                }
+
+                localjson = {
+                  txhash: txhash,
+                  blocknumber: blocknumber,
+                  currencyuuid: currencyuuid,
+                  owner: owner,
+                  quote: quote,
+                  title: title,
+                  amount: amount,
+                  currency: currency,
+                  hadfunds: hadfunds
+                };
+                localjson.savetime = Date.now();
+                order_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, order_list);
+
+                return _context132.abrupt("return", this._saveClientSideJson(session, keys, order_list));
+
+              case 35:
+                return _context132.abrupt("return", order_list);
+
+              case 36:
               case "end":
                 return _context132.stop();
             }
@@ -7024,17 +7227,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee132, this);
       }));
 
-      function fetchDeedMinterFromAddress(_x411, _x412, _x413, _x414) {
-        return _fetchDeedMinterFromAddress3.apply(this, arguments);
+      function saveOrder(_x406, _x407, _x408) {
+        return _saveOrder.apply(this, arguments);
       }
 
-      return fetchDeedMinterFromAddress;
+      return saveOrder;
     }()
   }, {
-    key: "fetchDeedMinterFromOwner",
+    key: "readInvoices",
     value: function () {
-      var _fetchDeedMinterFromOwner = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee133(sessionuuid, walletuuid, currencyuuid, owneraddress) {
-        var global, _apicontrollers, session, wallet, currency, minteraddress, minter;
+      var _readInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee133(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, invoice_list;
 
         return _regeneratorRuntime().wrap(function _callee133$(_context133) {
           while (1) {
@@ -7048,62 +7251,40 @@ var Module = /*#__PURE__*/function () {
                 return _context133.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
-                if (currencyuuid) {
-                  _context133.next = 4;
-                  break;
-                }
-
-                return _context133.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context133.next = 8;
+                _context133.next = 6;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 8:
+              case 6:
                 session = _context133.sent;
 
                 if (session) {
-                  _context133.next = 11;
+                  _context133.next = 9;
                   break;
                 }
 
                 return _context133.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 11:
-                _context133.next = 13;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'invoices']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'invoices']; // shared keys, otherwise we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let invoice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
-              case 13:
-                wallet = _context133.sent;
-                _context133.next = 16;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
 
-              case 16:
-                currency = _context133.sent;
+                _context133.next = 12;
+                return this._readClientSideJson(session, keys);
 
-                if (currency) {
-                  _context133.next = 19;
-                  break;
-                }
+              case 12:
+                invoice_list = _context133.sent;
+                if (!invoice_list) invoice_list = [];
+                return _context133.abrupt("return", invoice_list);
 
-                return _context133.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 19:
-                _context133.next = 21;
-                return this._getAddressLockerContent(session, wallet, currency, owneraddress);
-
-              case 21:
-                minteraddress = _context133.sent;
-                _context133.next = 24;
-                return this._fetchDeedMinterFromAddress(session, wallet, currency, minteraddress);
-
-              case 24:
-                minter = _context133.sent;
-                return _context133.abrupt("return", minter);
-
-              case 26:
+              case 15:
               case "end":
                 return _context133.stop();
             }
@@ -7111,17 +7292,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee133, this);
       }));
 
-      function fetchDeedMinterFromOwner(_x415, _x416, _x417, _x418) {
-        return _fetchDeedMinterFromOwner.apply(this, arguments);
+      function readInvoices(_x409, _x410) {
+        return _readInvoices.apply(this, arguments);
       }
 
-      return fetchDeedMinterFromOwner;
+      return readInvoices;
     }()
   }, {
-    key: "fetchDeedMinter",
+    key: "fetchInvoices",
     value: function () {
-      var _fetchDeedMinter = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee134(sessionuuid, walletuuid, currencyuuid, carduuid) {
-        var global, _apicontrollers, session, wallet, currency, card, card_address, erc721tokenaddress, minter;
+      var _fetchInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee134(sessionuuid, walletuuid, currencyuuid, orderhash) {
+        var global, _apicontrollers, session, wallet, currency, order, buyer_address, transactions, invoicelist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee134$(_context134) {
           while (1) {
@@ -7135,116 +7316,79 @@ var Module = /*#__PURE__*/function () {
                 return _context134.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
-                if (walletuuid) {
-                  _context134.next = 4;
-                  break;
-                }
-
-                return _context134.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                if (currencyuuid) {
-                  _context134.next = 6;
-                  break;
-                }
-
-                return _context134.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 6:
-                if (carduuid) {
-                  _context134.next = 8;
-                  break;
-                }
-
-                return _context134.abrupt("return", Promise.reject('card uuid is undefined'));
-
-              case 8:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context134.next = 12;
+                _context134.next = 6;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 12:
+              case 6:
                 session = _context134.sent;
 
                 if (session) {
-                  _context134.next = 15;
+                  _context134.next = 9;
                   break;
                 }
 
                 return _context134.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 15:
-                _context134.next = 17;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
+              case 9:
+                _context134.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
 
-              case 17:
+              case 11:
                 wallet = _context134.sent;
-
-                if (wallet) {
-                  _context134.next = 20;
-                  break;
-                }
-
-                return _context134.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 20:
-                _context134.next = 22;
+                _context134.next = 14;
                 return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
 
-              case 22:
+              case 14:
                 currency = _context134.sent;
 
                 if (currency) {
-                  _context134.next = 25;
+                  _context134.next = 17;
                   break;
                 }
 
                 return _context134.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
 
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context134.next = 19;
+                  break;
+                }
+
+                return _context134.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context134.next = 21;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, orderhash);
+
+              case 21:
+                order = _context134.sent;
+                buyer_address = order.owner; // use explorer to fetch transactions for buyer's address
+
+                _context134.next = 25;
+                return this._getAddressPretradeTransactions(session, wallet, currency, buyer_address);
+
               case 25:
-                _context134.next = 27;
-                return wallet.getCardFromUUID(carduuid);
+                transactions = _context134.sent;
+                // we filter invoices
+                invoicelist = [];
 
-              case 27:
-                card = _context134.sent;
+                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
+                  tx = transactions[i];
+                  dataobject = {};
 
-                if (card) {
-                  _context134.next = 30;
-                  break;
+                  this._fillTransactionDataObject(dataobject, tx);
+
+                  if (dataobject.type == 'invoice' && dataobject.order == orderhash) {
+                    //await this.saveInvoice(sessionuuid, null, dataobject);
+                    invoicelist.push(dataobject);
+                  }
                 }
 
-                return _context134.abrupt("return", Promise.reject('could not find card ' + carduuid));
+                return _context134.abrupt("return", invoicelist);
 
-              case 30:
-                card_address = card.getAddress();
-                _context134.next = 33;
-                return this._getAddressLockerContent(session, wallet, currency, card_address);
-
-              case 33:
-                erc721tokenaddress = _context134.sent;
-
-                if (erc721tokenaddress) {
-                  _context134.next = 36;
-                  break;
-                }
-
-                return _context134.abrupt("return");
-
-              case 36:
-                _context134.next = 38;
-                return this._fetchDeedMinterFromAddress(session, wallet, currency, erc721tokenaddress);
-
-              case 38:
-                minter = _context134.sent;
-                // add currency uuid
-                minter.currencyuuid = currencyuuid; // add card info
-
-                minter.card_uuid = carduuid;
-                minter.card_address = card_address;
-                return _context134.abrupt("return", minter);
-
-              case 43:
+              case 29:
               case "end":
                 return _context134.stop();
             }
@@ -7252,43 +7396,118 @@ var Module = /*#__PURE__*/function () {
         }, _callee134, this);
       }));
 
-      function fetchDeedMinter(_x419, _x420, _x421, _x422) {
-        return _fetchDeedMinter.apply(this, arguments);
+      function fetchInvoices(_x411, _x412, _x413, _x414) {
+        return _fetchInvoices.apply(this, arguments);
       }
 
-      return fetchDeedMinter;
+      return fetchInvoices;
     }()
   }, {
-    key: "_getERC721TokenObject",
+    key: "saveInvoice",
     value: function () {
-      var _getERC721TokenObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee135(session, currency, minter) {
-        var global, mvcerc721module, data, erc721token;
+      var _saveInvoice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee135(sessionuuid, walletuuid, invoice) {
+        var global, _apicontrollers, invoice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, order, amount, currency, pretradescheme_info, orderobject, quoteobject, title, keys, localjson;
+
         return _regeneratorRuntime().wrap(function _callee135$(_context135) {
           while (1) {
             switch (_context135.prev = _context135.next) {
               case 0:
-                if (!(!minter || !minter.address)) {
-                  _context135.next = 2;
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context135.next = 4;
+                return this.readInvoices(sessionuuid, walletuuid);
+
+              case 4:
+                invoice_list = _context135.sent;
+                bInList = false;
+                i = 0;
+
+              case 7:
+                if (!(i < invoice_list.length)) {
+                  _context135.next = 14;
                   break;
                 }
 
-                return _context135.abrupt("return", Promise.reject('can only instantiate minters already on the chain'));
+                if (!(invoice_list[i].txhash == invoice.txhash)) {
+                  _context135.next = 11;
+                  break;
+                }
 
-              case 2:
-                global = this.global;
-                mvcerc721module = global.getModuleObject('mvc-erc721');
-                data = Object.create(null);
-                data['address'] = minter.address;
-                data['name'] = minter.name;
-                data['symbol'] = minter.symbol;
-                _context135.next = 10;
-                return mvcerc721module.createERC721TokenObject(session, currency, data);
+                bInList = true;
+                return _context135.abrupt("break", 14);
 
-              case 10:
-                erc721token = _context135.sent;
-                return _context135.abrupt("return", erc721token);
+              case 11:
+                i++;
+                _context135.next = 7;
+                break;
 
-              case 12:
+              case 14:
+                if (bInList) {
+                  _context135.next = 38;
+                  break;
+                }
+
+                _context135.next = 17;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 17:
+                session = _context135.sent;
+
+                if (session) {
+                  _context135.next = 20;
+                  break;
+                }
+
+                return _context135.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 20:
+                // invoice parameters
+                txhash = invoice.txhash, blocknumber = invoice.blocknumber, currencyuuid = invoice.currencyuuid, owner = invoice.owner, order = invoice.order, amount = invoice.amount, currency = invoice.currency; // read order and quote to get title
+
+                _context135.next = 23;
+                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
+
+              case 23:
+                pretradescheme_info = _context135.sent;
+                _context135.next = 26;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, order)["catch"](function (err) {});
+
+              case 26:
+                orderobject = _context135.sent;
+                _context135.next = 29;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
+
+              case 29:
+                quoteobject = _context135.sent;
+                title = quoteobject ? quoteobject.title : null;
+
+                if (!walletuuid) {
+                  keys = ['myquote', 'invoices']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'invoices']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet
+                }
+
+                localjson = {
+                  txhash: txhash,
+                  blocknumber: blocknumber,
+                  currencyuuid: currencyuuid,
+                  owner: owner,
+                  order: order,
+                  title: title,
+                  amount: amount,
+                  currency: currency
+                };
+                localjson.savetime = Date.now();
+                invoice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, invoice_list);
+
+                return _context135.abrupt("return", this._saveClientSideJson(session, keys, invoice_list));
+
+              case 38:
+                return _context135.abrupt("return", invoice_list);
+
+              case 39:
               case "end":
                 return _context135.stop();
             }
@@ -7296,18 +7515,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee135, this);
       }));
 
-      function _getERC721TokenObject(_x423, _x424, _x425) {
-        return _getERC721TokenObject2.apply(this, arguments);
+      function saveInvoice(_x415, _x416, _x417) {
+        return _saveInvoice.apply(this, arguments);
       }
 
-      return _getERC721TokenObject;
-    }() // deeds
-
+      return saveInvoice;
+    }()
   }, {
-    key: "readDeeds",
+    key: "readPaymentNotices",
     value: function () {
-      var _readDeeds = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee136(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, deed_list;
+      var _readPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee136(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, paymentnotice_list;
 
         return _regeneratorRuntime().wrap(function _callee136$(_context136) {
           while (1) {
@@ -7338,20 +7556,21 @@ var Module = /*#__PURE__*/function () {
 
               case 9:
                 if (!walletuuid) {
-                  keys = ['myquote', 'deeds']; // shared keys
+                  keys = ['myquote', 'paymentnotices']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'deeds']; // shared keys, also we could look in wallet
+                  keys = ['myquote', 'paymentnotices']; // shared keys, otherwise we could look in wallet
                   // with mvcmodule.getFromWallet
-                }
+                } //let paymentnotice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+
 
                 _context136.next = 12;
                 return this._readClientSideJson(session, keys);
 
               case 12:
-                deed_list = _context136.sent;
-                if (!deed_list) deed_list = [];
-                return _context136.abrupt("return", deed_list);
+                paymentnotice_list = _context136.sent;
+                if (!paymentnotice_list) paymentnotice_list = [];
+                return _context136.abrupt("return", paymentnotice_list);
 
               case 15:
               case "end":
@@ -7361,17 +7580,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee136, this);
       }));
 
-      function readDeeds(_x426, _x427) {
-        return _readDeeds.apply(this, arguments);
+      function readPaymentNotices(_x418, _x419) {
+        return _readPaymentNotices.apply(this, arguments);
       }
 
-      return readDeeds;
+      return readPaymentNotices;
     }()
   }, {
-    key: "fetchDeeds",
+    key: "fetchPaymentNotices",
     value: function () {
-      var _fetchDeeds = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee137(sessionuuid, walletuuid, currencyuuid, minter) {
-        var global, _apicontrollers, session, wallet, currency, childsession, erc721token, deeds, totalsupply, i, deed;
+      var _fetchPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee137(sessionuuid, walletuuid, currencyuuid, invoicehash) {
+        var global, _apicontrollers, session, wallet, currency, invoice, vendor_address, transactions, paymentnoticelist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee137$(_context137) {
           while (1) {
@@ -7385,2431 +7604,61 @@ var Module = /*#__PURE__*/function () {
                 return _context137.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
-                if (currencyuuid) {
-                  _context137.next = 4;
-                  break;
-                }
-
-                return _context137.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context137.next = 8;
+                _context137.next = 6;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 8:
+              case 6:
                 session = _context137.sent;
 
                 if (session) {
-                  _context137.next = 11;
+                  _context137.next = 9;
                   break;
                 }
 
                 return _context137.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 11:
-                _context137.next = 13;
+              case 9:
+                _context137.next = 11;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
 
-              case 13:
+              case 11:
                 wallet = _context137.sent;
-                _context137.next = 16;
+                _context137.next = 14;
                 return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
 
-              case 16:
+              case 14:
                 currency = _context137.sent;
 
                 if (currency) {
-                  _context137.next = 19;
+                  _context137.next = 17;
                   break;
                 }
 
                 return _context137.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
 
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context137.next = 19;
+                  break;
+                }
+
+                return _context137.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
               case 19:
                 _context137.next = 21;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 21:
-                childsession = _context137.sent;
-                _context137.next = 24;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 24:
-                erc721token = _context137.sent;
-                // list of deeds
-                deeds = []; // get totalsupply to get list of tokenids
-
-                _context137.next = 28;
-                return erc721token.getTotalSupply();
-
-              case 28:
-                totalsupply = _context137.sent;
-                i = 0;
-
-              case 30:
-                if (!(i < totalsupply)) {
-                  _context137.next = 38;
-                  break;
-                }
-
-                _context137.next = 33;
-                return this._fetchDeedInfo(currency, erc721token, i);
-
-              case 33:
-                deed = _context137.sent;
-                deeds.push(deed);
-
-              case 35:
-                i++;
-                _context137.next = 30;
-                break;
-
-              case 38:
-                return _context137.abrupt("return", deeds);
-
-              case 39:
-              case "end":
-                return _context137.stop();
-            }
-          }
-        }, _callee137, this);
-      }));
-
-      function fetchDeeds(_x428, _x429, _x430, _x431) {
-        return _fetchDeeds.apply(this, arguments);
-      }
-
-      return fetchDeeds;
-    }()
-  }, {
-    key: "_getMinterCard",
-    value: function () {
-      var _getMinterCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee138(session, wallet, currency, minter) {
-        var carduuid, card;
-        return _regeneratorRuntime().wrap(function _callee138$(_context138) {
-          while (1) {
-            switch (_context138.prev = _context138.next) {
-              case 0:
-                carduuid = minter.card_uuid;
-
-                if (!(wallet && carduuid)) {
-                  _context138.next = 9;
-                  break;
-                }
-
-                _context138.next = 4;
-                return wallet.getCardFromUUID(carduuid);
-
-              case 4:
-                card = _context138.sent;
-
-                if (card) {
-                  _context138.next = 7;
-                  break;
-                }
-
-                return _context138.abrupt("return", Promise.reject('could not find card with uuid ' + carduuid));
-
-              case 7:
-                _context138.next = 12;
-                break;
-
-              case 9:
-                _context138.next = 11;
-                return this._getCurrencyCard(session, wallet, currency);
-
-              case 11:
-                card = _context138.sent;
-
-              case 12:
-                return _context138.abrupt("return", card);
-
-              case 13:
-              case "end":
-                return _context138.stop();
-            }
-          }
-        }, _callee138, this);
-      }));
-
-      function _getMinterCard(_x432, _x433, _x434, _x435) {
-        return _getMinterCard2.apply(this, arguments);
-      }
-
-      return _getMinterCard;
-    }()
-  }, {
-    key: "mintDeed",
-    value: function () {
-      var _mintDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee139(sessionuuid, walletuuid, currencyuuid, minter) {
-        var feelevel,
-            global,
-            _apicontrollers,
-            session,
-            wallet,
-            currency,
-            card,
-            childsession,
-            erc721token,
-            fromaccount,
-            from_card_scheme,
-            ethereumnodeaccessmodule,
-            ethereumtransaction,
-            fee,
-            totalsupply,
-            txhash,
-            deed,
-            _args139 = arguments;
-
-        return _regeneratorRuntime().wrap(function _callee139$(_context139) {
-          while (1) {
-            switch (_context139.prev = _context139.next) {
-              case 0:
-                feelevel = _args139.length > 4 && _args139[4] !== undefined ? _args139[4] : null;
-
-                if (sessionuuid) {
-                  _context139.next = 3;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 3:
-                if (walletuuid) {
-                  _context139.next = 5;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 5:
-                if (currencyuuid) {
-                  _context139.next = 7;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 7:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context139.next = 11;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 11:
-                session = _context139.sent;
-
-                if (session) {
-                  _context139.next = 14;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 14:
-                _context139.next = 16;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 16:
-                wallet = _context139.sent;
-
-                if (wallet) {
-                  _context139.next = 19;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 19:
-                _context139.next = 21;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 21:
-                currency = _context139.sent;
-
-                if (currency) {
-                  _context139.next = 24;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 24:
-                _context139.next = 26;
-                return this._getMinterCard(session, wallet, currency, minter);
-
-              case 26:
-                card = _context139.sent;
-
-                if (card) {
-                  _context139.next = 29;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('could not find minter card'));
-
-              case 29:
-                _context139.next = 31;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 31:
-                childsession = _context139.sent;
-                _context139.next = 34;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 34:
-                erc721token = _context139.sent;
-                fromaccount = card._getSessionAccountObject();
-                from_card_scheme = card.getScheme(); // mint a token item
-
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumtransaction = ethereumnodeaccessmodule.getEthereumTransactionObject(childsession, fromaccount); // fee
-
-                _context139.next = 41;
-                return _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
-
-              case 41:
-                fee = _context139.sent;
-                ethereumtransaction.setGas(fee.gaslimit);
-                ethereumtransaction.setGasPrice(fee.gasPrice); // fetch totalsupply
-
-                _context139.next = 46;
-                return erc721token.getTotalSupply();
-
-              case 46:
-                totalsupply = _context139.sent;
-                _context139.next = 49;
-                return erc721token.mint(fromaccount, ethereumtransaction);
-
-              case 49:
-                txhash = _context139.sent;
-
-                if (txhash) {
-                  _context139.next = 52;
-                  break;
-                }
-
-                return _context139.abrupt("return", Promise.reject('mint of deed did not succeed, no transaction hash returned'));
-
-              case 52:
-                deed = {
-                  type: 'deed',
-                  currencyuuid: currencyuuid,
-                  minter: minter.address,
-                  tokenid: totalsupply,
-                  txhash: 'dd-' + minter.address + '-' + totalsupply,
-                  metadata: {},
-                  articles: [],
-                  clauses: [],
-                  minthash: txhash
-                };
-                return _context139.abrupt("return", deed);
-
-              case 54:
-              case "end":
-                return _context139.stop();
-            }
-          }
-        }, _callee139, this);
-      }));
-
-      function mintDeed(_x436, _x437, _x438, _x439) {
-        return _mintDeed.apply(this, arguments);
-      }
-
-      return mintDeed;
-    }()
-  }, {
-    key: "saveDeed",
-    value: function () {
-      var _saveDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee140(sessionuuid, walletuuid, deed) {
-        var global, _apicontrollers, deed_list, bInList, i, session, txhash, currencyuuid, minter, tokenid, time, title, keys, localjson;
-
-        return _regeneratorRuntime().wrap(function _callee140$(_context140) {
-          while (1) {
-            switch (_context140.prev = _context140.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context140.next = 4;
-                return this.readDeeds(sessionuuid, walletuuid);
-
-              case 4:
-                deed_list = _context140.sent;
-                // look not in list
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < deed_list.length)) {
-                  _context140.next = 14;
-                  break;
-                }
-
-                if (!(deed_list[i].txhash == deed.txhash)) {
-                  _context140.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context140.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context140.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context140.next = 33;
-                  break;
-                }
-
-                _context140.next = 17;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 17:
-                session = _context140.sent;
-
-                if (session) {
-                  _context140.next = 20;
-                  break;
-                }
-
-                return _context140.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 20:
-                // deed parameters to be saved
-                txhash = deed.txhash;
-                currencyuuid = deed.currencyuuid;
-                minter = deed.minter;
-                tokenid = deed.tokenid;
-                time = deed.metadata ? deed.metadata.time : null;
-                title = deed.metadata ? deed.metadata.title : null;
-
-                if (!walletuuid) {
-                  keys = ['myquote', 'deeds']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'deeds']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet			
-                }
-
-                localjson = {
-                  txhash: txhash,
-                  time: time,
-                  currencyuuid: currencyuuid,
-                  minter: minter,
-                  tokenid: tokenid,
-                  title: title
-                };
-                localjson.savetime = Date.now();
-                deed_list.push(localjson);
-                return _context140.abrupt("return", this._saveClientSideJson(session, keys, deed_list));
-
-              case 33:
-                return _context140.abrupt("return", deed_list);
-
-              case 34:
-              case "end":
-                return _context140.stop();
-            }
-          }
-        }, _callee140, this);
-      }));
-
-      function saveDeed(_x440, _x441, _x442) {
-        return _saveDeed.apply(this, arguments);
-      }
-
-      return saveDeed;
-    }()
-  }, {
-    key: "_fetchDeedInfo",
-    value: function () {
-      var _fetchDeedInfo2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee141(currency, erc721token, tokenid) {
-        var deed, stringrecords, i, clause;
-        return _regeneratorRuntime().wrap(function _callee141$(_context141) {
-          while (1) {
-            switch (_context141.prev = _context141.next) {
-              case 0:
-                // fetch deed info
-                deed = {
-                  type: 'deed',
-                  tokenid: tokenid
-                };
-                deed.currencyuuid = currency.uuid;
-                deed.minter = erc721token.getAddress();
-                deed.txhash = 'dd-' + deed.minter + '-' + tokenid;
-                _context141.next = 6;
-                return erc721token.getChainTokenURI(tokenid);
-
-              case 6:
-                deed.tokenuri = _context141.sent;
-                _context141.next = 9;
-                return erc721token.ownerOf(tokenid);
-
-              case 9:
-                deed.owner = _context141.sent;
-                _context141.next = 12;
-                return erc721token.getApproved(tokenid);
-
-              case 12:
-                deed.approved = _context141.sent;
-                // fetch records and fill metadata and articles
-                deed.metadata = {};
-                deed.articles = [];
-                deed.clauses = [];
-                _context141.next = 18;
-                return erc721token.fetchRecords(tokenid)["catch"](function (err) {
-                  console.log('error in fetchRecords: ' + err);
-                });
-
-              case 18:
-                stringrecords = _context141.sent;
-                i = 0;
-
-              case 20:
-                if (!(i < stringrecords.length)) {
-                  _context141.next = 46;
-                  break;
-                }
-
-                _context141.prev = 21;
-                clause = JSON.parse(stringrecords[i]);
-                clause.type = 'clause';
-                clause.currencyuuid = deed.currencyuuid;
-                clause.txhash = deed.txhash + '-' + i;
-                clause.minter = deed.minter;
-                clause.tokenid = tokenid;
-                clause.index = i;
-                _context141.t0 = clause.subtype;
-                _context141.next = _context141.t0 === 'metadata' ? 32 : _context141.t0 === 'article' ? 34 : 36;
-                break;
-
-              case 32:
-                // overload
-                Object.assign(deed.metadata, clause);
-                return _context141.abrupt("break", 37);
-
-              case 34:
-                // addition
-                deed.articles.push(clause);
-                return _context141.abrupt("break", 37);
-
-              case 36:
-                return _context141.abrupt("break", 37);
-
-              case 37:
-                deed.clauses.push(clause);
-                _context141.next = 43;
-                break;
-
-              case 40:
-                _context141.prev = 40;
-                _context141.t1 = _context141["catch"](21);
-                console.log('string record is mal-formed: ' + stringrecords[i]);
-
-              case 43:
-                i++;
-                _context141.next = 20;
-                break;
-
-              case 46:
-                return _context141.abrupt("return", deed);
-
-              case 47:
-              case "end":
-                return _context141.stop();
-            }
-          }
-        }, _callee141, null, [[21, 40]]);
-      }));
-
-      function _fetchDeedInfo(_x443, _x444, _x445) {
-        return _fetchDeedInfo2.apply(this, arguments);
-      }
-
-      return _fetchDeedInfo;
-    }()
-  }, {
-    key: "fetchDeed",
-    value: function () {
-      var _fetchDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee142(sessionuuid, walletuuid, currencyuuid, minter, tokenid) {
-        var global, _apicontrollers, session, wallet, currency, childsession, erc721token, deed;
-
-        return _regeneratorRuntime().wrap(function _callee142$(_context142) {
-          while (1) {
-            switch (_context142.prev = _context142.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context142.next = 2;
-                  break;
-                }
-
-                return _context142.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (currencyuuid) {
-                  _context142.next = 4;
-                  break;
-                }
-
-                return _context142.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 4:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context142.next = 8;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 8:
-                session = _context142.sent;
-
-                if (session) {
-                  _context142.next = 11;
-                  break;
-                }
-
-                return _context142.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 11:
-                _context142.next = 13;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 13:
-                wallet = _context142.sent;
-                _context142.next = 16;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 16:
-                currency = _context142.sent;
-
-                if (currency) {
-                  _context142.next = 19;
-                  break;
-                }
-
-                return _context142.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 19:
-                _context142.next = 21;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 21:
-                childsession = _context142.sent;
-                _context142.next = 24;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 24:
-                erc721token = _context142.sent;
-                _context142.next = 27;
-                return this._fetchDeedInfo(currency, erc721token, tokenid);
-
-              case 27:
-                deed = _context142.sent;
-                _context142.next = 30;
-                return this.saveDeed(sessionuuid, walletuuid, deed);
-
-              case 30:
-                return _context142.abrupt("return", deed);
-
-              case 31:
-              case "end":
-                return _context142.stop();
-            }
-          }
-        }, _callee142, this);
-      }));
-
-      function fetchDeed(_x446, _x447, _x448, _x449, _x450) {
-        return _fetchDeed.apply(this, arguments);
-      }
-
-      return fetchDeed;
-    }()
-  }, {
-    key: "fetchLastDeed",
-    value: function () {
-      var _fetchLastDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee143(sessionuuid, walletuuid, currencyuuid, minter) {
-        var global, _apicontrollers, session, wallet, currency, childsession, erc721token, totalsupply, lasttokenid;
-
-        return _regeneratorRuntime().wrap(function _callee143$(_context143) {
-          while (1) {
-            switch (_context143.prev = _context143.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context143.next = 2;
-                  break;
-                }
-
-                return _context143.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (currencyuuid) {
-                  _context143.next = 4;
-                  break;
-                }
-
-                return _context143.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 4:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context143.next = 8;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 8:
-                session = _context143.sent;
-
-                if (session) {
-                  _context143.next = 11;
-                  break;
-                }
-
-                return _context143.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 11:
-                _context143.next = 13;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 13:
-                wallet = _context143.sent;
-                _context143.next = 16;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 16:
-                currency = _context143.sent;
-
-                if (currency) {
-                  _context143.next = 19;
-                  break;
-                }
-
-                return _context143.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 19:
-                _context143.next = 21;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 21:
-                childsession = _context143.sent;
-                _context143.next = 24;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 24:
-                erc721token = _context143.sent;
-                _context143.next = 27;
-                return erc721token.getTotalSupply();
-
-              case 27:
-                totalsupply = _context143.sent;
-                lasttokenid = totalsupply - 1;
-                return _context143.abrupt("return", this.fetchDeed(sessionuuid, walletuuid, currencyuuid, minter, lasttokenid));
-
-              case 30:
-              case "end":
-                return _context143.stop();
-            }
-          }
-        }, _callee143, this);
-      }));
-
-      function fetchLastDeed(_x451, _x452, _x453, _x454) {
-        return _fetchLastDeed.apply(this, arguments);
-      }
-
-      return fetchLastDeed;
-    }()
-  }, {
-    key: "isCardOwningDeed",
-    value: function () {
-      var _isCardOwningDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee144(sessionuuid, walletuuid, currencyuuid, carduuid, minter, deed) {
-        var owningcardinfo;
-        return _regeneratorRuntime().wrap(function _callee144$(_context144) {
-          while (1) {
-            switch (_context144.prev = _context144.next) {
-              case 0:
-                _context144.next = 2;
-                return this.getDeedOwningCard(sessionuuid, walletuuid, currencyuuid, minter, deed)["catch"](function (err) {});
-
-              case 2:
-                owningcardinfo = _context144.sent;
-
-                if (owningcardinfo) {
-                  _context144.next = 5;
-                  break;
-                }
-
-                return _context144.abrupt("return", false);
-
-              case 5:
-                if (!(owningcardinfo.uuid == carduuid)) {
-                  _context144.next = 9;
-                  break;
-                }
-
-                return _context144.abrupt("return", true);
-
-              case 9:
-                return _context144.abrupt("return", false);
-
-              case 10:
-              case "end":
-                return _context144.stop();
-            }
-          }
-        }, _callee144, this);
-      }));
-
-      function isCardOwningDeed(_x455, _x456, _x457, _x458, _x459, _x460) {
-        return _isCardOwningDeed.apply(this, arguments);
-      }
-
-      return isCardOwningDeed;
-    }() // TODO: clean the calls to getDeedOwningCard and _getDeedOwningCard
-
-  }, {
-    key: "_getDeedOwningCard",
-    value: function () {
-      var _getDeedOwningCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee145(session, wallet, currency, minter, deed) {
-        var sessionuuid, walletuuid, currencyuuid, address, cardinfo;
-        return _regeneratorRuntime().wrap(function _callee145$(_context145) {
-          while (1) {
-            switch (_context145.prev = _context145.next) {
-              case 0:
-                sessionuuid = session.getSessionUUID();
-                walletuuid = wallet.getWalletUUID();
-                currencyuuid = currency.uuid;
-                address = deed.owner;
-                _context145.next = 6;
-                return this.getCurrencyCardWithAddress(sessionuuid, walletuuid, currencyuuid, address)["catch"](function (err) {});
-
-              case 6:
-                cardinfo = _context145.sent;
-
-                if (cardinfo) {
-                  _context145.next = 9;
-                  break;
-                }
-
-                return _context145.abrupt("return");
-
-              case 9:
-                _context145.next = 11;
-                return wallet.getCardFromUUID(cardinfo.uuid);
-
-              case 11:
-                return _context145.abrupt("return", _context145.sent);
-
-              case 12:
-              case "end":
-                return _context145.stop();
-            }
-          }
-        }, _callee145, this);
-      }));
-
-      function _getDeedOwningCard(_x461, _x462, _x463, _x464, _x465) {
-        return _getDeedOwningCard2.apply(this, arguments);
-      }
-
-      return _getDeedOwningCard;
-    }()
-  }, {
-    key: "getDeedOwningCard",
-    value: function () {
-      var _getDeedOwningCard3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee146(sessionuuid, walletuuid, currencyuuid, minter, deed) {
-        var global, mvcmodule, _apicontrollers, session, wallet, currency, address, cardinfo, _privatekey;
-
-        return _regeneratorRuntime().wrap(function _callee146$(_context146) {
-          while (1) {
-            switch (_context146.prev = _context146.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context146.next = 2;
-                  break;
-                }
-
-                return _context146.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context146.next = 4;
-                  break;
-                }
-
-                return _context146.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                if (currencyuuid) {
-                  _context146.next = 6;
-                  break;
-                }
-
-                return _context146.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 6:
-                global = this.global;
-                mvcmodule = global.getModuleObject('mvc');
-                _apicontrollers = this._getClientAPI();
-                _context146.next = 11;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 11:
-                session = _context146.sent;
-
-                if (session) {
-                  _context146.next = 14;
-                  break;
-                }
-
-                return _context146.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 14:
-                _context146.next = 16;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 16:
-                wallet = _context146.sent;
-
-                if (wallet) {
-                  _context146.next = 19;
-                  break;
-                }
-
-                return _context146.abrupt("return");
-
-              case 19:
-                _context146.next = 21;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 21:
-                currency = _context146.sent;
-
-                if (currency) {
-                  _context146.next = 24;
-                  break;
-                }
-
-                return _context146.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 24:
-                address = deed.owner;
-                _context146.next = 27;
-                return this.getCurrencyCardWithAddress(sessionuuid, walletuuid, currencyuuid, address)["catch"](function (err) {});
-
-              case 27:
-                cardinfo = _context146.sent;
-
-                if (cardinfo) {
-                  _context146.next = 30;
-                  break;
-                }
-
-                return _context146.abrupt("return");
-
-              case 30:
-                _context146.next = 32;
-                return this.getCardPrivateKey(sessionuuid, walletuuid, cardinfo.uuid);
-
-              case 32:
-                _privatekey = _context146.sent;
-
-                if (!_privatekey) {
-                  _context146.next = 35;
-                  break;
-                }
-
-                return _context146.abrupt("return", cardinfo);
-
-              case 35:
-              case "end":
-                return _context146.stop();
-            }
-          }
-        }, _callee146, this);
-      }));
-
-      function getDeedOwningCard(_x466, _x467, _x468, _x469, _x470) {
-        return _getDeedOwningCard3.apply(this, arguments);
-      }
-
-      return getDeedOwningCard;
-    }()
-  }, {
-    key: "transferDeed",
-    value: function () {
-      var _transferDeed = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee147(sessionuuid, walletuuid, currencyuuid, minter, deed, toaddress) {
-        var feelevel,
-            global,
-            _apicontrollers,
-            session,
-            wallet,
-            currency,
-            card,
-            childsession,
-            erc721token,
-            fromaccount,
-            from_card_scheme,
-            toaccount,
-            ethereumnodeaccessmodule,
-            ethereumtransaction,
-            fee,
-            tokenid,
-            txhhash,
-            _args147 = arguments;
-
-        return _regeneratorRuntime().wrap(function _callee147$(_context147) {
-          while (1) {
-            switch (_context147.prev = _context147.next) {
-              case 0:
-                feelevel = _args147.length > 6 && _args147[6] !== undefined ? _args147[6] : null;
-
-                if (sessionuuid) {
-                  _context147.next = 3;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 3:
-                if (walletuuid) {
-                  _context147.next = 5;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 5:
-                if (currencyuuid) {
-                  _context147.next = 7;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 7:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context147.next = 11;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 11:
-                session = _context147.sent;
-
-                if (session) {
-                  _context147.next = 14;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 14:
-                _context147.next = 16;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 16:
-                wallet = _context147.sent;
-
-                if (wallet) {
-                  _context147.next = 19;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 19:
-                _context147.next = 21;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 21:
-                currency = _context147.sent;
-
-                if (currency) {
-                  _context147.next = 24;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 24:
-                _context147.next = 26;
-                return this._getDeedOwningCard(session, wallet, currency, minter, deed);
-
-              case 26:
-                card = _context147.sent;
-
-                if (card) {
-                  _context147.next = 29;
-                  break;
-                }
-
-                return _context147.abrupt("return", Promise.reject('could not find minter card'));
-
-              case 29:
-                _context147.next = 31;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 31:
-                childsession = _context147.sent;
-                _context147.next = 34;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 34:
-                erc721token = _context147.sent;
-                // sender and recipient
-                fromaccount = card._getSessionAccountObject();
-                from_card_scheme = card.getScheme();
-                toaccount = childsession.createBlankAccountObject();
-                toaccount.setAddress(toaddress); // transfer
-
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumtransaction = ethereumnodeaccessmodule.getEthereumTransactionObject(childsession, fromaccount); // fee
-
-                _context147.next = 43;
-                return _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
-
-              case 43:
-                fee = _context147.sent;
-                ethereumtransaction.setGas(fee.gaslimit);
-                ethereumtransaction.setGasPrice(fee.gasPrice);
-                tokenid = deed.tokenid; // TODO: uncomment for @p2pmoney-org/ethereum_erc721 > 0.20.16
-                //var _Buffer = this._getBufferClass();
-                //var deed_data_str = (deed.data ? JSON.stringify(deed.data) : '{}');
-                //var deed_data_buf = _Buffer.from(deed_data_str, 'utf8'); // not used while using @p2pmoney-org/ethereum_core ver 0.20.10
-                //var txhhash = await erc721token.safeTransferFrom(fromaccount, toaccount, tokenid, deed_data_buf, ethereumtransaction);
-
-                _context147.next = 49;
-                return erc721token.transferFrom(fromaccount, toaccount, tokenid, ethereumtransaction);
-
-              case 49:
-                txhhash = _context147.sent;
-                return _context147.abrupt("return", txhhash);
-
-              case 51:
-              case "end":
-                return _context147.stop();
-            }
-          }
-        }, _callee147, this);
-      }));
-
-      function transferDeed(_x471, _x472, _x473, _x474, _x475, _x476) {
-        return _transferDeed.apply(this, arguments);
-      }
-
-      return transferDeed;
-    }()
-  }, {
-    key: "registerClause",
-    value: function () {
-      var _registerClause = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee148(sessionuuid, walletuuid, currencyuuid, minter, deed, clause) {
-        var feelevel,
-            global,
-            _apicontrollers,
-            session,
-            wallet,
-            currency,
-            card,
-            childsession,
-            erc721token,
-            tokenid,
-            contentstring,
-            ethereumnodeaccessmodule,
-            fromaccount,
-            from_card_scheme,
-            ethereumtransaction,
-            fee,
-            txhash,
-            _args148 = arguments;
-
-        return _regeneratorRuntime().wrap(function _callee148$(_context148) {
-          while (1) {
-            switch (_context148.prev = _context148.next) {
-              case 0:
-                feelevel = _args148.length > 6 && _args148[6] !== undefined ? _args148[6] : null;
-
-                if (sessionuuid) {
-                  _context148.next = 3;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 3:
-                if (walletuuid) {
-                  _context148.next = 5;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 5:
-                if (currencyuuid) {
-                  _context148.next = 7;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('currency uuid is undefined'));
-
-              case 7:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context148.next = 11;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 11:
-                session = _context148.sent;
-
-                if (session) {
-                  _context148.next = 14;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 14:
-                _context148.next = 16;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 16:
-                wallet = _context148.sent;
-
-                if (wallet) {
-                  _context148.next = 19;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 19:
-                _context148.next = 21;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 21:
-                currency = _context148.sent;
-
-                if (currency) {
-                  _context148.next = 24;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 24:
-                if (!deed.owner) {
-                  _context148.next = 30;
-                  break;
-                }
-
-                _context148.next = 27;
-                return this._getDeedOwningCard(session, wallet, currency, minter, deed);
-
-              case 27:
-                card = _context148.sent;
-                _context148.next = 33;
-                break;
-
-              case 30:
-                _context148.next = 32;
-                return this._getMinterCard(session, wallet, currency, minter);
-
-              case 32:
-                card = _context148.sent;
-
-              case 33:
-                if (card) {
-                  _context148.next = 35;
-                  break;
-                }
-
-                return _context148.abrupt("return", Promise.reject('could not find minter card'));
-
-              case 35:
-                _context148.next = 37;
-                return this._getMonitoredERC721TokenSession(session, wallet, currency);
-
-              case 37:
-                childsession = _context148.sent;
-                _context148.next = 40;
-                return this._getERC721TokenObject(childsession, currency, minter);
-
-              case 40:
-                erc721token = _context148.sent;
-                tokenid = deed.tokenid;
-                contentstring = JSON.stringify(clause);
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                fromaccount = card._getSessionAccountObject();
-                from_card_scheme = card.getScheme();
-                ethereumtransaction = ethereumnodeaccessmodule.getEthereumTransactionObject(childsession, fromaccount); // fee
-
-                _context148.next = 49;
-                return _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
-
-              case 49:
-                fee = _context148.sent;
-                ethereumtransaction.setGas(fee.gaslimit);
-                ethereumtransaction.setGasPrice(fee.gasPrice);
-                _context148.next = 54;
-                return erc721token.registerRecord(tokenid, contentstring, ethereumtransaction);
-
-              case 54:
-                txhash = _context148.sent;
-                return _context148.abrupt("return", txhash);
-
-              case 56:
-              case "end":
-                return _context148.stop();
-            }
-          }
-        }, _callee148, this);
-      }));
-
-      function registerClause(_x477, _x478, _x479, _x480, _x481, _x482) {
-        return _registerClause.apply(this, arguments);
-      }
-
-      return registerClause;
-    }() //
-    // Quotes
-    //
-
-  }, {
-    key: "readQuotes",
-    value: function () {
-      var _readQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee149(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, quote_list;
-
-        return _regeneratorRuntime().wrap(function _callee149$(_context149) {
-          while (1) {
-            switch (_context149.prev = _context149.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context149.next = 2;
-                  break;
-                }
-
-                return _context149.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context149.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context149.sent;
-
-                if (session) {
-                  _context149.next = 9;
-                  break;
-                }
-
-                return _context149.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'quotes']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'quotes']; // shared keys, also we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let quote_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context149.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                quote_list = _context149.sent;
-                if (!quote_list) quote_list = [];
-                return _context149.abrupt("return", quote_list);
-
-              case 15:
-              case "end":
-                return _context149.stop();
-            }
-          }
-        }, _callee149, this);
-      }));
-
-      function readQuotes(_x483, _x484) {
-        return _readQuotes.apply(this, arguments);
-      }
-
-      return readQuotes;
-    }()
-  }, {
-    key: "fetchQuotes",
-    value: function () {
-      var _fetchQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee150(sessionuuid, walletuuid, currencyuuid, vendor_address) {
-        var global, _apicontrollers, session, wallet, currency, transactions, quotelist, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee150$(_context150) {
-          while (1) {
-            switch (_context150.prev = _context150.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context150.next = 2;
-                  break;
-                }
-
-                return _context150.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context150.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context150.sent;
-
-                if (session) {
-                  _context150.next = 9;
-                  break;
-                }
-
-                return _context150.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context150.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context150.sent;
-                _context150.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context150.sent;
-
-                if (currency) {
-                  _context150.next = 17;
-                  break;
-                }
-
-                return _context150.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context150.next = 19;
-                  break;
-                }
-
-                return _context150.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
-
-              case 19:
-                _context150.next = 21;
-                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
-
-              case 21:
-                transactions = _context150.sent;
-                // we filter quotes
-                quotelist = [];
-
-                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
-                  tx = transactions[i];
-                  dataobject = {};
-
-                  this._fillTransactionDataObject(dataobject, tx);
-
-                  if (dataobject.type == 'quote' && dataobject.owner == vendor_address) {
-                    //await this.saveQuote(sessionuuid, null, dataobject);
-                    quotelist.push(dataobject);
-                  }
-                }
-
-                return _context150.abrupt("return", quotelist);
-
-              case 25:
-              case "end":
-                return _context150.stop();
-            }
-          }
-        }, _callee150, this);
-      }));
-
-      function fetchQuotes(_x485, _x486, _x487, _x488) {
-        return _fetchQuotes.apply(this, arguments);
-      }
-
-      return fetchQuotes;
-    }()
-  }, {
-    key: "saveQuote",
-    value: function () {
-      var _saveQuote = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee151(sessionuuid, walletuuid, quote) {
-        var global, _apicontrollers, quote_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, title, amount, currency, keys, localjson;
-
-        return _regeneratorRuntime().wrap(function _callee151$(_context151) {
-          while (1) {
-            switch (_context151.prev = _context151.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context151.next = 4;
-                return this.readQuotes(sessionuuid, walletuuid);
-
-              case 4:
-                quote_list = _context151.sent;
-                // look not in list
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < quote_list.length)) {
-                  _context151.next = 14;
-                  break;
-                }
-
-                if (!(quote_list[i].txhash == quote.txhash)) {
-                  _context151.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context151.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context151.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context151.next = 28;
-                  break;
-                }
-
-                _context151.next = 17;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 17:
-                session = _context151.sent;
-
-                if (session) {
-                  _context151.next = 20;
-                  break;
-                }
-
-                return _context151.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 20:
-                // quote parameters to be saved
-                txhash = quote.txhash, blocknumber = quote.blocknumber, currencyuuid = quote.currencyuuid, owner = quote.owner, title = quote.title, amount = quote.amount, currency = quote.currency;
-
-                if (!walletuuid) {
-                  keys = ['myquote', 'quotes']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'quotes']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet			
-                }
-
-                localjson = {
-                  txhash: txhash,
-                  blocknumber: blocknumber,
-                  currencyuuid: currencyuuid,
-                  owner: owner,
-                  title: title,
-                  amount: amount,
-                  currency: currency
-                };
-                localjson.savetime = Date.now();
-                quote_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, quote_list);
-
-                return _context151.abrupt("return", this._saveClientSideJson(session, keys, quote_list));
-
-              case 28:
-                return _context151.abrupt("return", quote_list);
-
-              case 29:
-              case "end":
-                return _context151.stop();
-            }
-          }
-        }, _callee151, this);
-      }));
-
-      function saveQuote(_x489, _x490, _x491) {
-        return _saveQuote.apply(this, arguments);
-      }
-
-      return saveQuote;
-    }()
-  }, {
-    key: "readOrders",
-    value: function () {
-      var _readOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee152(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, order_list;
-
-        return _regeneratorRuntime().wrap(function _callee152$(_context152) {
-          while (1) {
-            switch (_context152.prev = _context152.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context152.next = 2;
-                  break;
-                }
-
-                return _context152.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context152.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context152.sent;
-
-                if (session) {
-                  _context152.next = 9;
-                  break;
-                }
-
-                return _context152.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'orders']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'orders']; // shared keys, otherwise we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let order_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context152.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                order_list = _context152.sent;
-                if (!order_list) order_list = [];
-                return _context152.abrupt("return", order_list);
-
-              case 15:
-              case "end":
-                return _context152.stop();
-            }
-          }
-        }, _callee152, this);
-      }));
-
-      function readOrders(_x492, _x493) {
-        return _readOrders.apply(this, arguments);
-      }
-
-      return readOrders;
-    }()
-  }, {
-    key: "fetchOrders",
-    value: function () {
-      var _fetchOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee153(sessionuuid, walletuuid, currencyuuid, quotehash) {
-        var global, _apicontrollers, session, wallet, currency, quote, vendor_address, transactions, orderlist, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee153$(_context153) {
-          while (1) {
-            switch (_context153.prev = _context153.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context153.next = 2;
-                  break;
-                }
-
-                return _context153.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context153.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context153.sent;
-
-                if (session) {
-                  _context153.next = 9;
-                  break;
-                }
-
-                return _context153.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context153.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context153.sent;
-                _context153.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context153.sent;
-
-                if (currency) {
-                  _context153.next = 17;
-                  break;
-                }
-
-                return _context153.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context153.next = 19;
-                  break;
-                }
-
-                return _context153.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
-
-              case 19:
-                _context153.next = 21;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
-
-              case 21:
-                quote = _context153.sent;
-                vendor_address = quote.owner; // use explorer to fetch transactions for vendor's address
-
-                _context153.next = 25;
-                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
-
-              case 25:
-                transactions = _context153.sent;
-                // we filter orders
-                orderlist = [];
-
-                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
-                  tx = transactions[i];
-                  dataobject = {};
-
-                  this._fillTransactionDataObject(dataobject, tx);
-
-                  if (dataobject.type == 'order' && dataobject.quote == quotehash) {
-                    //await this.saveOrder(sessionuuid, null, dataobject);
-                    orderlist.push(dataobject);
-                  }
-                }
-
-                return _context153.abrupt("return", orderlist);
-
-              case 29:
-              case "end":
-                return _context153.stop();
-            }
-          }
-        }, _callee153, this);
-      }));
-
-      function fetchOrders(_x494, _x495, _x496, _x497) {
-        return _fetchOrders.apply(this, arguments);
-      }
-
-      return fetchOrders;
-    }()
-  }, {
-    key: "scanNextBlockForOrders",
-    value: function () {
-      var _scanNextBlockForOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee154(sessionuuid, walletuuid, currencyuuid, quotehash, blockshift) {
-        var global, _apicontrollers, session, keys, scan, quote, new_orders, pretradeweb3rurl, childsession, current_blocknumber, start_block_number, last_block_number, ordernum, ethereumnodeaccessmodule, ethereumnodeaccessinstance, blocknumber, block, transactions, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee154$(_context154) {
-          while (1) {
-            switch (_context154.prev = _context154.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context154.next = 2;
-                  break;
-                }
-
-                return _context154.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context154.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context154.sent;
-
-                if (session) {
-                  _context154.next = 9;
-                  break;
-                }
-
-                return _context154.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                keys = ['myquote', 'scan', 'orders', quotehash]; //let scan = await _apicontrollers.getLocalJsonLeaf(session, keys);
-
-                _context154.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                scan = _context154.sent;
-                if (!scan) scan = {};
-                _context154.next = 16;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
-
-              case 16:
-                quote = _context154.sent;
-                new_orders = []; // get a childsession on currency pretrade web3provider
-
-                _context154.next = 20;
-                return this.getPretradeWeb3Url(sessionuuid, currencyuuid);
-
-              case 20:
-                pretradeweb3rurl = _context154.sent;
-                _context154.next = 23;
-                return this._getChildSessionOnWeb3Url(session, pretradeweb3rurl);
-
-              case 23:
-                childsession = _context154.sent;
-                _context154.next = 26;
-                return _apicontrollers.readCurrentBlockNumber(childsession);
-
-              case 26:
-                current_blocknumber = _context154.sent;
-                start_block_number = (scan.last_block_number ? scan.last_block_number : quote.blocknumber) + 1;
-                last_block_number = start_block_number + blockshift < current_blocknumber ? start_block_number + blockshift : current_blocknumber;
-                ordernum = scan.ordernum ? scan.ordernum : 0; // read transactions for each block
-
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumnodeaccessinstance = ethereumnodeaccessmodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
-                // var ethereumnodeaccessinstance = _apicontrollers.getEthereumNodeAccessInstance(childsession);
-
-                blocknumber = start_block_number;
-
-              case 33:
-                if (!(blocknumber < last_block_number + 1)) {
-                  _context154.next = 59;
-                  break;
-                }
-
-                _context154.next = 36;
-                return new Promise(function (resolve, reject) {
-                  ethereumnodeaccessinstance.web3_getBlock(blocknumber, true, function (err, res) {
-                    if (err) reject(err);else resolve(res);
-                  });
-                })["catch"](function (err) {
-                  console.log('error in scanNextBlockForOrders: ' + err);
-                });
-
-              case 36:
-                block = _context154.sent;
-                transactions = block.transactions;
-                i = 0;
-
-              case 39:
-                if (!(i < (transactions ? transactions.length : 0))) {
-                  _context154.next = 56;
-                  break;
-                }
-
-                tx = transactions[i]; // fake ethchainreader
-
-                tx.input_decoded_utf8 = ethereumnodeaccessmodule.web3ToUTF8(childsession, tx.input);
-                tx.block = {};
-                tx.block.blocknumber = tx.blockNumber;
-                tx.block.timestamp = tx.timeStamp;
-                dataobject = {};
-
-                this._fillTransactionDataObject(dataobject, tx);
-
-                console.log('found one transaction at ' + blocknumber);
-
-                if (!(dataobject.type == 'order')) {
-                  _context154.next = 53;
-                  break;
-                }
-
-                _context154.next = 51;
-                return this.saveOrder(sessionuuid, null, dataobject);
-
-              case 51:
-                new_orders.push(dataobject);
-                ordernum++;
-
-              case 53:
-                i++;
-                _context154.next = 39;
-                break;
-
-              case 56:
-                blocknumber++;
-                _context154.next = 33;
-                break;
-
-              case 59:
-                // save where we are
-                scan.last_block_number = last_block_number;
-                scan.ordernum = ordernum; //await _apicontrollers.saveLocalJson(session, keys, scan);
-
-                _context154.next = 63;
-                return this._saveClientSideJson(session, keys, scan);
-
-              case 63:
-                return _context154.abrupt("return", new_orders);
-
-              case 64:
-              case "end":
-                return _context154.stop();
-            }
-          }
-        }, _callee154, this);
-      }));
-
-      function scanNextBlockForOrders(_x498, _x499, _x500, _x501, _x502) {
-        return _scanNextBlockForOrders.apply(this, arguments);
-      }
-
-      return scanNextBlockForOrders;
-    }()
-  }, {
-    key: "saveOrder",
-    value: function () {
-      var _saveOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee155(sessionuuid, walletuuid, order) {
-        var global, _apicontrollers, order_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, quote, amount, currency, hadfunds, pretradescheme_info, quoteobject, title, keys, localjson;
-
-        return _regeneratorRuntime().wrap(function _callee155$(_context155) {
-          while (1) {
-            switch (_context155.prev = _context155.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context155.next = 4;
-                return this.readOrders(sessionuuid, walletuuid);
-
-              case 4:
-                order_list = _context155.sent;
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < order_list.length)) {
-                  _context155.next = 14;
-                  break;
-                }
-
-                if (!(order_list[i].txhash == order.txhash)) {
-                  _context155.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context155.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context155.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context155.next = 35;
-                  break;
-                }
-
-                _context155.next = 17;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 17:
-                session = _context155.sent;
-
-                if (session) {
-                  _context155.next = 20;
-                  break;
-                }
-
-                return _context155.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 20:
-                // order parameters
-                txhash = order.txhash, blocknumber = order.blocknumber, currencyuuid = order.currencyuuid, owner = order.owner, quote = order.quote, amount = order.amount, currency = order.currency, hadfunds = order.hadfunds; // read quote to get title
-
-                _context155.next = 23;
-                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
-
-              case 23:
-                pretradescheme_info = _context155.sent;
-                _context155.next = 26;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, quote)["catch"](function (err) {});
-
-              case 26:
-                quoteobject = _context155.sent;
-                title = quoteobject ? quoteobject.title : null;
-
-                if (!walletuuid) {
-                  keys = ['myquote', 'orders']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'orders']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet
-                }
-
-                localjson = {
-                  txhash: txhash,
-                  blocknumber: blocknumber,
-                  currencyuuid: currencyuuid,
-                  owner: owner,
-                  quote: quote,
-                  title: title,
-                  amount: amount,
-                  currency: currency,
-                  hadfunds: hadfunds
-                };
-                localjson.savetime = Date.now();
-                order_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, order_list);
-
-                return _context155.abrupt("return", this._saveClientSideJson(session, keys, order_list));
-
-              case 35:
-                return _context155.abrupt("return", order_list);
-
-              case 36:
-              case "end":
-                return _context155.stop();
-            }
-          }
-        }, _callee155, this);
-      }));
-
-      function saveOrder(_x503, _x504, _x505) {
-        return _saveOrder.apply(this, arguments);
-      }
-
-      return saveOrder;
-    }()
-  }, {
-    key: "readInvoices",
-    value: function () {
-      var _readInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee156(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, invoice_list;
-
-        return _regeneratorRuntime().wrap(function _callee156$(_context156) {
-          while (1) {
-            switch (_context156.prev = _context156.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context156.next = 2;
-                  break;
-                }
-
-                return _context156.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context156.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context156.sent;
-
-                if (session) {
-                  _context156.next = 9;
-                  break;
-                }
-
-                return _context156.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'invoices']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'invoices']; // shared keys, otherwise we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let invoice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context156.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                invoice_list = _context156.sent;
-                if (!invoice_list) invoice_list = [];
-                return _context156.abrupt("return", invoice_list);
-
-              case 15:
-              case "end":
-                return _context156.stop();
-            }
-          }
-        }, _callee156, this);
-      }));
-
-      function readInvoices(_x506, _x507) {
-        return _readInvoices.apply(this, arguments);
-      }
-
-      return readInvoices;
-    }()
-  }, {
-    key: "fetchInvoices",
-    value: function () {
-      var _fetchInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee157(sessionuuid, walletuuid, currencyuuid, orderhash) {
-        var global, _apicontrollers, session, wallet, currency, order, buyer_address, transactions, invoicelist, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee157$(_context157) {
-          while (1) {
-            switch (_context157.prev = _context157.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context157.next = 2;
-                  break;
-                }
-
-                return _context157.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context157.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context157.sent;
-
-                if (session) {
-                  _context157.next = 9;
-                  break;
-                }
-
-                return _context157.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context157.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context157.sent;
-                _context157.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context157.sent;
-
-                if (currency) {
-                  _context157.next = 17;
-                  break;
-                }
-
-                return _context157.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context157.next = 19;
-                  break;
-                }
-
-                return _context157.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
-
-              case 19:
-                _context157.next = 21;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, orderhash);
-
-              case 21:
-                order = _context157.sent;
-                buyer_address = order.owner; // use explorer to fetch transactions for buyer's address
-
-                _context157.next = 25;
-                return this._getAddressPretradeTransactions(session, wallet, currency, buyer_address);
-
-              case 25:
-                transactions = _context157.sent;
-                // we filter invoices
-                invoicelist = [];
-
-                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
-                  tx = transactions[i];
-                  dataobject = {};
-
-                  this._fillTransactionDataObject(dataobject, tx);
-
-                  if (dataobject.type == 'invoice' && dataobject.order == orderhash) {
-                    //await this.saveInvoice(sessionuuid, null, dataobject);
-                    invoicelist.push(dataobject);
-                  }
-                }
-
-                return _context157.abrupt("return", invoicelist);
-
-              case 29:
-              case "end":
-                return _context157.stop();
-            }
-          }
-        }, _callee157, this);
-      }));
-
-      function fetchInvoices(_x508, _x509, _x510, _x511) {
-        return _fetchInvoices.apply(this, arguments);
-      }
-
-      return fetchInvoices;
-    }()
-  }, {
-    key: "saveInvoice",
-    value: function () {
-      var _saveInvoice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee158(sessionuuid, walletuuid, invoice) {
-        var global, _apicontrollers, invoice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, order, amount, currency, pretradescheme_info, orderobject, quoteobject, title, keys, localjson;
-
-        return _regeneratorRuntime().wrap(function _callee158$(_context158) {
-          while (1) {
-            switch (_context158.prev = _context158.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context158.next = 4;
-                return this.readInvoices(sessionuuid, walletuuid);
-
-              case 4:
-                invoice_list = _context158.sent;
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < invoice_list.length)) {
-                  _context158.next = 14;
-                  break;
-                }
-
-                if (!(invoice_list[i].txhash == invoice.txhash)) {
-                  _context158.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context158.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context158.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context158.next = 38;
-                  break;
-                }
-
-                _context158.next = 17;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 17:
-                session = _context158.sent;
-
-                if (session) {
-                  _context158.next = 20;
-                  break;
-                }
-
-                return _context158.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 20:
-                // invoice parameters
-                txhash = invoice.txhash, blocknumber = invoice.blocknumber, currencyuuid = invoice.currencyuuid, owner = invoice.owner, order = invoice.order, amount = invoice.amount, currency = invoice.currency; // read order and quote to get title
-
-                _context158.next = 23;
-                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
-
-              case 23:
-                pretradescheme_info = _context158.sent;
-                _context158.next = 26;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, order)["catch"](function (err) {});
-
-              case 26:
-                orderobject = _context158.sent;
-                _context158.next = 29;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
-
-              case 29:
-                quoteobject = _context158.sent;
-                title = quoteobject ? quoteobject.title : null;
-
-                if (!walletuuid) {
-                  keys = ['myquote', 'invoices']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'invoices']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet
-                }
-
-                localjson = {
-                  txhash: txhash,
-                  blocknumber: blocknumber,
-                  currencyuuid: currencyuuid,
-                  owner: owner,
-                  order: order,
-                  title: title,
-                  amount: amount,
-                  currency: currency
-                };
-                localjson.savetime = Date.now();
-                invoice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, invoice_list);
-
-                return _context158.abrupt("return", this._saveClientSideJson(session, keys, invoice_list));
-
-              case 38:
-                return _context158.abrupt("return", invoice_list);
-
-              case 39:
-              case "end":
-                return _context158.stop();
-            }
-          }
-        }, _callee158, this);
-      }));
-
-      function saveInvoice(_x512, _x513, _x514) {
-        return _saveInvoice.apply(this, arguments);
-      }
-
-      return saveInvoice;
-    }()
-  }, {
-    key: "readPaymentNotices",
-    value: function () {
-      var _readPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee159(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, paymentnotice_list;
-
-        return _regeneratorRuntime().wrap(function _callee159$(_context159) {
-          while (1) {
-            switch (_context159.prev = _context159.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context159.next = 2;
-                  break;
-                }
-
-                return _context159.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context159.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context159.sent;
-
-                if (session) {
-                  _context159.next = 9;
-                  break;
-                }
-
-                return _context159.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'paymentnotices']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'paymentnotices']; // shared keys, otherwise we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let paymentnotice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context159.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                paymentnotice_list = _context159.sent;
-                if (!paymentnotice_list) paymentnotice_list = [];
-                return _context159.abrupt("return", paymentnotice_list);
-
-              case 15:
-              case "end":
-                return _context159.stop();
-            }
-          }
-        }, _callee159, this);
-      }));
-
-      function readPaymentNotices(_x515, _x516) {
-        return _readPaymentNotices.apply(this, arguments);
-      }
-
-      return readPaymentNotices;
-    }()
-  }, {
-    key: "fetchPaymentNotices",
-    value: function () {
-      var _fetchPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee160(sessionuuid, walletuuid, currencyuuid, invoicehash) {
-        var global, _apicontrollers, session, wallet, currency, invoice, vendor_address, transactions, paymentnoticelist, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee160$(_context160) {
-          while (1) {
-            switch (_context160.prev = _context160.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context160.next = 2;
-                  break;
-                }
-
-                return _context160.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context160.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context160.sent;
-
-                if (session) {
-                  _context160.next = 9;
-                  break;
-                }
-
-                return _context160.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context160.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context160.sent;
-                _context160.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context160.sent;
-
-                if (currency) {
-                  _context160.next = 17;
-                  break;
-                }
-
-                return _context160.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context160.next = 19;
-                  break;
-                }
-
-                return _context160.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
-
-              case 19:
-                _context160.next = 21;
                 return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, invoicehash);
 
               case 21:
-                invoice = _context160.sent;
+                invoice = _context137.sent;
                 vendor_address = invoice.owner; // use explorer to fetch transactions for vendor's address
 
-                _context160.next = 25;
+                _context137.next = 25;
                 return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
 
               case 25:
-                transactions = _context160.sent;
+                transactions = _context137.sent;
                 // we filter payment notices
                 paymentnoticelist = [];
 
@@ -9825,17 +7674,17 @@ var Module = /*#__PURE__*/function () {
                   }
                 }
 
-                return _context160.abrupt("return", paymentnoticelist);
+                return _context137.abrupt("return", paymentnoticelist);
 
               case 29:
               case "end":
-                return _context160.stop();
+                return _context137.stop();
             }
           }
-        }, _callee160, this);
+        }, _callee137, this);
       }));
 
-      function fetchPaymentNotices(_x517, _x518, _x519, _x520) {
+      function fetchPaymentNotices(_x420, _x421, _x422, _x423) {
         return _fetchPaymentNotices.apply(this, arguments);
       }
 
@@ -9844,85 +7693,85 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "savePaymentNotice",
     value: function () {
-      var _savePaymentNotice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee161(sessionuuid, walletuuid, paymentnotice) {
+      var _savePaymentNotice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee138(sessionuuid, walletuuid, paymentnotice) {
         var global, _apicontrollers, paymentnotice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, invoice, amount, currency, pretradescheme_info, invoiceobject, orderobject, quoteobject, title, keys, localjson;
 
-        return _regeneratorRuntime().wrap(function _callee161$(_context161) {
+        return _regeneratorRuntime().wrap(function _callee138$(_context138) {
           while (1) {
-            switch (_context161.prev = _context161.next) {
+            switch (_context138.prev = _context138.next) {
               case 0:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context161.next = 4;
+                _context138.next = 4;
                 return this.readPaymentNotices(sessionuuid, walletuuid);
 
               case 4:
-                paymentnotice_list = _context161.sent;
+                paymentnotice_list = _context138.sent;
                 bInList = false;
                 i = 0;
 
               case 7:
                 if (!(i < paymentnotice_list.length)) {
-                  _context161.next = 14;
+                  _context138.next = 14;
                   break;
                 }
 
                 if (!(paymentnotice_list[i].txhash == paymentnotice.txhash)) {
-                  _context161.next = 11;
+                  _context138.next = 11;
                   break;
                 }
 
                 bInList = true;
-                return _context161.abrupt("break", 14);
+                return _context138.abrupt("break", 14);
 
               case 11:
                 i++;
-                _context161.next = 7;
+                _context138.next = 7;
                 break;
 
               case 14:
                 if (bInList) {
-                  _context161.next = 41;
+                  _context138.next = 41;
                   break;
                 }
 
-                _context161.next = 17;
+                _context138.next = 17;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 17:
-                session = _context161.sent;
+                session = _context138.sent;
 
                 if (session) {
-                  _context161.next = 20;
+                  _context138.next = 20;
                   break;
                 }
 
-                return _context161.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context138.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 20:
                 // paymentnotice parameters
                 txhash = paymentnotice.txhash, blocknumber = paymentnotice.blocknumber, currencyuuid = paymentnotice.currencyuuid, owner = paymentnotice.owner, invoice = paymentnotice.invoice, amount = paymentnotice.amount, currency = paymentnotice.currency; // read invoice, order and quote to get title
 
-                _context161.next = 23;
+                _context138.next = 23;
                 return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
 
               case 23:
-                pretradescheme_info = _context161.sent;
-                _context161.next = 26;
+                pretradescheme_info = _context138.sent;
+                _context138.next = 26;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, invoice)["catch"](function (err) {});
 
               case 26:
-                invoiceobject = _context161.sent;
-                _context161.next = 29;
+                invoiceobject = _context138.sent;
+                _context138.next = 29;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, invoiceobject.order)["catch"](function (err) {});
 
               case 29:
-                orderobject = _context161.sent;
-                _context161.next = 32;
+                orderobject = _context138.sent;
+                _context138.next = 32;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
 
               case 32:
-                quoteobject = _context161.sent;
+                quoteobject = _context138.sent;
                 title = quoteobject ? quoteobject.title : null;
 
                 if (!walletuuid) {
@@ -9946,20 +7795,20 @@ var Module = /*#__PURE__*/function () {
                 localjson.savetime = Date.now();
                 paymentnotice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, paymentnotice_list);
 
-                return _context161.abrupt("return", this._saveClientSideJson(session, keys, paymentnotice_list));
+                return _context138.abrupt("return", this._saveClientSideJson(session, keys, paymentnotice_list));
 
               case 41:
-                return _context161.abrupt("return", paymentnotice_list);
+                return _context138.abrupt("return", paymentnotice_list);
 
               case 42:
               case "end":
-                return _context161.stop();
+                return _context138.stop();
             }
           }
-        }, _callee161, this);
+        }, _callee138, this);
       }));
 
-      function savePaymentNotice(_x521, _x522, _x523) {
+      function savePaymentNotice(_x424, _x425, _x426) {
         return _savePaymentNotice.apply(this, arguments);
       }
 
@@ -9968,53 +7817,53 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_saveTransactionObject",
     value: function () {
-      var _saveTransactionObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee162(sessionuuid, walletuuid, tx) {
-        return _regeneratorRuntime().wrap(function _callee162$(_context162) {
+      var _saveTransactionObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee139(sessionuuid, walletuuid, tx) {
+        return _regeneratorRuntime().wrap(function _callee139$(_context139) {
           while (1) {
-            switch (_context162.prev = _context162.next) {
+            switch (_context139.prev = _context139.next) {
               case 0:
                 if (tx) {
-                  _context162.next = 2;
+                  _context139.next = 2;
                   break;
                 }
 
-                return _context162.abrupt("return");
+                return _context139.abrupt("return");
 
               case 2:
-                _context162.t0 = tx.type;
-                _context162.next = _context162.t0 === 'bounty' ? 5 : _context162.t0 === 'claim' ? 6 : _context162.t0 === 'quote' ? 7 : _context162.t0 === 'order' ? 8 : _context162.t0 === 'invoice' ? 9 : _context162.t0 === 'paymentnotice' ? 10 : 11;
+                _context139.t0 = tx.type;
+                _context139.next = _context139.t0 === 'bounty' ? 5 : _context139.t0 === 'claim' ? 6 : _context139.t0 === 'quote' ? 7 : _context139.t0 === 'order' ? 8 : _context139.t0 === 'invoice' ? 9 : _context139.t0 === 'paymentnotice' ? 10 : 11;
                 break;
 
               case 5:
-                return _context162.abrupt("return", this.saveBounty(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.saveBounty(sessionuuid, walletuuid, tx));
 
               case 6:
-                return _context162.abrupt("return", this.saveClaim(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.saveClaim(sessionuuid, walletuuid, tx));
 
               case 7:
-                return _context162.abrupt("return", this.saveQuote(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.saveQuote(sessionuuid, walletuuid, tx));
 
               case 8:
-                return _context162.abrupt("return", this.saveOrder(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.saveOrder(sessionuuid, walletuuid, tx));
 
               case 9:
-                return _context162.abrupt("return", this.saveInvoice(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.saveInvoice(sessionuuid, walletuuid, tx));
 
               case 10:
-                return _context162.abrupt("return", this.savePaymentNotice(sessionuuid, walletuuid, tx));
+                return _context139.abrupt("return", this.savePaymentNotice(sessionuuid, walletuuid, tx));
 
               case 11:
-                return _context162.abrupt("break", 12);
+                return _context139.abrupt("break", 12);
 
               case 12:
               case "end":
-                return _context162.stop();
+                return _context139.stop();
             }
           }
-        }, _callee162, this);
+        }, _callee139, this);
       }));
 
-      function _saveTransactionObject(_x524, _x525, _x526) {
+      function _saveTransactionObject(_x427, _x428, _x429) {
         return _saveTransactionObject2.apply(this, arguments);
       }
 
@@ -10026,25 +7875,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getPriceForCreditUnits",
     value: function () {
-      var _getPriceForCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee163(sessionuuid, currencyuuid, creditunits) {
+      var _getPriceForCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee140(sessionuuid, currencyuuid, creditunits) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee163$(_context163) {
+        return _regeneratorRuntime().wrap(function _callee140$(_context140) {
           while (1) {
-            switch (_context163.prev = _context163.next) {
+            switch (_context140.prev = _context140.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context163.abrupt("return", mvccurrencies.getPriceForCreditUnits(sessionuuid, currencyuuid, creditunits));
+                return _context140.abrupt("return", mvccurrencies.getPriceForCreditUnits(sessionuuid, currencyuuid, creditunits));
 
               case 3:
               case "end":
-                return _context163.stop();
+                return _context140.stop();
             }
           }
-        }, _callee163, this);
+        }, _callee140, this);
       }));
 
-      function getPriceForCreditUnits(_x527, _x528, _x529) {
+      function getPriceForCreditUnits(_x430, _x431, _x432) {
         return _getPriceForCreditUnits.apply(this, arguments);
       }
 
@@ -10053,29 +7902,29 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "buyCreditUnits",
     value: function () {
-      var _buyCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee164(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits) {
+      var _buyCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee141(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits) {
         var feelevel,
             global,
             mvccurrencies,
-            _args164 = arguments;
-        return _regeneratorRuntime().wrap(function _callee164$(_context164) {
+            _args141 = arguments;
+        return _regeneratorRuntime().wrap(function _callee141$(_context141) {
           while (1) {
-            switch (_context164.prev = _context164.next) {
+            switch (_context141.prev = _context141.next) {
               case 0:
-                feelevel = _args164.length > 5 && _args164[5] !== undefined ? _args164[5] : null;
+                feelevel = _args141.length > 5 && _args141[5] !== undefined ? _args141[5] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context164.abrupt("return", mvccurrencies.buyCreditUnits(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits, feelevel));
+                return _context141.abrupt("return", mvccurrencies.buyCreditUnits(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits, feelevel));
 
               case 4:
               case "end":
-                return _context164.stop();
+                return _context141.stop();
             }
           }
-        }, _callee164, this);
+        }, _callee141, this);
       }));
 
-      function buyCreditUnits(_x530, _x531, _x532, _x533, _x534) {
+      function buyCreditUnits(_x433, _x434, _x435, _x436, _x437) {
         return _buyCreditUnits.apply(this, arguments);
       }
 
@@ -10087,29 +7936,29 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getDecimalAmount",
     value: function () {
-      var _getDecimalAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee165(sessionuuid, amount) {
+      var _getDecimalAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee142(sessionuuid, amount) {
         var decimals,
             global,
             mvccurrencies,
-            _args165 = arguments;
-        return _regeneratorRuntime().wrap(function _callee165$(_context165) {
+            _args142 = arguments;
+        return _regeneratorRuntime().wrap(function _callee142$(_context142) {
           while (1) {
-            switch (_context165.prev = _context165.next) {
+            switch (_context142.prev = _context142.next) {
               case 0:
-                decimals = _args165.length > 2 && _args165[2] !== undefined ? _args165[2] : 18;
+                decimals = _args142.length > 2 && _args142[2] !== undefined ? _args142[2] : 18;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context165.abrupt("return", mvccurrencies.getDecimalAmount(sessionuuid, amount, decimals));
+                return _context142.abrupt("return", mvccurrencies.getDecimalAmount(sessionuuid, amount, decimals));
 
               case 4:
               case "end":
-                return _context165.stop();
+                return _context142.stop();
             }
           }
-        }, _callee165, this);
+        }, _callee142, this);
       }));
 
-      function getDecimalAmount(_x535, _x536) {
+      function getDecimalAmount(_x438, _x439) {
         return _getDecimalAmount.apply(this, arguments);
       }
 
@@ -10118,25 +7967,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCurrencyAmount",
     value: function () {
-      var _getCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee166(sessionuuid, currencyuuid, amount) {
+      var _getCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee143(sessionuuid, currencyuuid, amount) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee166$(_context166) {
+        return _regeneratorRuntime().wrap(function _callee143$(_context143) {
           while (1) {
-            switch (_context166.prev = _context166.next) {
+            switch (_context143.prev = _context143.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context166.abrupt("return", mvccurrencies.getCurrencyAmount(sessionuuid, currencyuuid, amount));
+                return _context143.abrupt("return", mvccurrencies.getCurrencyAmount(sessionuuid, currencyuuid, amount));
 
               case 3:
               case "end":
-                return _context166.stop();
+                return _context143.stop();
             }
           }
-        }, _callee166, this);
+        }, _callee143, this);
       }));
 
-      function getCurrencyAmount(_x537, _x538, _x539) {
+      function getCurrencyAmount(_x440, _x441, _x442) {
         return _getCurrencyAmount.apply(this, arguments);
       }
 
@@ -10145,25 +7994,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "formatCurrencyAmount",
     value: function () {
-      var _formatCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee167(sessionuuid, currencyuuid, currencyamount, options) {
+      var _formatCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee144(sessionuuid, currencyuuid, currencyamount, options) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee167$(_context167) {
+        return _regeneratorRuntime().wrap(function _callee144$(_context144) {
           while (1) {
-            switch (_context167.prev = _context167.next) {
+            switch (_context144.prev = _context144.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context167.abrupt("return", mvccurrencies.formatCurrencyAmount(sessionuuid, currencyuuid, currencyamount, options));
+                return _context144.abrupt("return", mvccurrencies.formatCurrencyAmount(sessionuuid, currencyuuid, currencyamount, options));
 
               case 3:
               case "end":
-                return _context167.stop();
+                return _context144.stop();
             }
           }
-        }, _callee167, this);
+        }, _callee144, this);
       }));
 
-      function formatCurrencyAmount(_x540, _x541, _x542, _x543) {
+      function formatCurrencyAmount(_x443, _x444, _x445, _x446) {
         return _formatCurrencyAmount.apply(this, arguments);
       }
 

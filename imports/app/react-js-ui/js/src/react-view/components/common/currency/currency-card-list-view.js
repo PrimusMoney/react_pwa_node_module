@@ -721,22 +721,23 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
     key: "onClickItem",
     value: function () {
       var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(item) {
-        var currencyuuid, carduuid, cardaddress, params;
+        var currencyuuid, carduuid, params;
         return _regeneratorRuntime().wrap(function _callee10$(_context10) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
                 currencyuuid = item.currencyuuid;
                 carduuid = item.uuid;
-                cardaddress = item.address;
+                /* let cardaddress = item.address;
+                	let params = {currencyuuid, carduuid, cardaddress}; */
+
                 params = {
                   currencyuuid: currencyuuid,
-                  carduuid: carduuid,
-                  cardaddress: cardaddress
+                  carduuid: carduuid
                 };
                 this.app.gotoRoute('currencycard', params);
 
-              case 5:
+              case 4:
               case "end":
                 return _context10.stop();
             }

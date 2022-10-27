@@ -44,4 +44,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('currencies', 'provider.js', Provider); //export default Provider;
-//# sourceMappingURL=provider.js.map

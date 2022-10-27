@@ -452,4 +452,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ContactList);
 
 exports["default"] = _default;
-//# sourceMappingURL=contact-list.js.map

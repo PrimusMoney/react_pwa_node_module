@@ -37,4 +37,3 @@ var store = (0, _redux.createStore)(pReducer, initialState, _redux.applyMiddlewa
 exports.store = store;
 var persistor = (0, _reduxPersist.persistStore)(store);
 exports.persistor = persistor;
-//# sourceMappingURL=store.js.map

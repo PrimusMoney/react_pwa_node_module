@@ -14,4 +14,3 @@ if (typeof window !== 'undefined') {
 }
 
 _globalscope.simplestore.BigNumber = require('bignumber.js');
-//# sourceMappingURL=module-load.js.map

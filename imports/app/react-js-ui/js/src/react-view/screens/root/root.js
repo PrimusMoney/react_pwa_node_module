@@ -1835,20 +1835,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectRoutings",
     value: function _getDataObjectRoutings() {
-      var map = {}; // built-in
-
-      /*		map['quote'] = {type: 'quote', path: 'quote', action: 'view', params: ['txhash', 'currencyuuid']};
-      		map['order'] = {type: 'order', path: 'order', action: 'view', params: ['txhash', 'currencyuuid']};
-      		map['invoice'] = {type: 'invoice', path: 'invoice', action: 'view', params: ['txhash', 'currencyuuid']};
-      		map['paymentnotice'] = {type: 'paymentnotice', path: 'paymentnotice', action: 'view', params: ['txhash', 'currencyuuid']};
-      
-      		map['bounty'] = {type: 'bounty', path: 'bounty', action: 'view', params: ['txhash', 'currencyuuid']};
-      		map['claim'] = {type: 'claim', path: 'claim', action: 'view', params: ['txhash', 'currencyuuid']};
-      
-       		map['deed'] = {type: 'deed', path: 'deed', action: 'view', params: ['txhash', 'currencyuuid', 'minter', 'tokenid']};
-      		map['clause'] = {type: 'clause', path: 'clause', action: 'view', params: ['txhash', 'currencyuuid', 'minter', 'tokenid', 'index']};
-       */
-      // add dataobject routing for routes that are marked as linked to data objects
+      var map = {}; // add dataobject routing for routes that are marked as linked to data objects
 
       var routes = Root.routes;
 
@@ -2647,4 +2634,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Root);
 
 exports["default"] = _default;
-//# sourceMappingURL=root.js.map

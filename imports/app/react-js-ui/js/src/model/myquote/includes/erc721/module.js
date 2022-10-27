@@ -292,4 +292,3 @@ _GlobalClass.getGlobalObject().registerModuleObject(new Module()); // dependenci
 
 
 _GlobalClass.getGlobalObject().registerModuleDepency('mvc-erc721', 'common');
-//# sourceMappingURL=module.js.map

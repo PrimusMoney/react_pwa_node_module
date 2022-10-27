@@ -233,4 +233,3 @@ var styles = _reactNative.StyleSheet.create({
   },
   pickeritem: {}
 });
-//# sourceMappingURL=settings.js.map

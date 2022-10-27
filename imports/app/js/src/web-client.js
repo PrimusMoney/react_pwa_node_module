@@ -47,6 +47,8 @@ var WebClient = /*#__PURE__*/function () {
     this.webclientcontrollers.module = this;
     this.namespace = null; // e.g. to load config from sub-folder
 
+    this.updatetime = null; // to load updated versions of config files
+
     this.currencies = null;
   }
 
@@ -122,23 +124,16 @@ var WebClient = /*#__PURE__*/function () {
       return setNameSpace;
     }()
   }, {
-    key: "loadConfig",
+    key: "setUpdatetime",
     value: function () {
-      var _loadConfig = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(configname) {
-        var jsonfile, config_json;
+      var _setUpdatetime = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(updatetime) {
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                jsonfile = './config/' + (this.namespace ? this.namespace + '/' : '') + configname + '.json';
-                _context3.next = 3;
-                return this._loadExternalJSON(jsonfile)["catch"](function (err) {});
+                this.updatetime = updatetime;
 
-              case 3:
-                config_json = _context3.sent;
-                return _context3.abrupt("return", config_json);
-
-              case 5:
+              case 1:
               case "end":
                 return _context3.stop();
             }
@@ -146,7 +141,45 @@ var WebClient = /*#__PURE__*/function () {
         }, _callee3, this);
       }));
 
-      function loadConfig(_x3) {
+      function setUpdatetime(_x3) {
+        return _setUpdatetime.apply(this, arguments);
+      }
+
+      return setUpdatetime;
+    }()
+  }, {
+    key: "loadConfig",
+    value: function () {
+      var _loadConfig = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(configname, versiontag) {
+        var jsonfile, config_json;
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                jsonfile = './config/' + (this.namespace ? this.namespace + '/' : '') + configname + '.json';
+
+                if (this.updatetime) {
+                  jsonfile += '?t=' + this.updatetime + (versiontag ? '&v=' + versiontag : '');
+                } else {
+                  jsonfile += versiontag ? '?v=' + versiontag : '';
+                }
+
+                _context4.next = 4;
+                return this._loadExternalJSON(jsonfile)["catch"](function (err) {});
+
+              case 4:
+                config_json = _context4.sent;
+                return _context4.abrupt("return", config_json);
+
+              case 6:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function loadConfig(_x4, _x5) {
         return _loadConfig.apply(this, arguments);
       }
 
@@ -155,24 +188,24 @@ var WebClient = /*#__PURE__*/function () {
   }, {
     key: "init",
     value: function () {
-      var _init = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+      var _init = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
         var _globalscope, webclientcontrollers_init, Bootstrap, ScriptLoader, bootstrapobject, rootscriptloader, clientglobal, CoreConfig, XtraConfig, WebClientConfig, clientapicontrollers, session, webclient_config_dev, xtraconfigmodule, authkeymodule, oauth2module, currencies, webapp_currencies, array, i, key, currency, currenciesmodule, local_currencies, currencies_array;
 
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 console.log('WebClient.init called');
                 console.log('module init called for ' + this.name);
-                _context4.prev = 2;
+                _context5.prev = 2;
                 _globalscope = this.globalscope;
-                _context4.next = 6;
+                _context5.next = 6;
                 return this.webclientcontrollers.init()["catch"](function (err) {
                   console.log('error initializing web client controllers: ' + err);
                 });
 
               case 6:
-                webclientcontrollers_init = _context4.sent;
+                webclientcontrollers_init = _context5.sent;
                 console.log('webclient controllers initialized'); // end of all initialization
 
                 Bootstrap = _globalscope.simplestore.Bootstrap;
@@ -197,15 +230,15 @@ var WebClient = /*#__PURE__*/function () {
                 session = clientapicontrollers.getCurrentSessionObject();
 
                 if (!(this.execution_env == 'dev')) {
-                  _context4.next = 30;
+                  _context5.next = 30;
                   break;
                 }
 
-                _context4.next = 25;
+                _context5.next = 25;
                 return this.loadConfig('webclient-config-dev')["catch"](function (err) {});
 
               case 25:
-                webclient_config_dev = _context4.sent;
+                webclient_config_dev = _context5.sent;
 
                 if (webclient_config_dev) {
                   Object.assign(WebClientConfig, webclient_config_dev);
@@ -213,7 +246,7 @@ var WebClient = /*#__PURE__*/function () {
 
                 clientglobal.setExecutionEnvironment('dev'); // we call this.webclientcontrollers._initdev to simplify debugging
 
-                _context4.next = 30;
+                _context5.next = 30;
                 return this.webclientcontrollers._initdev();
 
               case 30:
@@ -241,13 +274,13 @@ var WebClient = /*#__PURE__*/function () {
                 currencies = this.getCurrencies(); // built-in
                 // additional currencies for webapp
 
-                _context4.next = 39;
+                _context5.next = 39;
                 return this.loadConfig('currencies-webapp')["catch"](function (err) {
                   console.log('WebClient.init error loading webapp currencies: ' + err);
                 });
 
               case 39:
-                webapp_currencies = _context4.sent;
+                webapp_currencies = _context5.sent;
 
                 if (webapp_currencies) {
                   array = Object.keys(webapp_currencies);
@@ -261,13 +294,13 @@ var WebClient = /*#__PURE__*/function () {
 
 
                 currenciesmodule = clientglobal.getModuleObject('currencies');
-                _context4.next = 44;
+                _context5.next = 44;
                 return currenciesmodule.readLocalCurrencies(session)["catch"](function (err) {
                   console.log('WebClient.init error reading local currencies: ' + err);
                 });
 
               case 44:
-                local_currencies = _context4.sent;
+                local_currencies = _context5.sent;
 
                 if (local_currencies) {
                   for (i = 0; i < (local_currencies ? local_currencies.length : 0); i++) {
@@ -278,15 +311,15 @@ var WebClient = /*#__PURE__*/function () {
 
 
                 if (!(this.execution_env == 'dev')) {
-                  _context4.next = 51;
+                  _context5.next = 51;
                   break;
                 }
 
-                _context4.next = 49;
+                _context5.next = 49;
                 return this.initdev();
 
               case 49:
-                _context4.next = 51;
+                _context5.next = 51;
                 return this.echotest();
 
               case 51:
@@ -304,19 +337,19 @@ var WebClient = /*#__PURE__*/function () {
 
                 rootscriptloader.signalEvent('on_mobile_load_end');
                 this.isready = true;
-                return _context4.abrupt("return", true);
+                return _context5.abrupt("return", true);
 
               case 57:
-                _context4.prev = 57;
-                _context4.t0 = _context4["catch"](2);
-                console.log('exception in WebClient.init: ' + _context4.t0);
+                _context5.prev = 57;
+                _context5.t0 = _context5["catch"](2);
+                console.log('exception in WebClient.init: ' + _context5.t0);
 
               case 60:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this, [[2, 57]]);
+        }, _callee5, this, [[2, 57]]);
       }));
 
       function init() {
@@ -328,15 +361,15 @@ var WebClient = /*#__PURE__*/function () {
   }, {
     key: "initprod",
     value: function () {
-      var _initprod = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(bForce) {
+      var _initprod = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(bForce) {
         var WebClientConfig, clientapicontrollers, session, webapp_schemes, network_list, i, prodnetwork, scheme, scheme_server, jsonarray, j, _builtin_local_schemes, _builtin_remote_schemes;
 
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
                 console.log('WebClient.initprod called');
-                _context5.prev = 1;
+                _context6.prev = 1;
                 WebClientConfig = this.WebClientConfig;
                 console.log('WebClient.initprod starting for ' + this.execution_env + 'execution environment');
                 clientapicontrollers = this.getClientAPI(); // get session object
@@ -345,16 +378,16 @@ var WebClient = /*#__PURE__*/function () {
                 // storage (webapp) environment
                 //
 
-                _context5.next = 8;
+                _context6.next = 8;
                 return this.loadConfig('schemes-webapp')["catch"](function (err) {
                   console.log('WebClient.initprod error loading webapp schemes: ' + err);
                 });
 
               case 8:
-                webapp_schemes = _context5.sent;
+                webapp_schemes = _context6.sent;
 
                 if (!webapp_schemes) {
-                  _context5.next = 23;
+                  _context6.next = 23;
                   break;
                 }
 
@@ -364,22 +397,22 @@ var WebClient = /*#__PURE__*/function () {
 
               case 13:
                 if (!(i < network_list.length)) {
-                  _context5.next = 23;
+                  _context6.next = 23;
                   break;
                 }
 
                 prodnetwork = network_list[i];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'prod-config';
-                _context5.next = 19;
+                _context6.next = 19;
                 return clientapicontrollers.createScheme(session, prodnetwork);
 
               case 19:
-                scheme = _context5.sent;
+                scheme = _context6.sent;
 
               case 20:
                 i++;
-                _context5.next = 13;
+                _context6.next = 13;
                 break;
 
               case 23:
@@ -426,7 +459,7 @@ var WebClient = /*#__PURE__*/function () {
                 //
 
                 if (!WebClientConfig.builtin_scheme_list_servers) {
-                  _context5.next = 49;
+                  _context6.next = 49;
                   break;
                 }
 
@@ -435,46 +468,46 @@ var WebClient = /*#__PURE__*/function () {
 
               case 27:
                 if (!(i < WebClientConfig.builtin_scheme_list_servers.length)) {
-                  _context5.next = 49;
+                  _context6.next = 49;
                   break;
                 }
 
                 scheme_server = WebClientConfig.builtin_scheme_list_servers[i];
                 console.log('WebClient.initprod calling scheme list server: ' + scheme_server.name);
-                _context5.next = 32;
+                _context6.next = 32;
                 return clientapicontrollers.http_get_json(session, scheme_server.url)["catch"](function (err) {
                   jsonarray = null;
                 });
 
               case 32:
-                jsonarray = _context5.sent;
+                jsonarray = _context6.sent;
                 console.log('WebClient.initprod starting calling scheme list servers');
                 network_list = jsonarray && jsonarray.data ? jsonarray.data : null;
                 j = 0;
 
               case 36:
                 if (!(j < (network_list ? network_list.length : 0))) {
-                  _context5.next = 46;
+                  _context6.next = 46;
                   break;
                 }
 
                 prodnetwork = network_list[j];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'prod-server-import';
-                _context5.next = 42;
+                _context6.next = 42;
                 return clientapicontrollers.createScheme(session, prodnetwork);
 
               case 42:
-                scheme = _context5.sent;
+                scheme = _context6.sent;
 
               case 43:
                 j++;
-                _context5.next = 36;
+                _context6.next = 36;
                 break;
 
               case 46:
                 i++;
-                _context5.next = 27;
+                _context6.next = 27;
                 break;
 
               case 49:
@@ -485,7 +518,7 @@ var WebClient = /*#__PURE__*/function () {
                 _builtin_local_schemes = this.getBuiltinLocalSchemes();
 
                 if (!_builtin_local_schemes) {
-                  _context5.next = 64;
+                  _context6.next = 64;
                   break;
                 }
 
@@ -495,22 +528,22 @@ var WebClient = /*#__PURE__*/function () {
 
               case 54:
                 if (!(i < network_list.length)) {
-                  _context5.next = 64;
+                  _context6.next = 64;
                   break;
                 }
 
                 prodnetwork = network_list[i];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'prod-local-built-in';
-                _context5.next = 60;
+                _context6.next = 60;
                 return clientapicontrollers.createScheme(session, prodnetwork);
 
               case 60:
-                scheme = _context5.sent;
+                scheme = _context6.sent;
 
               case 61:
                 i++;
-                _context5.next = 54;
+                _context6.next = 54;
                 break;
 
               case 64:
@@ -518,7 +551,7 @@ var WebClient = /*#__PURE__*/function () {
                 _builtin_remote_schemes = this.getBuiltinRemoteSchemes();
 
                 if (!_builtin_remote_schemes) {
-                  _context5.next = 79;
+                  _context6.next = 79;
                   break;
                 }
 
@@ -528,41 +561,41 @@ var WebClient = /*#__PURE__*/function () {
 
               case 69:
                 if (!(i < network_list.length)) {
-                  _context5.next = 79;
+                  _context6.next = 79;
                   break;
                 }
 
                 prodnetwork = network_list[i];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'prod-remote-built-in';
-                _context5.next = 75;
+                _context6.next = 75;
                 return clientapicontrollers.createScheme(session, prodnetwork);
 
               case 75:
-                scheme = _context5.sent;
+                scheme = _context6.sent;
 
               case 76:
                 i++;
-                _context5.next = 69;
+                _context6.next = 69;
                 break;
 
               case 79:
-                return _context5.abrupt("return", true);
+                return _context6.abrupt("return", true);
 
               case 82:
-                _context5.prev = 82;
-                _context5.t0 = _context5["catch"](1);
-                console.log('exception in WebClient.initprod: ' + _context5.t0);
+                _context6.prev = 82;
+                _context6.t0 = _context6["catch"](1);
+                console.log('exception in WebClient.initprod: ' + _context6.t0);
 
               case 85:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this, [[1, 82]]);
+        }, _callee6, this, [[1, 82]]);
       }));
 
-      function initprod(_x4) {
+      function initprod(_x6) {
         return _initprod.apply(this, arguments);
       }
 
@@ -571,15 +604,15 @@ var WebClient = /*#__PURE__*/function () {
   }, {
     key: "initdev",
     value: function () {
-      var _initdev = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(bForce) {
+      var _initdev = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(bForce) {
         var WebClientConfig, clientapicontrollers, session, currencies, dev_currencies, array, i, key, currency, dev_schemes, network_list, prodnetwork, scheme, error, importurl, imported, testnetwork, accountarray, accnt, address, name, label, contactinfo, contact, creations, vaultname, passphrase, creation, vaultsession, vaultnetworkconfig, vault, tokenarray, tkn, tokenaddress, web3providerurl, description, tokenuuid, token, privatekey, account, userarray, value, walletname, wallet, walletsession, j, testaccount, _cardname, _cardlabel, _address, card, k, tokenaccount, default_address, networkconfig, usercredentials, blanksession, canauthenticate, sessionaccounts, cards, username, password;
 
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
                 console.log('WebClient.initdev called');
-                _context6.prev = 1;
+                _context7.prev = 1;
                 WebClientConfig = this.WebClientConfig;
                 clientapicontrollers = this.getClientAPI(); // get session object
 
@@ -590,13 +623,13 @@ var WebClient = /*#__PURE__*/function () {
 
                 currencies = this.getCurrencies(); // additional currencies for dev
 
-                _context6.next = 8;
+                _context7.next = 8;
                 return this.loadConfig('currencies-dev')["catch"](function (err) {
                   console.log('WebClient.initdev error loading dev currencies: ' + err);
                 });
 
               case 8:
-                dev_currencies = _context6.sent;
+                dev_currencies = _context7.sent;
 
                 if (dev_currencies) {
                   array = Object.keys(dev_currencies);
@@ -612,16 +645,16 @@ var WebClient = /*#__PURE__*/function () {
                 // add dev schemes to localstorage, if any
 
 
-                _context6.next = 12;
+                _context7.next = 12;
                 return this.loadConfig('schemes-dev')["catch"](function (err) {
                   console.log('WebClient.initdev error loading dev schemes: ' + err);
                 });
 
               case 12:
-                dev_schemes = _context6.sent;
+                dev_schemes = _context7.sent;
 
                 if (!dev_schemes) {
-                  _context6.next = 27;
+                  _context7.next = 27;
                   break;
                 }
 
@@ -631,31 +664,31 @@ var WebClient = /*#__PURE__*/function () {
 
               case 17:
                 if (!(i < network_list.length)) {
-                  _context6.next = 27;
+                  _context7.next = 27;
                   break;
                 }
 
                 prodnetwork = network_list[i];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'dev-config';
-                _context6.next = 23;
+                _context7.next = 23;
                 return clientapicontrollers.createScheme(session, prodnetwork);
 
               case 23:
-                scheme = _context6.sent;
+                scheme = _context7.sent;
 
               case 24:
                 i++;
-                _context6.next = 17;
+                _context7.next = 17;
                 break;
 
               case 27:
                 if (!(WebClientConfig.initdev !== true && bForce !== true)) {
-                  _context6.next = 29;
+                  _context7.next = 29;
                   break;
                 }
 
-                return _context6.abrupt("return");
+                return _context7.abrupt("return");
 
               case 29:
                 console.log('WebClient.initdev starting for ' + this.execution_env + ' execution environment'); // clear LocalStorage
@@ -668,7 +701,7 @@ var WebClient = /*#__PURE__*/function () {
                 console.log('WebClient.initdev importing schemes');
 
                 if (!WebClientConfig.remoteschemes) {
-                  _context6.next = 44;
+                  _context7.next = 44;
                   break;
                 }
 
@@ -677,20 +710,20 @@ var WebClient = /*#__PURE__*/function () {
 
               case 36:
                 if (!(i < WebClientConfig.remoteschemes.length)) {
-                  _context6.next = 44;
+                  _context7.next = 44;
                   break;
                 }
 
                 importurl = WebClientConfig.remoteschemes[i].importurl;
-                _context6.next = 40;
+                _context7.next = 40;
                 return clientapicontrollers.importScheme(session, importurl);
 
               case 40:
-                imported = _context6.sent;
+                imported = _context7.sent;
 
               case 41:
                 i++;
-                _context6.next = 36;
+                _context7.next = 36;
                 break;
 
               case 44:
@@ -700,7 +733,7 @@ var WebClient = /*#__PURE__*/function () {
                 console.log('WebClient.initdev creating schemes');
 
                 if (!WebClientConfig.testnetworks) {
-                  _context6.next = 58;
+                  _context7.next = 58;
                   break;
                 }
 
@@ -709,22 +742,22 @@ var WebClient = /*#__PURE__*/function () {
 
               case 48:
                 if (!(i < WebClientConfig.testnetworks.length)) {
-                  _context6.next = 58;
+                  _context7.next = 58;
                   break;
                 }
 
                 testnetwork = WebClientConfig.testnetworks[i];
                 prodnetwork.xtra_data = prodnetwork.xtra_data ? prodnetwork.xtra_data : {};
                 prodnetwork.xtra_data.origin = 'dev-built-in';
-                _context6.next = 54;
+                _context7.next = 54;
                 return clientapicontrollers.createScheme(session, testnetwork);
 
               case 54:
-                scheme = _context6.sent;
+                scheme = _context7.sent;
 
               case 55:
                 i++;
-                _context6.next = 48;
+                _context7.next = 48;
                 break;
 
               case 58:
@@ -735,7 +768,7 @@ var WebClient = /*#__PURE__*/function () {
                 accountarray = WebClientConfig.testaccounts;
 
                 if (!accountarray) {
-                  _context6.next = 74;
+                  _context7.next = 74;
                   break;
                 }
 
@@ -743,7 +776,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 62:
                 if (!(i < accountarray.length)) {
-                  _context6.next = 74;
+                  _context7.next = 74;
                   break;
                 }
 
@@ -754,15 +787,15 @@ var WebClient = /*#__PURE__*/function () {
                 contactinfo = {
                   label: label
                 };
-                _context6.next = 70;
+                _context7.next = 70;
                 return clientapicontrollers.createContact(session, name, address, contactinfo);
 
               case 70:
-                contact = _context6.sent;
+                contact = _context7.sent;
 
               case 71:
                 i++;
-                _context6.next = 62;
+                _context7.next = 62;
                 break;
 
               case 74:
@@ -772,7 +805,7 @@ var WebClient = /*#__PURE__*/function () {
                 creations = [];
 
                 if (!(WebClientConfig.testvaults && WebClientConfig.testvaults.length > 0)) {
-                  _context6.next = 146;
+                  _context7.next = 146;
                   break;
                 }
 
@@ -782,22 +815,22 @@ var WebClient = /*#__PURE__*/function () {
 
               case 78:
                 if (!(i < WebClientConfig.testvaults.length)) {
-                  _context6.next = 88;
+                  _context7.next = 88;
                   break;
                 }
 
                 vaultname = WebClientConfig.testvaults[i].name;
                 passphrase = WebClientConfig.testvaults[i].passphrase;
-                _context6.next = 83;
+                _context7.next = 83;
                 return clientapicontrollers.createVault(session, vaultname, passphrase);
 
               case 83:
-                creation = _context6.sent;
+                creation = _context7.sent;
                 creations[i] = creation;
 
               case 85:
                 i++;
-                _context6.next = 78;
+                _context7.next = 78;
                 break;
 
               case 88:
@@ -805,7 +838,7 @@ var WebClient = /*#__PURE__*/function () {
                 creation = creations[0];
 
                 if (!creation) {
-                  _context6.next = 146;
+                  _context7.next = 146;
                   break;
                 }
 
@@ -819,18 +852,18 @@ var WebClient = /*#__PURE__*/function () {
                 vaultsession = clientapicontrollers.createBlankSessionObject();
                 vaultnetworkconfig = clientapicontrollers.getDefaultSchemeConfig(0); //vaultnetworkconfig.ethnodeserver.web3_provider_url = (WebClientConfig.testnetworks[0] ? WebClientConfig.testnetworks[0].ethnodeserver.web3_provider_url : null);
 
-                _context6.next = 98;
+                _context7.next = 98;
                 return clientapicontrollers.setSessionNetworkConfig(vaultsession, vaultnetworkconfig);
 
               case 98:
-                _context6.next = 100;
+                _context7.next = 100;
                 return clientapicontrollers.openVault(vaultsession, vaultname, passphrase);
 
               case 100:
-                vault = _context6.sent;
+                vault = _context7.sent;
 
                 if (!vault) {
-                  _context6.next = 140;
+                  _context7.next = 140;
                   break;
                 }
 
@@ -840,7 +873,7 @@ var WebClient = /*#__PURE__*/function () {
                 tokenarray = WebClientConfig.testtokens;
 
                 if (!tokenarray) {
-                  _context6.next = 122;
+                  _context7.next = 122;
                   break;
                 }
 
@@ -848,7 +881,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 107:
                 if (!(i < tokenarray.length)) {
-                  _context6.next = 122;
+                  _context7.next = 122;
                   break;
                 }
 
@@ -862,12 +895,12 @@ var WebClient = /*#__PURE__*/function () {
                 if (description) token.setLocalDescription(description);
                 if (tokenuuid) token.uuid = tokenuuid; // we save this token
 
-                _context6.next = 119;
+                _context7.next = 119;
                 return clientapicontrollers.saveERC20Token(vaultsession, token);
 
               case 119:
                 i++;
-                _context6.next = 107;
+                _context7.next = 107;
                 break;
 
               case 122:
@@ -876,7 +909,7 @@ var WebClient = /*#__PURE__*/function () {
                 accountarray = WebClientConfig.testaccounts;
 
                 if (!accountarray) {
-                  _context6.next = 139;
+                  _context7.next = 139;
                   break;
                 }
 
@@ -884,7 +917,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 126:
                 if (!(i < accountarray.length)) {
-                  _context6.next = 139;
+                  _context7.next = 139;
                   break;
                 }
 
@@ -896,12 +929,12 @@ var WebClient = /*#__PURE__*/function () {
                 account.setDescription(description);
                 session.addAccountObject(account); // we save this account
 
-                _context6.next = 136;
+                _context7.next = 136;
                 return clientapicontrollers.saveAccountObject(vaultsession, account);
 
               case 136:
                 i++;
-                _context6.next = 126;
+                _context7.next = 126;
                 break;
 
               case 139:
@@ -912,20 +945,20 @@ var WebClient = /*#__PURE__*/function () {
                 userarray = WebClientConfig.testusers;
 
                 if (!userarray) {
-                  _context6.next = 146;
+                  _context7.next = 146;
                   break;
                 }
 
                 key = 'credentials';
                 value = userarray;
-                _context6.next = 146;
+                _context7.next = 146;
                 return clientapicontrollers.putInVault(session, vaultname, key, value)["catch"](function (err) {
                   console.log('error storing credentials in vault ' + vaultname);
                 });
 
               case 146:
                 if (!(WebClientConfig.localwallets && WebClientConfig.localwallets.length > 0)) {
-                  _context6.next = 343;
+                  _context7.next = 343;
                   break;
                 }
 
@@ -939,22 +972,22 @@ var WebClient = /*#__PURE__*/function () {
 
               case 150:
                 if (!(i < WebClientConfig.localwallets.length)) {
-                  _context6.next = 160;
+                  _context7.next = 160;
                   break;
                 }
 
                 walletname = WebClientConfig.localwallets[i].name;
                 passphrase = WebClientConfig.localwallets[i].passphrase;
-                _context6.next = 155;
+                _context7.next = 155;
                 return clientapicontrollers.createWallet(session, walletname, passphrase);
 
               case 155:
-                creation = _context6.sent;
+                creation = _context7.sent;
                 creations[i] = creation;
 
               case 157:
                 i++;
-                _context6.next = 150;
+                _context7.next = 150;
                 break;
 
               case 160:
@@ -962,7 +995,7 @@ var WebClient = /*#__PURE__*/function () {
                 creation = creations[0];
 
                 if (!creation) {
-                  _context6.next = 330;
+                  _context7.next = 330;
                   break;
                 }
 
@@ -970,14 +1003,14 @@ var WebClient = /*#__PURE__*/function () {
                 walletname = WebClientConfig.localwallets[0].name;
                 passphrase = WebClientConfig.localwallets[0].passphrase; // wallet
 
-                _context6.next = 167;
+                _context7.next = 167;
                 return clientapicontrollers.openWallet(session, walletname, passphrase);
 
               case 167:
-                wallet = _context6.sent;
+                wallet = _context7.sent;
 
                 if (!wallet) {
-                  _context6.next = 330;
+                  _context7.next = 330;
                   break;
                 }
 
@@ -992,7 +1025,7 @@ var WebClient = /*#__PURE__*/function () {
                 tokenarray = WebClientConfig.testtokens;
 
                 if (!tokenarray) {
-                  _context6.next = 190;
+                  _context7.next = 190;
                   break;
                 }
 
@@ -1000,7 +1033,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 175:
                 if (!(i < tokenarray.length)) {
-                  _context6.next = 190;
+                  _context7.next = 190;
                   break;
                 }
 
@@ -1014,12 +1047,12 @@ var WebClient = /*#__PURE__*/function () {
                 if (description) token.setLocalDescription(description);
                 if (tokenuuid) token.uuid = tokenuuid; // we save this token
 
-                _context6.next = 187;
+                _context7.next = 187;
                 return clientapicontrollers.saveERC20Token(walletsession, token);
 
               case 187:
                 i++;
-                _context6.next = 175;
+                _context7.next = 175;
                 break;
 
               case 190:
@@ -1028,7 +1061,7 @@ var WebClient = /*#__PURE__*/function () {
                 accountarray = WebClientConfig.testaccounts;
 
                 if (!accountarray) {
-                  _context6.next = 208;
+                  _context7.next = 208;
                   break;
                 }
 
@@ -1036,7 +1069,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 194:
                 if (!(i < accountarray.length)) {
-                  _context6.next = 208;
+                  _context7.next = 208;
                   break;
                 }
 
@@ -1049,17 +1082,17 @@ var WebClient = /*#__PURE__*/function () {
                 walletsession.addAccountObject(account);
                 walletsession.user.addAccountObject(account); // we save this account
 
-                _context6.next = 205;
+                _context7.next = 205;
                 return clientapicontrollers.saveAccountObject(walletsession, account);
 
               case 205:
                 i++;
-                _context6.next = 194;
+                _context7.next = 194;
                 break;
 
               case 208:
                 if (!(WebClientConfig.testnetworks && WebClientConfig.localtestaccounts)) {
-                  _context6.next = 250;
+                  _context7.next = 250;
                   break;
                 }
 
@@ -1070,18 +1103,18 @@ var WebClient = /*#__PURE__*/function () {
 
               case 211:
                 if (!(i < WebClientConfig.testnetworks.length)) {
-                  _context6.next = 250;
+                  _context7.next = 250;
                   break;
                 }
 
-                _context6.next = 214;
+                _context7.next = 214;
                 return clientapicontrollers.getSchemeFromUUID(session, WebClientConfig.testnetworks[i].uuid);
 
               case 214:
-                scheme = _context6.sent;
+                scheme = _context7.sent;
 
                 if (!(scheme && !scheme.isRemote())) {
-                  _context6.next = 247;
+                  _context7.next = 247;
                   break;
                 }
 
@@ -1089,7 +1122,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 217:
                 if (!(j < WebClientConfig.localtestaccounts.length)) {
-                  _context6.next = 247;
+                  _context7.next = 247;
                   break;
                 }
 
@@ -1097,21 +1130,21 @@ var WebClient = /*#__PURE__*/function () {
                 _cardname = testaccount.description;
                 _cardlabel = testaccount.description + '-on-' + scheme.getName();
                 _address = testaccount.address;
-                _context6.next = 224;
+                _context7.next = 224;
                 return wallet.createCard(scheme, _cardname, null, _address)["catch"](function (err) {
                   console.log('error while creating local card ' + _cardname + ': ' + err);
                 });
 
               case 224:
-                card = _context6.sent;
+                card = _context7.sent;
 
                 if (!card) {
-                  _context6.next = 244;
+                  _context7.next = 244;
                   break;
                 }
 
                 card.setLabel(_cardlabel);
-                _context6.next = 229;
+                _context7.next = 229;
                 return card.save();
 
               case 229:
@@ -1119,38 +1152,38 @@ var WebClient = /*#__PURE__*/function () {
 
               case 230:
                 if (!(k < WebClientConfig.localtesttokens)) {
-                  _context6.next = 244;
+                  _context7.next = 244;
                   break;
                 }
 
                 tkn = WebClientConfig.localtesttokens[k];
                 token = card.getTokenObject(tkn.address);
-                _context6.next = 235;
+                _context7.next = 235;
                 return card.createTokenAccount(tkn);
 
               case 235:
-                tokenaccount = _context6.sent;
-                _context6.next = 238;
+                tokenaccount = _context7.sent;
+                _context7.next = 238;
                 return tokenaccount.init();
 
               case 238:
                 tokenaccount.setDescription(tkn.description);
-                _context6.next = 241;
+                _context7.next = 241;
                 return tokenaccount.save();
 
               case 241:
                 k++;
-                _context6.next = 230;
+                _context7.next = 230;
                 break;
 
               case 244:
                 j++;
-                _context6.next = 217;
+                _context7.next = 217;
                 break;
 
               case 247:
                 i++;
-                _context6.next = 211;
+                _context7.next = 211;
                 break;
 
               case 250:
@@ -1162,12 +1195,12 @@ var WebClient = /*#__PURE__*/function () {
                 userarray = WebClientConfig.remotetestusers;
 
                 if (!userarray) {
-                  _context6.next = 301;
+                  _context7.next = 301;
                   break;
                 }
 
                 if (!(WebClientConfig.testnetworks && WebClientConfig.testaccounts && WebClientConfig.testaccounts[0] && WebClientConfig.testaccounts[0].address)) {
-                  _context6.next = 301;
+                  _context7.next = 301;
                   break;
                 }
 
@@ -1178,23 +1211,23 @@ var WebClient = /*#__PURE__*/function () {
 
               case 256:
                 if (!(i < WebClientConfig.testnetworks.length)) {
-                  _context6.next = 301;
+                  _context7.next = 301;
                   break;
                 }
 
-                _context6.next = 259;
+                _context7.next = 259;
                 return clientapicontrollers.getSchemeFromUUID(session, WebClientConfig.testnetworks[i].uuid);
 
               case 259:
-                scheme = _context6.sent;
+                scheme = _context7.sent;
 
                 if (!scheme) {
-                  _context6.next = 297;
+                  _context7.next = 297;
                   break;
                 }
 
                 if (!scheme.isRemote()) {
-                  _context6.next = 295;
+                  _context7.next = 295;
                   break;
                 }
 
@@ -1203,37 +1236,37 @@ var WebClient = /*#__PURE__*/function () {
 
               case 264:
                 if (!(j < userarray.length)) {
-                  _context6.next = 295;
+                  _context7.next = 295;
                   break;
                 }
 
                 usercredentials = userarray[j]; // create card if we can authenticate
 
-                _context6.next = 268;
+                _context7.next = 268;
                 return clientapicontrollers.createNetworkSession(networkconfig);
 
               case 268:
-                blanksession = _context6.sent;
-                _context6.next = 271;
+                blanksession = _context7.sent;
+                _context7.next = 271;
                 return clientapicontrollers.authenticate(blanksession, usercredentials.username, usercredentials.password);
 
               case 271:
-                canauthenticate = _context6.sent;
+                canauthenticate = _context7.sent;
 
                 if (!canauthenticate) {
-                  _context6.next = 292;
+                  _context7.next = 292;
                   break;
                 }
 
-                _context6.next = 275;
+                _context7.next = 275;
                 return clientapicontrollers.getSessionAccountObjects(blanksession, true);
 
               case 275:
-                sessionaccounts = _context6.sent;
+                sessionaccounts = _context7.sent;
                 _address = default_address;
 
                 if (!sessionaccounts) {
-                  _context6.next = 292;
+                  _context7.next = 292;
                   break;
                 }
 
@@ -1241,41 +1274,41 @@ var WebClient = /*#__PURE__*/function () {
 
               case 279:
                 if (!(k < sessionaccounts.length)) {
-                  _context6.next = 292;
+                  _context7.next = 292;
                   break;
                 }
 
                 _cardlabel = usercredentials.username + '-on-' + scheme.getName();
                 _address = sessionaccounts[k].getAddress();
-                _context6.next = 284;
+                _context7.next = 284;
                 return wallet.createCard(scheme, usercredentials.username, usercredentials.password, _address)["catch"](function (err) {
                   console.log('error while creating remote card ' + usercredentials.username + ': ' + err);
                 });
 
               case 284:
-                card = _context6.sent;
+                card = _context7.sent;
 
                 if (!card) {
-                  _context6.next = 289;
+                  _context7.next = 289;
                   break;
                 }
 
                 card.setLabel(_cardlabel);
-                _context6.next = 289;
+                _context7.next = 289;
                 return card.save();
 
               case 289:
                 k++;
-                _context6.next = 279;
+                _context7.next = 279;
                 break;
 
               case 292:
                 j++;
-                _context6.next = 264;
+                _context7.next = 264;
                 break;
 
               case 295:
-                _context6.next = 298;
+                _context7.next = 298;
                 break;
 
               case 297:
@@ -1283,7 +1316,7 @@ var WebClient = /*#__PURE__*/function () {
 
               case 298:
                 i++;
-                _context6.next = 256;
+                _context7.next = 256;
                 break;
 
               case 301:
@@ -1291,38 +1324,38 @@ var WebClient = /*#__PURE__*/function () {
                 // create token accounts
                 // and store them
                 console.log('WebClient.initdev creating token accounts for cards of first wallet');
-                _context6.next = 304;
+                _context7.next = 304;
                 return wallet.getCardList(true);
 
               case 304:
-                cards = _context6.sent;
+                cards = _context7.sent;
                 i = 0;
 
               case 306:
                 if (!(i < cards.length)) {
-                  _context6.next = 329;
+                  _context7.next = 329;
                   break;
                 }
 
                 card = cards[i];
 
                 if (!card.isLocked()) {
-                  _context6.next = 311;
+                  _context7.next = 311;
                   break;
                 }
 
-                _context6.next = 311;
+                _context7.next = 311;
                 return card.unlock();
 
               case 311:
-                _context6.next = 313;
+                _context7.next = 313;
                 return card.getTokenList(true);
 
               case 313:
-                tokenarray = _context6.sent;
+                tokenarray = _context7.sent;
 
                 if (!tokenarray) {
-                  _context6.next = 326;
+                  _context7.next = 326;
                   break;
                 }
 
@@ -1330,27 +1363,27 @@ var WebClient = /*#__PURE__*/function () {
 
               case 316:
                 if (!(j < tokenarray.length)) {
-                  _context6.next = 326;
+                  _context7.next = 326;
                   break;
                 }
 
                 tkn = tokenarray[j];
                 tokenaddress = tkn.getAddress();
                 description = tkn.getAddress();
-                _context6.next = 322;
+                _context7.next = 322;
                 return card.createTokenAccount(tkn);
 
               case 322:
-                tokenaccount = _context6.sent;
+                tokenaccount = _context7.sent;
 
               case 323:
                 j++;
-                _context6.next = 316;
+                _context7.next = 316;
                 break;
 
               case 326:
                 i++;
-                _context6.next = 306;
+                _context7.next = 306;
                 break;
 
               case 329:
@@ -1365,7 +1398,7 @@ var WebClient = /*#__PURE__*/function () {
                 console.log('WebClient.initdev importing remote wallets');
 
                 if (!WebClientConfig.remotewallets) {
-                  _context6.next = 343;
+                  _context7.next = 343;
                   break;
                 }
 
@@ -1373,46 +1406,46 @@ var WebClient = /*#__PURE__*/function () {
 
               case 333:
                 if (!(i < WebClientConfig.remotewallets.length)) {
-                  _context6.next = 343;
+                  _context7.next = 343;
                   break;
                 }
 
                 username = WebClientConfig.remotewallets[i].username;
                 password = WebClientConfig.remotewallets[i].password;
                 importurl = WebClientConfig.remotewallets[i].importurl;
-                _context6.next = 339;
+                _context7.next = 339;
                 return clientapicontrollers.importWallet(session, importurl, username, password);
 
               case 339:
-                imported = _context6.sent;
+                imported = _context7.sent;
 
               case 340:
                 i++;
-                _context6.next = 333;
+                _context7.next = 333;
                 break;
 
               case 343:
                 console.log('WebClient.initdev successfully finished initialization of dev environment');
-                return _context6.abrupt("return", true);
+                return _context7.abrupt("return", true);
 
               case 347:
-                _context6.prev = 347;
-                _context6.t0 = _context6["catch"](1);
-                console.log('exception in WebClient.initdev: ' + _context6.t0);
-                console.log(_context6.t0.stack);
+                _context7.prev = 347;
+                _context7.t0 = _context7["catch"](1);
+                console.log('exception in WebClient.initdev: ' + _context7.t0);
+                console.log(_context7.t0.stack);
 
               case 351:
                 console.log('WebClient.initdev end');
 
               case 352:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this, [[1, 347]]);
+        }, _callee7, this, [[1, 347]]);
       }));
 
-      function initdev(_x5) {
+      function initdev(_x7) {
         return _initdev.apply(this, arguments);
       }
 
@@ -1620,38 +1653,38 @@ var WebClient = /*#__PURE__*/function () {
   }, {
     key: "_clearWebLocalStorage",
     value: function () {
-      var _clearWebLocalStorage2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+      var _clearWebLocalStorage2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
                 if (!(this.execution_env != 'dev')) {
-                  _context7.next = 2;
+                  _context8.next = 2;
                   break;
                 }
 
-                return _context7.abrupt("return", Promise.reject('can not clear LocalStorage in an execution environment other than dev!'));
+                return _context8.abrupt("return", Promise.reject('can not clear LocalStorage in an execution environment other than dev!'));
 
               case 2:
-                _context7.prev = 2;
+                _context8.prev = 2;
                 localStorage.clear();
-                _context7.next = 9;
+                _context8.next = 9;
                 break;
 
               case 6:
-                _context7.prev = 6;
-                _context7.t0 = _context7["catch"](2);
-                return _context7.abrupt("return", Promise.reject('error clearing LocalStorage'));
+                _context8.prev = 6;
+                _context8.t0 = _context8["catch"](2);
+                return _context8.abrupt("return", Promise.reject('error clearing LocalStorage'));
 
               case 9:
-                return _context7.abrupt("return", true);
+                return _context8.abrupt("return", true);
 
               case 10:
               case "end":
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this, [[2, 6]]);
+        }, _callee8, this, [[2, 6]]);
       }));
 
       function _clearWebLocalStorage() {
@@ -1678,33 +1711,33 @@ var WebClient = /*#__PURE__*/function () {
   }, {
     key: "echotest",
     value: function () {
-      var _echotest = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+      var _echotest = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
         var _this2 = this;
 
         var WebClientConfig, clientapicontrollers, topsession, localsession, remotesession, username, password, networkuuid, networks, network, i, tokenarray, blocknumber, txhash, tx, data, data2, datastring, tx2, address, balance, tokenaddress, providerurl, position;
-        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
                 console.log('WebClient.echotest called');
-                _context8.prev = 1;
+                _context9.prev = 1;
 
                 if (!(this.getExecutionEnvironment() != 'dev')) {
-                  _context8.next = 4;
+                  _context9.next = 4;
                   break;
                 }
 
-                return _context8.abrupt("return");
+                return _context9.abrupt("return");
 
               case 4:
                 WebClientConfig = this.WebClientConfig;
 
                 if (!(WebClientConfig.echotestdev !== true)) {
-                  _context8.next = 7;
+                  _context9.next = 7;
                   break;
                 }
 
-                return _context8.abrupt("return");
+                return _context9.abrupt("return");
 
               case 7:
                 console.log('Executing WebClient.echotest for dev execution environment');
@@ -1717,12 +1750,12 @@ var WebClient = /*#__PURE__*/function () {
                 //
 
                 if (!(WebClientConfig.authkeymodule_activate === true)) {
-                  _context8.next = 33;
+                  _context9.next = 33;
                   break;
                 }
 
                 if (!WebClientConfig.testusers) {
-                  _context8.next = 33;
+                  _context9.next = 33;
                   break;
                 }
 
@@ -1734,45 +1767,45 @@ var WebClient = /*#__PURE__*/function () {
 
               case 20:
                 if (!(i < (networks ? networks.length : 0))) {
-                  _context8.next = 27;
+                  _context9.next = 27;
                   break;
                 }
 
                 if (!(networkuuid === networks[i].uuid)) {
-                  _context8.next = 24;
+                  _context9.next = 24;
                   break;
                 }
 
                 network = networks[i];
-                return _context8.abrupt("break", 27);
+                return _context9.abrupt("break", 27);
 
               case 24:
                 i++;
-                _context8.next = 20;
+                _context9.next = 20;
                 break;
 
               case 27:
                 if (!network) {
-                  _context8.next = 32;
+                  _context9.next = 32;
                   break;
                 }
 
-                _context8.next = 30;
+                _context9.next = 30;
                 return clientapicontrollers.setSessionNetworkConfig(remotesession, network);
 
               case 30:
-                _context8.next = 32;
+                _context9.next = 32;
                 return clientapicontrollers.authenticate(remotesession, username, password);
 
               case 32:
                 this.echo('switch to authenticated remote session ' + (remotesession ? remotesession.isAnonymous() ? 'NOT successful' : 'successful' : 'not created'));
 
               case 33:
-                _context8.next = 35;
+                _context9.next = 35;
                 return clientapicontrollers.getERC20TokenList(remotesession, true);
 
               case 35:
-                tokenarray = _context8.sent;
+                tokenarray = _context9.sent;
                 this.echo('list of tokens contains ' + (tokenarray && tokenarray.length ? tokenarray.length : 0) + ' element(s)'); //
                 // ethnode
                 //
@@ -1783,43 +1816,43 @@ var WebClient = /*#__PURE__*/function () {
                 });*/
                 // current block number
 
-                _context8.next = 39;
+                _context9.next = 39;
                 return clientapicontrollers.readCurrentBlockNumber(remotesession)["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 39:
-                blocknumber = _context8.sent;
+                blocknumber = _context9.sent;
                 this.echo('current block number is: ' + blocknumber); // transaction
 
                 if (!(WebClientConfig.testtransactions && WebClientConfig.testtransactions[0])) {
-                  _context8.next = 65;
+                  _context9.next = 65;
                   break;
                 }
 
                 // using ethchainreader
                 txhash = WebClientConfig.testtransactions[0].hash;
-                _context8.next = 45;
+                _context9.next = 45;
                 return clientapicontrollers.readTransaction(remotesession, txhash)["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 45:
-                tx = _context8.sent;
+                tx = _context9.sent;
                 this.echo('transaction data is: ' + (tx && tx.input_decoded_utf8 ? tx.input_decoded_utf8 : null));
 
                 if (!tx) {
-                  _context8.next = 54;
+                  _context9.next = 54;
                   break;
                 }
 
-                _context8.next = 50;
+                _context9.next = 50;
                 return tx.getTransactionReceiptData()["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 50:
-                data = _context8.sent;
+                data = _context9.sent;
                 data2 = data ? {
                   blockNumber: data.blockNumber
                 } : null;
@@ -1827,27 +1860,27 @@ var WebClient = /*#__PURE__*/function () {
                 this.echo('transaction receipt data is: ' + datastring);
 
               case 54:
-                _context8.next = 56;
+                _context9.next = 56;
                 return clientapicontrollers.getEthereumTransaction(remotesession, txhash)["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 56:
-                tx2 = _context8.sent;
+                tx2 = _context9.sent;
                 this.echo('transaction data is: ' + (tx2 ? tx2.data_decoded_utf8 : null));
 
                 if (!tx2) {
-                  _context8.next = 65;
+                  _context9.next = 65;
                   break;
                 }
 
-                _context8.next = 61;
+                _context9.next = 61;
                 return clientapicontrollers.getEthereumTransactionReceipt(remotesession, txhash)["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 61:
-                data = _context8.sent;
+                data = _context9.sent;
                 data2 = data ? {
                   blockNumber: data.blockNumber
                 } : null;
@@ -1856,23 +1889,23 @@ var WebClient = /*#__PURE__*/function () {
 
               case 65:
                 if (!(WebClientConfig.testaccounts && WebClientConfig.testaccounts[0] && WebClientConfig.testaccounts[1])) {
-                  _context8.next = 83;
+                  _context9.next = 83;
                   break;
                 }
 
                 address = WebClientConfig.testaccounts[0].address; // web 3 account balance
 
-                _context8.next = 69;
+                _context9.next = 69;
                 return clientapicontrollers.getEthAddressBalance(remotesession, address)["catch"](function (err) {
                   _this2.echo('error: ' + err);
                 });
 
               case 69:
-                balance = _context8.sent;
+                balance = _context9.sent;
                 this.echo(address + ' balance is: ' + balance); // tokens
 
                 if (!WebClientConfig.testtokens) {
-                  _context8.next = 83;
+                  _context9.next = 83;
                   break;
                 }
 
@@ -1880,42 +1913,42 @@ var WebClient = /*#__PURE__*/function () {
 
               case 73:
                 if (!(i < WebClientConfig.testtokens.length)) {
-                  _context8.next = 83;
+                  _context9.next = 83;
                   break;
                 }
 
                 tokenaddress = WebClientConfig.testtokens[i].address;
                 providerurl = WebClientConfig.testtokens[i].web3providerurl;
-                _context8.next = 78;
+                _context9.next = 78;
                 return clientapicontrollers.getAddressERC20Position(remotesession, providerurl, tokenaddress, address)["catch"](function (err) {
                   console.log('error: ' + err);
                 });
 
               case 78:
-                position = _context8.sent;
+                position = _context9.sent;
                 this.echo(address + ' position is: ' + position);
 
               case 80:
                 i++;
-                _context8.next = 73;
+                _context9.next = 73;
                 break;
 
               case 83:
-                _context8.next = 89;
+                _context9.next = 89;
                 break;
 
               case 85:
-                _context8.prev = 85;
-                _context8.t0 = _context8["catch"](1);
-                this.echo('exception in WebClient.echotest: ' + _context8.t0);
-                console.log(_context8.t0.stack);
+                _context9.prev = 85;
+                _context9.t0 = _context9["catch"](1);
+                this.echo('exception in WebClient.echotest: ' + _context9.t0);
+                console.log(_context9.t0.stack);
 
               case 89:
               case "end":
-                return _context8.stop();
+                return _context9.stop();
             }
           }
-        }, _callee8, this, [[1, 85]]);
+        }, _callee9, this, [[1, 85]]);
       }));
 
       function echotest() {
@@ -1940,4 +1973,3 @@ var WebClient = /*#__PURE__*/function () {
 
 var _default = WebClient;
 exports["default"] = _default;
-//# sourceMappingURL=web-client.js.map

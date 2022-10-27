@@ -24,4 +24,3 @@ var Currencies = {
 
 var _default = Currencies;
 exports["default"] = _default;
-//# sourceMappingURL=currencies.js.map

@@ -54,4 +54,3 @@ var MyComponent = /*#__PURE__*/function (_React$Component) {
 
 var _default = MyComponent;
 exports["default"] = _default;
-//# sourceMappingURL=contact-send-form.js.map

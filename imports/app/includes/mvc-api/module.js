@@ -6542,4 +6542,3 @@ _GlobalClass.getGlobalObject().registerModuleObject(new Module()); //dependencie
 
 
 _GlobalClass.getGlobalObject().registerModuleDepency('mvc-currencies', 'common');
-//# sourceMappingURL=module.js.map

@@ -372,4 +372,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('uniswap', 'V2_Router02ContractInterface', Router02ContractInterface);
-//# sourceMappingURL=router02-contract-interface.js.map

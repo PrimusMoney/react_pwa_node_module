@@ -84,4 +84,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('uniswap', 'V2_FactoryContractInterface', FactoryContractInterface);
-//# sourceMappingURL=factory-contract-interface.js.map

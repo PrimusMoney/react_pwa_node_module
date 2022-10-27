@@ -2296,4 +2296,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(CurrencyCardView);
 
 exports["default"] = _default;
-//# sourceMappingURL=currency-card-view.js.map

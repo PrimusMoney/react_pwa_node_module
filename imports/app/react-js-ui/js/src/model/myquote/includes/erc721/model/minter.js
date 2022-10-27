@@ -142,4 +142,3 @@ var Minter = /*#__PURE__*/function (_ERC721TokenClass) {
 }(ERC721TokenClass);
 
 _GlobalClass.registerModuleClass('mvc-erc721', 'Minter', Minter);
-//# sourceMappingURL=minter.js.map

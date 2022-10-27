@@ -335,4 +335,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('uniswap', 'UniswapAccess', UniswapAccess);
-//# sourceMappingURL=uniswap-access.js.map

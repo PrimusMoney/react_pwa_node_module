@@ -117,4 +117,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(LogoutScreen);
 
 exports["default"] = _default;
-//# sourceMappingURL=logout.js.map

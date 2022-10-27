@@ -239,4 +239,3 @@ WebClientConfig.builtin_remote_schemes = {
 
 var _default = WebClientConfig;
 exports["default"] = _default;
-//# sourceMappingURL=webclient-config.js.map

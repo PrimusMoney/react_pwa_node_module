@@ -1330,4 +1330,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(LoginForm);
 
 exports["default"] = _default;
-//# sourceMappingURL=login-form.js.map

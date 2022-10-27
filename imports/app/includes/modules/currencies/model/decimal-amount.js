@@ -328,4 +328,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('currencies', 'DecimalAmount', DecimalAmount);
-//# sourceMappingURL=decimal-amount.js.map

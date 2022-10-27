@@ -133,7 +133,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
     key: "checkContext",
     value: function () {
       var _checkContext = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, wallet;
+        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, boot_webapp, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, wallet;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -148,25 +148,28 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
 
               case 6:
                 isonline = _context.sent;
-                connectioninfo.online_status_string = isonline ? mvcmyquote.t('you are online') : mvcmyquote.t('you appear to be offline'); // local settings
+                connectioninfo.online_status_string = isonline ? mvcmyquote.t('you are online') : mvcmyquote.t('you appear to be offline'); // app, boot_webapp & local settings
 
                 settingsinfo = {};
+                boot_webapp = this.app.getConfig();
+                settingsinfo.conf_update_time = boot_webapp.updatetime;
+                settingsinfo.app_update_time = this.app.updatetime;
                 webapp_name = this.app.basename;
-                _context.next = 12;
+                _context.next = 15;
                 return this.mvcmyquote.readSettings(['firstboot']);
 
-              case 12:
+              case 15:
                 firstboot = _context.sent;
                 webapp_firstboot = firstboot[webapp_name] ? firstboot[webapp_name] : firstboot;
                 settingsinfo.time_string = webapp_firstboot.time ? mvcmyquote.formatDate(webapp_firstboot.time / 1000, 'YYYY-mm-dd HH:MM:SS') : mvcmyquote.t('never');
-                settingsinfo.initial_time_string = webapp_firstboot.initial_time ? mvcmyquote.formatDate(webapp_firstboot.initial_time / 1000, 'YYYY-mm-dd HH:MM:SS') : mvcmyquote.t('never');
+                settingsinfo.initial_time_string = webapp_firstboot.initial_time ? mvcmyquote.formatDate(webapp_firstboot.initial_time / 1000, 'YYYY-mm-dd HH:MM:SS') : mvcmyquote.t('n.a.');
                 settingsinfo.last_update_string = webapp_firstboot.last_update ? mvcmyquote.formatDate(webapp_firstboot.last_update / 1000, 'YYYY-mm-dd HH:MM:SS') : mvcmyquote.t('never');
                 walletinfo = {};
                 walletuuid = this.props.currentwalletuuid;
-                _context.next = 21;
+                _context.next = 24;
                 return mvcmodule.getWalletInfo(rootsessionuuid, walletuuid)["catch"](function (err) {});
 
-              case 21:
+              case 24:
                 wallet = _context.sent;
 
                 if (wallet) {
@@ -179,7 +182,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
                   walletinfo: walletinfo
                 });
 
-              case 24:
+              case 27:
               case "end":
                 return _context.stop();
             }
@@ -245,18 +248,18 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
         className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("div", null, 'os name: ' + deviceinfo.osName), /*#__PURE__*/_react["default"].createElement("div", null, 'os version: ' + deviceinfo.osVersion), /*#__PURE__*/_react["default"].createElement("div", null, 'browser version: ' + deviceinfo.fullBrowserVersion)), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
-      }, /*#__PURE__*/_react["default"].createElement("div", null, 'last setup: ' + (settingsinfo.time_string ? settingsinfo.time_string : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'last update: ' + (settingsinfo.last_update_string ? settingsinfo.last_update_string : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'initial setup: ' + (settingsinfo.initial_time_string ? settingsinfo.initial_time_string : 'none'))), /*#__PURE__*/_react["default"].createElement("div", {
+      }, /*#__PURE__*/_react["default"].createElement("div", null, 'last setup: ' + (settingsinfo.time_string ? settingsinfo.time_string : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'initial setup: ' + (settingsinfo.initial_time_string ? settingsinfo.initial_time_string : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'conf update: ' + (settingsinfo.conf_update_time ? settingsinfo.conf_update_time : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'app update: ' + (settingsinfo.app_update_time ? settingsinfo.app_update_time : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'last update: ' + (settingsinfo.last_update_string ? settingsinfo.last_update_string : 'none'))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("div", null, 'online status: ' + (connectioninfo.online_status_string ? connectioninfo.online_status_string : ''))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("div", null, 'current wallet: ' + (walletinfo.name ? walletinfo.name : 'none'))), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
-      }, liabilitymessage), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
-        className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("span", null, "Privacy policy: "), /*#__PURE__*/_react["default"].createElement("span", {
         className: "ShareLink",
         onClick: this.onPrivacyLinkClick.bind(this)
-      }, privacylink)), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), exec_env == 'dev' ? /*#__PURE__*/_react["default"].createElement("div", {
+      }, privacylink)), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
+        className: "TextBox"
+      }, liabilitymessage), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), exec_env == 'dev' ? /*#__PURE__*/_react["default"].createElement("div", {
         className: "DevInfo"
       }, /*#__PURE__*/_react["default"].createElement("div", null, 'app env: ' + dev_info.app_exec_env), /*#__PURE__*/_react["default"].createElement("div", null, 'react: ' + dev_info.react_version), /*#__PURE__*/_react["default"].createElement("div", null, 'mvc env: ' + dev_info.mvc_exec_env), /*#__PURE__*/_react["default"].createElement("div", null, "isMobile: ", _mobileDeviceDetect.isMobile ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isMobileOnly: ", _mobileDeviceDetect.isMobileOnly ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isTablet: ", _mobileDeviceDetect.isTablet ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isBrowser: ", _mobileDeviceDetect.isBrowser ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isSmartTV: ", _mobileDeviceDetect.isSmartTV ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isWearable: ", _mobileDeviceDetect.isWearable ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isConsole: ", _mobileDeviceDetect.isConsole ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isAndroid: ", _mobileDeviceDetect.isAndroid ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isWinPhone: ", _mobileDeviceDetect.isWinPhone ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isIOS: ", _mobileDeviceDetect.isIOS ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isChrome: ", _mobileDeviceDetect.isChrome ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isFirefox: ", _mobileDeviceDetect.isFirefox ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isSafari: ", _mobileDeviceDetect.isSafari ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isOpera: ", _mobileDeviceDetect.isOpera ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isIE: ", _mobileDeviceDetect.isIE ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isEdge: ", _mobileDeviceDetect.isEdge ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isYandex: ", _mobileDeviceDetect.isYandex ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isChromium: ", _mobileDeviceDetect.isChromium ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "isMobileSafari: ", _mobileDeviceDetect.isMobileSafari ? 'true' : 'false'), /*#__PURE__*/_react["default"].createElement("div", null, "deviceDetect: ", typeof _mobileDeviceDetect.deviceDetect !== 'undefined' ? JSON.stringify((0, _mobileDeviceDetect.deviceDetect)()) : null)) : /*#__PURE__*/_react["default"].createElement(_react["default"].Fragment, null));
     }
@@ -304,4 +307,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(AboutScreen);
 
 exports["default"] = _default;
-//# sourceMappingURL=about.js.map

@@ -318,4 +318,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Header);
 
 exports["default"] = _default;
-//# sourceMappingURL=header.js.map

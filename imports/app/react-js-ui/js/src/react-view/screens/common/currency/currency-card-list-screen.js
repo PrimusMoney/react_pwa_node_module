@@ -167,4 +167,3 @@ CurrencyCardListScreen.propTypes = {
 };
 var _default = CurrencyCardListScreen;
 exports["default"] = _default;
-//# sourceMappingURL=currency-card-list-screen.js.map

@@ -184,4 +184,3 @@ var ModuleControllers = /*#__PURE__*/function () {
 
 var _default = ModuleControllers;
 exports["default"] = _default;
-//# sourceMappingURL=controllers.js.map

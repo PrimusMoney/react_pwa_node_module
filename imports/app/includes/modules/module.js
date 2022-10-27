@@ -142,4 +142,3 @@ _GlobalClass.getGlobalObject().registerModuleObject(new Module()); // dependenci
 _GlobalClass.getGlobalObject().registerModuleDepency('currenciesmodules', 'common');
 
 _GlobalClass.getGlobalObject().registerModuleDepency('currenciesmodules', 'clientmodules');
-//# sourceMappingURL=module.js.map

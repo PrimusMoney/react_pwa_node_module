@@ -198,4 +198,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(DeepLinkScreen);
 
 exports["default"] = _default;
-//# sourceMappingURL=deeplink-screen.js.map

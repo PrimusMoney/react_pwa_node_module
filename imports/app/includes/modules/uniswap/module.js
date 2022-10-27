@@ -237,4 +237,3 @@ _GlobalClass.getGlobalObject().registerModuleObject(new Module()); // dependenci
 
 
 _GlobalClass.getGlobalObject().registerModuleDepency('uniswap', 'common');
-//# sourceMappingURL=module.js.map

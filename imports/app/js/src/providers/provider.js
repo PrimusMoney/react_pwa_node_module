@@ -41,4 +41,3 @@ var Provider = /*#__PURE__*/function () {
 
 var _default = Provider;
 exports["default"] = _default;
-//# sourceMappingURL=provider.js.map

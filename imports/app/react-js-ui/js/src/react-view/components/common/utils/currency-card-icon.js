@@ -47,4 +47,3 @@ var CurrencyCardIcon = function CurrencyCardIcon(_ref) {
 
 var _default = CurrencyCardIcon;
 exports["default"] = _default;
-//# sourceMappingURL=currency-card-icon.js.map

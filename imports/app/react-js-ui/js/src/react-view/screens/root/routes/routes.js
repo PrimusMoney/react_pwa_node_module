@@ -125,4 +125,3 @@ var Routes = /*#__PURE__*/function () {
 
 var _default = Routes;
 exports["default"] = _default;
-//# sourceMappingURL=routes.js.map

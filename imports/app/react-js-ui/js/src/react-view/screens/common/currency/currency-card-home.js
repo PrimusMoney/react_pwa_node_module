@@ -188,4 +188,3 @@ CurrencyCardHomeScreen.propTypes = {
 };
 var _default = CurrencyCardHomeScreen;
 exports["default"] = _default;
-//# sourceMappingURL=currency-card-home.js.map

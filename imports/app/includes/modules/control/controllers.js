@@ -259,4 +259,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 
   _GlobalClass2.registerModuleClass('currenciesmodules', 'Controllers', ModuleControllers);
 }
-//# sourceMappingURL=controllers.js.map

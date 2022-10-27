@@ -295,4 +295,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ContactView);
 
 exports["default"] = _default;
-//# sourceMappingURL=contact-view.js.map

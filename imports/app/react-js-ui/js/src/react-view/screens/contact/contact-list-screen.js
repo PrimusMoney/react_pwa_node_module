@@ -144,4 +144,3 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var _default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ContactListScreen);
 
 exports["default"] = _default;
-//# sourceMappingURL=contact-list-screen.js.map

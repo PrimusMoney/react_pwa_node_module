@@ -82,4 +82,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('uniswap', 'V2_PairContractInterface', PairContractInterface);
-//# sourceMappingURL=pair-contract-interface.js.map

@@ -215,4 +215,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('mvc-erc721', 'Locker', Locker);
-//# sourceMappingURL=locker.js.map

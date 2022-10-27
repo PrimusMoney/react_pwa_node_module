@@ -204,4 +204,3 @@ if (typeof window !== 'undefined' && typeof window.GlobalClass !== 'undefined' &
 }
 
 _GlobalClass.registerModuleClass('currencies', 'CurrencyAmount', CurrencyAmount);
-//# sourceMappingURL=currency-amount.js.map

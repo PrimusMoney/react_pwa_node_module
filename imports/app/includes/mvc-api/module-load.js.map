@@ -1,1 +1,0 @@
-{"version":3,"file":"module-load.js","names":[],"sources":["../../../../../../../imports/app/includes/mvc-api/module-load.js"],"sourcesContent":["import './module.js';\n\n// all currencies modules\nimport '../modules/module-load.js';\n\n\n"],"mappings":";;AAAA;;AAGA"}

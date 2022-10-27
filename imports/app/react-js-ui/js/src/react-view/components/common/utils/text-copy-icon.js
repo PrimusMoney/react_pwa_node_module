@@ -50,4 +50,3 @@ var TextCopyIcon = function TextCopyIcon(_ref) {
 
 var _default = TextCopyIcon;
 exports["default"] = _default;
-//# sourceMappingURL=text-copy-icon.js.map

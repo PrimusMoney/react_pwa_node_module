@@ -154,4 +154,3 @@ SplashScreen.propTypes = {
 };
 var _default = SplashScreen;
 exports["default"] = _default;
-//# sourceMappingURL=splash.js.map

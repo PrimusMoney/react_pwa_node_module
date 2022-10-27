@@ -43,4 +43,3 @@ List.propTypes = {
 };
 var _default = List;
 exports["default"] = _default;
-//# sourceMappingURL=list.js.map

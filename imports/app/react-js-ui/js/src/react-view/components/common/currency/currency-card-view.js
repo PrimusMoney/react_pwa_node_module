@@ -405,7 +405,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     key: "checkNavigationState",
     value: function () {
       var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-        var mvcmyquote, rootsessionuuid, walletuuid, app_nav_state, app_nav_target, unlocked, online, _params, devicewallet, _params2, isdevicewallet, params, web3_provider_url, tokenaddress, currencyuuid, carduuid, cardaddress, to_address, transfer_amount, ring, _params3, currency, options, scheme, _existing_currencies, i, _currency_description, card, maincurrencycard, canpay, _canpay2, cards, _card, _canpay, _currency, _card2, _currency2, _carduuid, _currencyuuid2, _scheme, credits, creditbalance, position, position_string, position_int, message_text, address, privatekey, web3providerurl, address_string, privatekey_string, web3providerurl_string, need_credit_units, credit_units_requested, priceinfo, can_buy_credit_units, tx_fee, transfer_cost_units, feelevel, price_struct, _to_address, amount, decimalamount_string, decimals, decimalamount, return_url, callback_url;
+        var mvcmyquote, rootsessionuuid, walletuuid, app_nav_state, app_nav_target, unlocked, online, _params, devicewallet, _params2, isdevicewallet, params, web3_provider_url, tokenaddress, currencyuuid, carduuid, cardaddress, to_address, transfer_amount, ring, _params3, currency, options, scheme, _existing_currencies, i, _currency_description, card, maincurrencycard, canpay, _canpay2, cards, _card, _canpay, _currency, _card2, _currency2, _carduuid, _currencyuuid2, _scheme, credits, creditbalance, position, position_string, position_int, message_text, address, privatekey, web3providerurl, address_string, privatekey_string, web3providerurl_string, need_credit_units, credit_units_requested, priceinfo, can_buy_credit_units, tx_fee, transfer_cost_units, feelevel, price_struct, _to_address, credit_amount, amount_string, decimalamount_string, amount, decimals, decimalamount, return_url, callback_url;
 
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) {
@@ -510,9 +510,11 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 ;
                 currencyuuid = params.currencyuuid;
                 carduuid = params.carduuid;
-                cardaddress = params.cardaddress;
+                cardaddress = params.cardaddress; // transfer
+
                 to_address = params.to ? params.to : null;
-                transfer_amount = params.amount ? params.amount : 0;
+                transfer_amount = params.amount_string ? params.amount_string : params.amount ? params.amount : 0; // security
+
                 ring = params.ring ? parseInt(params.ring) : 1;
 
                 if (!(ring > 1 && this.state.isdevicewallet === true)) {
@@ -847,7 +849,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
 
               case 173:
                 if (!(this.card && this.currency)) {
-                  _context4.next = 255;
+                  _context4.next = 261;
                   break;
                 }
 
@@ -989,28 +991,44 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 priceinfo = _context4.sent;
 
               case 242:
+                //
                 // transfer
+                //
                 _to_address = this.callparams && this.callparams.to ? this.callparams.to : null;
+                credit_amount = this.callparams.credit_amount ? this.callparams.credit_amount : 0;
+                amount_string = this.callparams && this.callparams.amount_string ? this.callparams.amount_string : 0;
+
+                if (!amount_string) {
+                  _context4.next = 249;
+                  break;
+                }
+
+                // TODO: check amount_string is well formatted
+                decimalamount_string = amount_string;
+                _context4.next = 258;
+                break;
+
+              case 249:
                 amount = this.callparams && this.callparams.amount ? this.callparams.amount : 0;
 
                 if (!(amount > 0)) {
-                  _context4.next = 252;
+                  _context4.next = 258;
                   break;
                 }
 
                 decimals = parseInt(_currency2.decimals);
-                _context4.next = 248;
+                _context4.next = 254;
                 return mvcmyquote.getDecimalAmount(rootsessionuuid, amount, decimals);
 
-              case 248:
+              case 254:
                 decimalamount = _context4.sent;
-                _context4.next = 251;
+                _context4.next = 257;
                 return decimalamount.toFixedString();
 
-              case 251:
+              case 257:
                 decimalamount_string = _context4.sent;
 
-              case 252:
+              case 258:
                 // return url
                 return_url = this.callparams && this.callparams.returnurl ? this.app.decodebase64(this.callparams.returnurl) : null;
                 callback_url = this.callparams && this.callparams.callbackurl ? this.app.decodebase64(this.callparams.callbackurl) : null;
@@ -1035,30 +1053,31 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   priceinfo: priceinfo,
                   to_address: _to_address,
                   transfer_amount: decimalamount_string,
+                  credit_amount: credit_amount,
                   return_url: return_url,
                   callback_url: callback_url
                 });
 
-              case 255:
-                _context4.next = 260;
+              case 261:
+                _context4.next = 266;
                 break;
 
-              case 257:
-                _context4.prev = 257;
+              case 263:
+                _context4.prev = 263;
                 _context4.t3 = _context4["catch"](4);
                 console.log('exception in CurrencyCardView.checkNavigationState: ' + _context4.t3);
 
-              case 260:
-                _context4.prev = 260;
+              case 266:
+                _context4.prev = 266;
                 this.checking = false;
-                return _context4.finish(260);
+                return _context4.finish(266);
 
-              case 263:
+              case 269:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[4, 257, 260, 263]]);
+        }, _callee4, this, [[4, 263, 266, 269]]);
       }));
 
       function checkNavigationState() {

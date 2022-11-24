@@ -489,7 +489,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
 
               case 35:
                 if (!(app_nav_target && app_nav_target.route == 'currencycard' && app_nav_target.reached == false)) {
-                  _context4.next = 175;
+                  _context4.next = 173;
                   break;
                 }
 
@@ -844,16 +844,10 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 this.currency = currency; // mark target as reached
 
                 app_nav_target.reached = true;
-                _context4.next = 177;
-                break;
 
-              case 175:
-                this.app.gotoRoute('home');
-                return _context4.abrupt("return");
-
-              case 177:
+              case 173:
                 if (!(this.card && this.currency)) {
-                  _context4.next = 259;
+                  _context4.next = 255;
                   break;
                 }
 
@@ -861,45 +855,45 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 _currency2 = this.currency;
                 _carduuid = _card2.uuid;
                 _currencyuuid2 = _currency2.uuid;
-                _context4.next = 184;
+                _context4.next = 180;
                 return mvcmyquote.getSchemeInfo(rootsessionuuid, _card2.schemeuuid);
 
-              case 184:
+              case 180:
                 _scheme = _context4.sent;
-                _context4.next = 187;
+                _context4.next = 183;
                 return mvcmyquote.getCreditBalance(rootsessionuuid, walletuuid, _carduuid);
 
-              case 187:
+              case 183:
                 credits = _context4.sent;
                 creditbalance = credits.transactionunits;
-                _context4.next = 191;
+                _context4.next = 187;
                 return mvcmyquote.getSchemeTransactionUnitsThreshold(rootsessionuuid, _scheme.uuid);
 
-              case 191:
+              case 187:
                 credits.threshold = _context4.sent;
-                _context4.next = 194;
+                _context4.next = 190;
                 return mvcmyquote.getCurrencyPosition(rootsessionuuid, walletuuid, _currencyuuid2, _carduuid);
 
-              case 194:
+              case 190:
                 position = _context4.sent;
-                _context4.next = 197;
+                _context4.next = 193;
                 return mvcmyquote.formatCurrencyAmount(rootsessionuuid, _currencyuuid2, position);
 
-              case 197:
+              case 193:
                 position_string = _context4.sent;
-                _context4.next = 200;
+                _context4.next = 196;
                 return position.toInteger();
 
-              case 200:
+              case 196:
                 position_int = _context4.sent;
                 // message translated in user's language
                 message_text = ''; // export
 
                 address = _card2.address;
-                _context4.next = 205;
+                _context4.next = 201;
                 return mvcmyquote.getCardPrivateKey(rootsessionuuid, walletuuid, _carduuid)["catch"](function (err) {});
 
-              case 205:
+              case 201:
                 privatekey = _context4.sent;
                 web3providerurl = _scheme.network.ethnodeserver.web3_provider_url;
                 address_string = address ? mvcmyquote.fitString(address, 32) : '';
@@ -929,24 +923,24 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 can_buy_credit_units = false;
 
                 if (!need_credit_units) {
-                  _context4.next = 223;
+                  _context4.next = 219;
                   break;
                 }
 
-                _context4.next = 219;
+                _context4.next = 215;
                 return this._readCurrencyCards();
 
-              case 219:
+              case 215:
                 this.currencycards = _context4.sent;
-                _context4.next = 222;
+                _context4.next = 218;
                 return this._filterCreditPositiveCards();
 
-              case 222:
+              case 218:
                 this.positivecards = _context4.sent;
 
-              case 223:
+              case 219:
                 if (!(creditbalance > 0)) {
-                  _context4.next = 236;
+                  _context4.next = 232;
                   break;
                 }
 
@@ -955,68 +949,68 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 transfer_cost_units = _currency2.uniswap_v2 && _currency2.uniswap_v2.swap_max_cost_units ? parseInt(_currency2.uniswap_v2.swap_max_cost_units) : 8; // max of successive transactions (approve, buy)
 
                 tx_fee.estimated_cost_units = transfer_cost_units;
-                _context4.next = 230;
+                _context4.next = 226;
                 return mvcmyquote.getRecommendedFeeLevel(rootsessionuuid, walletuuid, _carduuid, tx_fee);
 
-              case 230:
+              case 226:
                 feelevel = _context4.sent;
-                _context4.next = 233;
+                _context4.next = 229;
                 return mvcmyquote.canCompleteTransaction(rootsessionuuid, walletuuid, _carduuid, tx_fee, feelevel)["catch"](function (err) {});
 
-              case 233:
+              case 229:
                 can_buy_credit_units = _context4.sent;
-                _context4.next = 237;
+                _context4.next = 233;
                 break;
 
-              case 236:
+              case 232:
                 can_buy_credit_units = false;
 
-              case 237:
+              case 233:
                 if (!can_buy_credit_units) {
-                  _context4.next = 246;
+                  _context4.next = 242;
                   break;
                 }
 
                 if (!(_currency2.ops.cantxfree !== true && _currency2.ops.cantopup !== true && _currency2.ops.canswap === true)) {
-                  _context4.next = 246;
+                  _context4.next = 242;
                   break;
                 }
 
-                _context4.next = 241;
+                _context4.next = 237;
                 return mvcmyquote.getPriceForCreditUnits(rootsessionuuid, _currencyuuid2, this._getCreditsUnitsToBuy(credit_units_requested));
 
-              case 241:
+              case 237:
                 price_struct = _context4.sent;
                 price_struct.credit_units_requested = this._getCreditsUnitsRequested(credit_units_requested);
-                _context4.next = 245;
+                _context4.next = 241;
                 return this._getPriceInfo(price_struct);
 
-              case 245:
+              case 241:
                 priceinfo = _context4.sent;
 
-              case 246:
+              case 242:
                 // transfer
                 _to_address = this.callparams && this.callparams.to ? this.callparams.to : null;
                 amount = this.callparams && this.callparams.amount ? this.callparams.amount : 0;
 
                 if (!(amount > 0)) {
-                  _context4.next = 256;
+                  _context4.next = 252;
                   break;
                 }
 
                 decimals = parseInt(_currency2.decimals);
-                _context4.next = 252;
+                _context4.next = 248;
                 return mvcmyquote.getDecimalAmount(rootsessionuuid, amount, decimals);
 
-              case 252:
+              case 248:
                 decimalamount = _context4.sent;
-                _context4.next = 255;
+                _context4.next = 251;
                 return decimalamount.toFixedString();
 
-              case 255:
+              case 251:
                 decimalamount_string = _context4.sent;
 
-              case 256:
+              case 252:
                 // return url
                 return_url = this.callparams && this.callparams.returnurl ? this.app.decodebase64(this.callparams.returnurl) : null;
                 callback_url = this.callparams && this.callparams.callbackurl ? this.app.decodebase64(this.callparams.callbackurl) : null;
@@ -1045,26 +1039,26 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   callback_url: callback_url
                 });
 
-              case 259:
-                _context4.next = 264;
+              case 255:
+                _context4.next = 260;
                 break;
 
-              case 261:
-                _context4.prev = 261;
+              case 257:
+                _context4.prev = 257;
                 _context4.t3 = _context4["catch"](4);
                 console.log('exception in CurrencyCardView.checkNavigationState: ' + _context4.t3);
 
-              case 264:
-                _context4.prev = 264;
+              case 260:
+                _context4.prev = 260;
                 this.checking = false;
-                return _context4.finish(264);
+                return _context4.finish(260);
 
-              case 267:
+              case 263:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[4, 261, 264, 267]]);
+        }, _callee4, this, [[4, 257, 260, 263]]);
       }));
 
       function checkNavigationState() {
@@ -1222,7 +1216,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     key: "onTransfer",
     value: function () {
       var _onTransfer = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
-        var mvcmyquote, rootsessionuuid, walletuuid, _this$state2, currentcard, currency, transfer_amount, to_address, return_url, callback_url, validaddress, tokenamount, tokenamount_int, tx_fee, transfer_cost_units, _feelevel, canspend, txhash_payment, turn_off_processing, _url, _url2, _keys, i;
+        var mvcmyquote, rootsessionuuid, walletuuid, _this$state2, currentcard, currency, transfer_amount, to_address, return_url, callback_url, validaddress, tokenamount, tokenamount_int, tx_fee, transfer_cost_units, _feelevel, canspend, txhash_payment, tx_info, turn_off_processing, _url, _url2, _keys, i;
 
         return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) {
@@ -1233,9 +1227,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
                 _this$state2 = this.state, currentcard = _this$state2.currentcard, currency = _this$state2.currency, transfer_amount = _this$state2.transfer_amount, to_address = _this$state2.to_address, return_url = _this$state2.return_url, callback_url = _this$state2.callback_url;
-                this.setState({
-                  processing: true
+
+                this._setState({
+                  processing: true,
+                  processinginfo: 'transferring currency amount'
                 });
+
                 _context9.prev = 6;
                 _context9.next = 9;
                 return mvcmyquote.isValidAddress(rootsessionuuid, to_address)["catch"](function (err) {
@@ -1333,17 +1330,38 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 return _context9.abrupt("return");
 
               case 47:
+                _context9.next = 49;
+                return this.app.waitForTransactionInfo(currentcard.schemeuuid, txhash_payment, {
+                  max_loops: 10,
+                  sleep: 5000
+                });
+
+              case 49:
+                tx_info = _context9.sent;
+
+                if (!(!tx_info || tx_info.status_int !== 10)) {
+                  _context9.next = 54;
+                  break;
+                }
+
+                this.app.alert('Transfer transaction still not visible on chain after 50s: ' + txhash_payment);
+                this.setState({
+                  processing: false
+                });
+                return _context9.abrupt("return");
+
+              case 54:
                 //
                 // post transaction processing
                 //
                 turn_off_processing = true; // send info to caller's backoffice
 
                 if (!callback_url) {
-                  _context9.next = 59;
+                  _context9.next = 66;
                   break;
                 }
 
-                _context9.prev = 49;
+                _context9.prev = 56;
                 // transaction hash
                 _url = callback_url;
 
@@ -1355,7 +1373,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   _url += '&tx=' + txhash_payment;
                 }
 
-                _context9.next = 54;
+                _context9.next = 61;
                 return new Promise(function (resolve, reject) {
                   // make an XHttpRequest call (simle call, no check on return)
                   var xhttp = new XMLHttpRequest();
@@ -1383,18 +1401,18 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   console.log('error in CurrencyCardView.onTransfer notifying callback: ' + err);
                 });
 
-              case 54:
-                _context9.next = 59;
+              case 61:
+                _context9.next = 66;
                 break;
 
-              case 56:
-                _context9.prev = 56;
-                _context9.t0 = _context9["catch"](49);
+              case 63:
+                _context9.prev = 63;
+                _context9.t0 = _context9["catch"](56);
                 console.log('exception in CurrencyCardView.onTransfer notifying callback: ' + _context9.t0);
 
-              case 59:
+              case 66:
                 if (!return_url) {
-                  _context9.next = 68;
+                  _context9.next = 75;
                   break;
                 }
 
@@ -1420,40 +1438,40 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   }
                 }
 
-                _context9.next = 65;
+                _context9.next = 72;
                 return this.app.gotoUrl(_url2);
 
-              case 65:
+              case 72:
                 turn_off_processing = false; // wait for url jump to happen
 
-                _context9.next = 70;
+                _context9.next = 77;
                 break;
 
-              case 68:
-                _context9.next = 70;
+              case 75:
+                _context9.next = 77;
                 return this.app.refreshPage();
 
-              case 70:
+              case 77:
                 // end of processing
                 if (turn_off_processing) this.setState({
                   processing: false
                 });
                 return _context9.abrupt("return", true);
 
-              case 74:
-                _context9.prev = 74;
+              case 81:
+                _context9.prev = 81;
                 _context9.t1 = _context9["catch"](6);
                 console.log('exception in onTransfer: ' + _context9.t1);
                 this.setState({
                   processing: false
                 });
 
-              case 78:
+              case 85:
               case "end":
                 return _context9.stop();
             }
           }
-        }, _callee9, this, [[6, 74], [49, 56]]);
+        }, _callee9, this, [[6, 81], [56, 63]]);
       }));
 
       function onTransfer() {
@@ -1504,7 +1522,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     key: "onBuyCredits",
     value: function () {
       var _onBuyCredits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
-        var mvcmyquote, rootsessionuuid, walletuuid, _this$state3, currentcard, currency, credit_units_requested, credit_units_tobuy, tx_fee, transfer_cost_units, feelevel, txhash;
+        var mvcmyquote, rootsessionuuid, walletuuid, _this$state3, currentcard, currency, credit_units_requested, credit_units_tobuy, tx_fee, transfer_cost_units, feelevel, txhash, tx_info;
 
         return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) {
@@ -1515,9 +1533,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
                 _this$state3 = this.state, currentcard = _this$state3.currentcard, currency = _this$state3.currency, credit_units_requested = _this$state3.credit_units_requested;
-                this.setState({
-                  processing: true
+
+                this._setState({
+                  processing: true,
+                  processinginfo: 'buying credit units'
                 });
+
                 _context11.prev = 6;
                 credit_units_tobuy = this._getCreditsUnitsToBuy(credit_units_requested);
                 tx_fee = {};
@@ -1550,26 +1571,47 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 return _context11.abrupt("return");
 
               case 22:
+                _context11.next = 24;
+                return this.app.waitForTransactionInfo(currentcard.schemeuuid, txhash, {
+                  max_loops: 10,
+                  sleep: 5000
+                });
+
+              case 24:
+                tx_info = _context11.sent;
+
+                if (!(!tx_info || tx_info.status_int !== 10)) {
+                  _context11.next = 29;
+                  break;
+                }
+
+                this.app.alert('Transfer transaction still not visible on chain after 50s: ' + txhash);
+                this.setState({
+                  processing: false
+                });
+                return _context11.abrupt("return");
+
+              case 29:
                 this.setState({
                   processing: false
                 });
                 this.app.refreshPage();
                 return _context11.abrupt("return", true);
 
-              case 27:
-                _context11.prev = 27;
+              case 34:
+                _context11.prev = 34;
                 _context11.t0 = _context11["catch"](6);
                 console.log('exception in onBuyCredits: ' + _context11.t0);
                 this.setState({
                   processing: false
                 });
 
-              case 31:
+              case 38:
               case "end":
                 return _context11.stop();
             }
           }
-        }, _callee11, this, [[6, 27]]);
+        }, _callee11, this, [[6, 34]]);
       }));
 
       function onBuyCredits() {
@@ -1637,7 +1679,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     key: "onPickCreditsFrom",
     value: function () {
       var _onPickCreditsFrom = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
-        var mvcmyquote, rootsessionuuid, walletuuid, _this$state4, sourcecard, currentcard, credit_units_requested, feelevel, tx_fee, transfer_cost_units, canspend, units_txhash;
+        var mvcmyquote, rootsessionuuid, walletuuid, _this$state4, sourcecard, currentcard, credit_units_requested, feelevel, tx_fee, transfer_cost_units, canspend, units_txhash, tx_info;
 
         return _regeneratorRuntime().wrap(function _callee13$(_context13) {
           while (1) {
@@ -1648,9 +1690,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
                 _this$state4 = this.state, sourcecard = _this$state4.sourcecard, currentcard = _this$state4.currentcard, credit_units_requested = _this$state4.credit_units_requested;
-                this.setState({
-                  processing: true
+
+                this._setState({
+                  processing: true,
+                  processinginfo: 'transferring credit units'
                 });
+
                 _context13.prev = 6;
                 // check we have enough transaction credits
                 feelevel = null;
@@ -1710,14 +1755,35 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 return _context13.abrupt("return");
 
               case 32:
+                _context13.next = 34;
+                return this.app.waitForTransactionInfo(currentcard.schemeuuid, units_txhash, {
+                  max_loops: 10,
+                  sleep: 5000
+                });
+
+              case 34:
+                tx_info = _context13.sent;
+
+                if (!(!tx_info || tx_info.status_int !== 10)) {
+                  _context13.next = 39;
+                  break;
+                }
+
+                this.app.alert('Transfer transaction still not visible on chain after 50s: ' + units_txhash);
+                this.setState({
+                  processing: false
+                });
+                return _context13.abrupt("return");
+
+              case 39:
                 this.setState({
                   processing: false
                 });
                 this.app.refreshPage();
                 return _context13.abrupt("return", true);
 
-              case 37:
-                _context13.prev = 37;
+              case 44:
+                _context13.prev = 44;
                 _context13.t0 = _context13["catch"](6);
                 console.log('exception in onPickCreditsFrom: ' + _context13.t0);
                 this.app.error('exception in onPickCreditsFrom: ' + _context13.t0);
@@ -1726,12 +1792,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   processing: false
                 });
 
-              case 43:
+              case 50:
               case "end":
                 return _context13.stop();
             }
           }
-        }, _callee13, this, [[6, 37]]);
+        }, _callee13, this, [[6, 44]]);
       }));
 
       function onPickCreditsFrom() {
@@ -1745,7 +1811,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     key: "onMoveCredits",
     value: function () {
       var _onMoveCredits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14() {
-        var mvcmyquote, rootsessionuuid, walletuuid, _this$state5, currentcard, credit_amount, to_address, return_url, validaddress, feelevel, tx_fee, transfer_cost_units, canspend, tocard, units_txhash, _url, _keys, i;
+        var mvcmyquote, rootsessionuuid, walletuuid, _this$state5, currentcard, credit_amount, to_address, return_url, validaddress, feelevel, tx_fee, transfer_cost_units, canspend, tocard, units_txhash, tx_info, _url, _keys, i;
 
         return _regeneratorRuntime().wrap(function _callee14$(_context14) {
           while (1) {
@@ -1756,9 +1822,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
                 _this$state5 = this.state, currentcard = _this$state5.currentcard, credit_amount = _this$state5.credit_amount, to_address = _this$state5.to_address, return_url = _this$state5.return_url;
-                this.setState({
-                  processing: true
+
+                this._setState({
+                  processing: true,
+                  processinginfo: 'transfering credit units'
                 });
+
                 _context14.prev = 6;
                 _context14.next = 9;
                 return mvcmyquote.isValidAddress(rootsessionuuid, to_address)["catch"](function (err) {
@@ -1861,12 +1930,33 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 return _context14.abrupt("return");
 
               case 48:
+                _context14.next = 50;
+                return this.app.waitForTransactionInfo(currentcard.schemeuuid, units_txhash, {
+                  max_loops: 10,
+                  sleep: 5000
+                });
+
+              case 50:
+                tx_info = _context14.sent;
+
+                if (!(!tx_info || tx_info.status_int !== 10)) {
+                  _context14.next = 55;
+                  break;
+                }
+
+                this.app.alert('Transfer transaction still not visible on chain after 50s: ' + units_txhash);
+                this.setState({
+                  processing: false
+                });
+                return _context14.abrupt("return");
+
+              case 55:
                 this.setState({
                   processing: false
                 });
 
                 if (!return_url) {
-                  _context14.next = 57;
+                  _context14.next = 64;
                   break;
                 }
 
@@ -1892,34 +1982,34 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   }
                 }
 
-                _context14.next = 55;
+                _context14.next = 62;
                 return this.app.gotoUrl(_url);
 
-              case 55:
-                _context14.next = 59;
+              case 62:
+                _context14.next = 66;
                 break;
 
-              case 57:
-                _context14.next = 59;
+              case 64:
+                _context14.next = 66;
                 return this.app.refreshPage();
 
-              case 59:
+              case 66:
                 return _context14.abrupt("return", true);
 
-              case 62:
-                _context14.prev = 62;
+              case 69:
+                _context14.prev = 69;
                 _context14.t0 = _context14["catch"](6);
                 console.log('exception in onMoveCredits: ' + _context14.t0);
                 this.setState({
                   processing: false
                 });
 
-              case 66:
+              case 73:
               case "end":
                 return _context14.stop();
             }
           }
-        }, _callee14, this, [[6, 62]]);
+        }, _callee14, this, [[6, 69]]);
       }));
 
       function onMoveCredits() {
@@ -2082,7 +2172,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormControl, {
         autoFocus: true,
         type: "text",
-        value: transfer_amount,
+        value: transfer_amount ? transfer_amount : '',
         onChange: function onChange(e) {
           return _this5.setState({
             transfer_amount: e.target.value
@@ -2112,7 +2202,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormControl, {
         autoFocus: true,
         type: "text",
-        value: credit_amount,
+        value: credit_amount ? credit_amount : '',
         onChange: function onChange(e) {
           return _this6.setState({
             credit_amount: e.target.value

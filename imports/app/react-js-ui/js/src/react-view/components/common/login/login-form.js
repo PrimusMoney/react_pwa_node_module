@@ -152,15 +152,23 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
               case 4:
                 this.login_scheme_list_webapp = _context.sent;
-                _context.next = 7;
+
+                if (!(this.app.exec_env === 'dev')) {
+                  _context.next = 9;
+                  break;
+                }
+
+                _context.next = 8;
                 return mvcmyquote.loadConfig('login-dev');
 
-              case 7:
+              case 8:
                 this.login_scheme_list_dev = _context.sent;
-                _context.next = 10;
+
+              case 9:
+                _context.next = 11;
                 return mvcmyquote.getDefaultLocalSchemeInfo(rootsessionuuid);
 
-              case 10:
+              case 11:
                 localscheme = _context.sent;
                 this.default_local_schemeuuid = localscheme.uuid; // look if a transaction is defined in the url
 
@@ -168,7 +176,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 app_nav_target = app_nav_state.target;
 
                 if (!(app_nav_target && app_nav_target.route == 'login' && app_nav_target.reached == false)) {
-                  _context.next = 20;
+                  _context.next = 21;
                   break;
                 }
 
@@ -178,17 +186,17 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 //await this.setProcessing(false);
 
                 app_nav_target.reached = true;
-                _context.next = 65;
+                _context.next = 66;
                 break;
 
-              case 20:
+              case 21:
                 console.log('LoginForm.checkNavigationState starting from a clean slate'); // starting from a clean slate
 
                 startconditions = this.app.getVariable('start_conditions');
                 urlParams = startconditions.urlParams;
 
                 if (!urlParams) {
-                  _context.next = 65;
+                  _context.next = 66;
                   break;
                 }
 
@@ -198,7 +206,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 schemeuuid = urlParams.get('schemeuuid');
 
                 if (!sessionuuid) {
-                  _context.next = 52;
+                  _context.next = 53;
                   break;
                 }
 
@@ -207,7 +215,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 console.log('LoginForm.checkNavigationState reconnecting to session:' + sessionuuid);
 
                 if (!schemeuuid) {
-                  _context.next = 50;
+                  _context.next = 51;
                   break;
                 }
 
@@ -217,99 +225,99 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(startconditions.walletforscheme_treating !== true)) {
-                  _context.next = 50;
+                  _context.next = 51;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState looking for a wallet for scheme ' + schemeuuid);
                 startconditions.walletforscheme_treating = true; // set processing flag on
 
-                _context.next = 37;
+                _context.next = 38;
                 return this.setProcessing(true);
 
-              case 37:
-                _context.next = 39;
+              case 38:
+                _context.next = 40;
                 return this._getWalletForScheme(params)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
-              case 39:
+              case 40:
                 wallet = _context.sent;
 
                 if (!wallet) {
-                  _context.next = 47;
+                  _context.next = 48;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState found wallet for session:' + sessionuuid);
-                _context.next = 44;
+                _context.next = 45;
                 return this.postLogin('bootstrap');
 
-              case 44:
+              case 45:
                 startconditions.walletforscheme_treated = true;
-                _context.next = 50;
+                _context.next = 51;
                 break;
 
-              case 47:
+              case 48:
                 console.log('LoginForm.checkNavigationState reset url, could not find wallet for session:' + sessionuuid); // we restart on a clean url
 
-                _context.next = 50;
+                _context.next = 51;
                 return this.app.resetHref();
 
-              case 50:
-                _context.next = 65;
+              case 51:
+                _context.next = 66;
                 break;
 
-              case 52:
+              case 53:
                 if (!(txhash && currencyuuid)) {
-                  _context.next = 65;
+                  _context.next = 66;
                   break;
                 }
 
-                _context.next = 55;
+                _context.next = 56;
                 return this.app.getStartDataObject()["catch"](function (err) {
                   console.log('error calling App.getStartDataObject: ' + err);
                 });
 
-              case 55:
+              case 56:
                 dataobj = _context.sent;
 
                 if (!dataobj) {
-                  _context.next = 63;
+                  _context.next = 64;
                   break;
                 }
 
                 if (!(dataobj.viewed !== true)) {
-                  _context.next = 61;
+                  _context.next = 62;
                   break;
                 }
 
                 _params = {
                   dataobject: dataobj
                 };
-                _context.next = 61;
+                _context.next = 62;
                 return this.app.gotoMyQuotePage(_params)["catch"](function (err) {
                   console.log('error calling App.gotoMyQuotePage: ' + err);
                 });
 
-              case 61:
-                _context.next = 65;
+              case 62:
+                _context.next = 66;
                 break;
 
-              case 63:
-                _context.next = 65;
+              case 64:
+                _context.next = 66;
                 return this.app.onEmptyStartDataObject(txhash, currencyuuid)["catch"](function (err) {
                   console.log('error calling App.onEmptyStartDataObject: ' + err);
                 });
 
-              case 65:
+              case 66:
                 console.log('LoginForm.checkNavigationState loaded');
 
                 this._setState({
                   loaded: true
                 });
 
-              case 67:
+              case 68:
               case "end":
                 return _context.stop();
             }

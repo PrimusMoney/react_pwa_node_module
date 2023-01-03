@@ -186,7 +186,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 //await this.setProcessing(false);
 
                 app_nav_target.reached = true;
-                _context.next = 66;
+                _context.next = 68;
                 break;
 
               case 21:
@@ -196,26 +196,30 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 urlParams = startconditions.urlParams;
 
                 if (!urlParams) {
-                  _context.next = 66;
+                  _context.next = 68;
                   break;
                 }
 
                 txhash = urlParams.get('tx');
                 currencyuuid = urlParams.get('ccy');
                 sessionuuid = urlParams.get('sessionuuid');
-                schemeuuid = urlParams.get('schemeuuid');
+                schemeuuid = urlParams.get('schemeuuid'); // give possibility to hooks to find alternative alt logins (e.g. openid)
 
+                _context.next = 31;
+                return this.preLogin('bootstrap');
+
+              case 31:
                 if (!sessionuuid) {
-                  _context.next = 53;
+                  _context.next = 55;
                   break;
                 }
 
-                // we need to reconnect to a pre-existing
+                // we need to reconnect to a pre-existing session
                 // (e.g. coming back from oauth2 authentication)
                 console.log('LoginForm.checkNavigationState reconnecting to session:' + sessionuuid);
 
                 if (!schemeuuid) {
-                  _context.next = 51;
+                  _context.next = 53;
                   break;
                 }
 
@@ -225,99 +229,99 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(startconditions.walletforscheme_treating !== true)) {
-                  _context.next = 51;
+                  _context.next = 53;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState looking for a wallet for scheme ' + schemeuuid);
                 startconditions.walletforscheme_treating = true; // set processing flag on
 
-                _context.next = 38;
+                _context.next = 40;
                 return this.setProcessing(true);
 
-              case 38:
-                _context.next = 40;
+              case 40:
+                _context.next = 42;
                 return this._getWalletForScheme(params)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
-              case 40:
+              case 42:
                 wallet = _context.sent;
 
                 if (!wallet) {
-                  _context.next = 48;
+                  _context.next = 50;
                   break;
                 }
 
                 console.log('LoginForm.checkNavigationState found wallet for session:' + sessionuuid);
-                _context.next = 45;
+                _context.next = 47;
                 return this.postLogin('bootstrap');
 
-              case 45:
+              case 47:
                 startconditions.walletforscheme_treated = true;
-                _context.next = 51;
+                _context.next = 53;
                 break;
 
-              case 48:
+              case 50:
                 console.log('LoginForm.checkNavigationState reset url, could not find wallet for session:' + sessionuuid); // we restart on a clean url
 
-                _context.next = 51;
+                _context.next = 53;
                 return this.app.resetHref();
 
-              case 51:
-                _context.next = 66;
+              case 53:
+                _context.next = 68;
                 break;
 
-              case 53:
+              case 55:
                 if (!(txhash && currencyuuid)) {
-                  _context.next = 66;
+                  _context.next = 68;
                   break;
                 }
 
-                _context.next = 56;
+                _context.next = 58;
                 return this.app.getStartDataObject()["catch"](function (err) {
                   console.log('error calling App.getStartDataObject: ' + err);
                 });
 
-              case 56:
+              case 58:
                 dataobj = _context.sent;
 
                 if (!dataobj) {
-                  _context.next = 64;
+                  _context.next = 66;
                   break;
                 }
 
                 if (!(dataobj.viewed !== true)) {
-                  _context.next = 62;
+                  _context.next = 64;
                   break;
                 }
 
                 _params = {
                   dataobject: dataobj
                 };
-                _context.next = 62;
+                _context.next = 64;
                 return this.app.gotoMyQuotePage(_params)["catch"](function (err) {
                   console.log('error calling App.gotoMyQuotePage: ' + err);
                 });
 
-              case 62:
-                _context.next = 66;
+              case 64:
+                _context.next = 68;
                 break;
 
-              case 64:
-                _context.next = 66;
+              case 66:
+                _context.next = 68;
                 return this.app.onEmptyStartDataObject(txhash, currencyuuid)["catch"](function (err) {
                   console.log('error calling App.onEmptyStartDataObject: ' + err);
                 });
 
-              case 66:
+              case 68:
                 console.log('LoginForm.checkNavigationState loaded');
 
                 this._setState({
                   loaded: true
                 });
 
-              case 68:
+              case 70:
               case "end":
                 return _context.stop();
             }
@@ -1119,7 +1123,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             switch (_context13.prev = _context13.next) {
               case 0:
                 type = item.type;
-                schemeuuid = item.uuid;
+                schemeuuid = item.schemeuuid ? item.schemeuuid : item.uuid;
 
                 this._setState({
                   schemeuuid: schemeuuid
@@ -1349,17 +1353,27 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         type: 1,
         mode: 'oauth2',
         provider: 'facebook',
+        schemeuuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b',
         uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'
       }, {
         name: 'primusmoney',
         label: 'connect with a primus money account',
         type: 1,
         credentials: true,
+        schemeuuid: 'd3b4fa61-ed65-11f6-4877-b169441dbe58',
         uuid: 'd3b4fa61-ed65-11f6-4877-b169441dbe58'
       }]; // webapp additional logins
 
+      var count = 0;
+
       if (this.login_scheme_list_webapp) {
         for (var i = 0; i < this.login_scheme_list_webapp.length; i++) {
+          if (!this.login_scheme_list_webapp[i].schemeuuid) {
+            // legacy
+            this.login_scheme_list_webapp[i].schemeuuid = this.login_scheme_list_webapp[i].uuid;
+            this.login_scheme_list_webapp[i].uuid += '-' + count++; // to avoid collision in List for multiple login using same scheme
+          }
+
           schemeList.push(this.login_scheme_list_webapp[i]);
         }
       }
@@ -1368,6 +1382,12 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         // only for dev
         if (this.login_scheme_list_dev) {
           for (var i = 0; i < this.login_scheme_list_dev.length; i++) {
+            if (!this.login_scheme_list_dev[i].schemeuuid) {
+              // legacy
+              this.login_scheme_list_dev[i].schemeuuid = this.login_scheme_list_dev[i].uuid;
+              this.login_scheme_list_dev[i].uuid += '-' + count++; // to avoid collision in Listfor multiple login using same scheme
+            }
+
             schemeList.push(this.login_scheme_list_dev[i]);
           }
         }

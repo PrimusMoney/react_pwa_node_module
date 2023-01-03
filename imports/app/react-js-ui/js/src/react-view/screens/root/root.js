@@ -2131,7 +2131,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_gotoUrl",
     value: function () {
       var _gotoUrl2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35(url) {
-        var cleanurl, URL, queryobject, dataobject_routes, sessionuuid, route, params, urlParams, dataobject, querystring, app_start_conditions, _params, routings, types, routing, i, param_name;
+        var cleanurl, mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, URL, queryobject, dataobject_routes, sessionuuid, route, _params, urlParams, dataobject, querystring, app_start_conditions, _params2, routings, types, routing, i, param_name;
 
         return _regeneratorRuntime().wrap(function _callee35$(_context35) {
           while (1) {
@@ -2144,15 +2144,39 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 cleanurl = _context35.sent;
 
                 if (!(url && url.startsWith(cleanurl) !== true)) {
-                  _context35.next = 6;
+                  _context35.next = 19;
                   break;
                 }
 
                 // this is a jump to another site
+                // (or a deep link)
+                // give opportunity to hooks to treat alternative url (e.g. openid://)
+                mvcmyquote = this.getMvcMyQuoteObject();
+                rootsessionuuid = this.props.rootsessionuuid;
+                walletuuid = this.props.currentwalletuuid;
+                result = [];
+                params = [];
+                params.push(url);
+                params.push(rootsessionuuid);
+                params.push(walletuuid);
+                _context35.next = 14;
+                return mvcmyquote.invokeAsyncHooks('gotoUrl_asynchook', result, params);
+
+              case 14:
+                ret = _context35.sent;
+
+                if (!(ret && result.jump === false)) {
+                  _context35.next = 17;
+                  break;
+                }
+
+                return _context35.abrupt("return");
+
+              case 17:
                 window.location.href = url;
                 return _context35.abrupt("return");
 
-              case 6:
+              case 19:
                 // look if a session, route or transaction is defined in the url
                 URL = require("url");
                 queryobject = url ? URL.parse(url, true).query : {};
@@ -2162,7 +2186,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 sessionuuid = queryobject.sessionuuid;
 
                 if (!sessionuuid) {
-                  _context35.next = 14;
+                  _context35.next = 27;
                   break;
                 }
 
@@ -2174,25 +2198,25 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 this.app.gotoRoute('login');
                 return _context35.abrupt("return");
 
-              case 14:
+              case 27:
                 //
                 // following a route given in the param "route" in the url
                 route = queryobject.route;
 
                 if (!(route && dataobject_routes.includes(route) !== true)) {
-                  _context35.next = 19;
+                  _context35.next = 32;
                   break;
                 }
 
                 // a route indicates the way
                 // and we don't follow routes reserved for dataobject here
-                params = Object.assign({}, queryobject);
-                this.app.gotoRoute(route, params);
+                _params = Object.assign({}, queryobject);
+                this.app.gotoRoute(route, _params);
                 return _context35.abrupt("return");
 
-              case 19:
+              case 32:
                 if (!url) {
-                  _context35.next = 28;
+                  _context35.next = 41;
                   break;
                 }
 
@@ -2201,36 +2225,36 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 querystring = querystring.indexOf('#') > 0 ? querystring.split('#')[0] : querystring; // remove trailing anchor
 
                 urlParams = new URLSearchParams(querystring);
-                _context35.next = 25;
+                _context35.next = 38;
                 return this._getDataObjectFromUrlParams(urlParams);
 
-              case 25:
+              case 38:
                 dataobject = _context35.sent;
-                _context35.next = 33;
+                _context35.next = 46;
                 break;
 
-              case 28:
+              case 41:
                 // initial url
                 app_start_conditions = this.app.getVariable('start_conditions');
                 urlParams = app_start_conditions.urlParams;
-                _context35.next = 32;
+                _context35.next = 45;
                 return this.app.getStartDataObject();
 
-              case 32:
+              case 45:
                 dataobject = _context35.sent;
 
-              case 33:
+              case 46:
                 if (!dataobject) {
-                  _context35.next = 47;
+                  _context35.next = 60;
                   break;
                 }
 
-                _params = {
+                _params2 = {
                   dataobject: dataobject
                 };
 
                 if (!dataobject.type) {
-                  _context35.next = 44;
+                  _context35.next = 57;
                   break;
                 }
 
@@ -2238,29 +2262,29 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 types = Object.keys(routings);
 
                 if (!types.includes(dataobject.type)) {
-                  _context35.next = 44;
+                  _context35.next = 57;
                   break;
                 }
 
                 routing = routings[dataobject.type];
-                _params.action = routing.action;
+                _params2.action = routing.action;
 
                 for (i = 0; i < (routing.params ? routing.params.length : 0); i++) {
                   param_name = routing.params[i];
-                  _params[param_name] = dataobject[param_name];
+                  _params2[param_name] = dataobject[param_name];
                 }
 
-                this.app.gotoRoute(routing.path, _params);
+                this.app.gotoRoute(routing.path, _params2);
                 return _context35.abrupt("return");
 
-              case 44:
+              case 57:
                 return _context35.abrupt("return");
 
-              case 47:
+              case 60:
                 // no route and no data object
                 this.app.gotoRoute('home');
 
-              case 48:
+              case 61:
               case "end":
                 return _context35.stop();
             }

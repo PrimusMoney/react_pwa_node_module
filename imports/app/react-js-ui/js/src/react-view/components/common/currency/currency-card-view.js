@@ -80,6 +80,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
     _this.currencycards = [];
     _this.checking = false;
     _this.closing = false;
+    _this.opened_devicewallet = false;
     _this.state = {
       creditbalance: 'loading...',
       position: null,
@@ -427,12 +428,12 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 unlocked = _context4.sent;
 
                 if (unlocked) {
-                  _context4.next = 31;
+                  _context4.next = 32;
                   break;
                 }
 
                 if (this.closing) {
-                  _context4.next = 26;
+                  _context4.next = 27;
                   break;
                 }
 
@@ -459,51 +460,52 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
               case 21:
                 devicewallet = _context4.sent;
                 walletuuid = devicewallet.uuid;
+                this.opened_devicewallet = false;
 
                 this._setState({
                   isdevicewallet: true
                 });
 
-                _context4.next = 29;
+                _context4.next = 30;
                 break;
 
-              case 26:
+              case 27:
                 _params2 = app_nav_target ? app_nav_target.params : null;
                 this.app.gotoRoute('login', _params2);
                 return _context4.abrupt("return");
 
-              case 29:
-                _context4.next = 35;
+              case 30:
+                _context4.next = 36;
                 break;
 
-              case 31:
-                _context4.next = 33;
+              case 32:
+                _context4.next = 34;
                 return this.app.isDeviceWallet(walletuuid);
 
-              case 33:
+              case 34:
                 isdevicewallet = _context4.sent;
 
                 this._setState({
                   isdevicewallet: isdevicewallet
                 });
 
-              case 35:
+              case 36:
                 if (!(app_nav_target && app_nav_target.route == 'currencycard' && app_nav_target.reached == false)) {
-                  _context4.next = 173;
+                  _context4.next = 174;
                   break;
                 }
 
                 params = app_nav_target.params;
 
                 if (params) {
-                  _context4.next = 40;
+                  _context4.next = 41;
                   break;
                 }
 
                 this.app.gotoRoute('home');
                 return _context4.abrupt("return");
 
-              case 40:
+              case 41:
                 this.callparams = params;
                 web3_provider_url = params.web3url ? this.app.decodebase64(params.web3url) : null;
                 tokenaddress = params.tokenaddress;
@@ -518,7 +520,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 ring = params.ring ? parseInt(params.ring) : 1;
 
                 if (!(ring > 1 && this.state.isdevicewallet === true)) {
-                  _context4.next = 54;
+                  _context4.next = 55;
                   break;
                 }
 
@@ -527,61 +529,61 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 this.app.gotoRoute('login', _params3);
                 return _context4.abrupt("return");
 
-              case 54:
+              case 55:
                 if (!currencyuuid) {
-                  _context4.next = 60;
+                  _context4.next = 61;
                   break;
                 }
 
-                _context4.next = 57;
+                _context4.next = 58;
                 return mvcmyquote.getCurrencyFromUUID(rootsessionuuid, currencyuuid);
 
-              case 57:
+              case 58:
                 currency = _context4.sent;
-                _context4.next = 109;
+                _context4.next = 110;
                 break;
 
-              case 60:
+              case 61:
                 if (!tokenaddress) {
-                  _context4.next = 109;
+                  _context4.next = 110;
                   break;
                 }
 
                 if (!web3_provider_url) {
-                  _context4.next = 109;
+                  _context4.next = 110;
                   break;
                 }
 
                 options = {}; // no other requirement on ethnodeserverconfig
 
-                _context4.next = 65;
+                _context4.next = 66;
                 return mvcmyquote.findLocalSchemeInfoFromWeb3Url(rootsessionuuid, web3_provider_url, options)["catch"](function (err) {
                   console.log('error in CurrencyCardView.checkNavigationState: ' + err);
                 });
 
-              case 65:
+              case 66:
                 scheme = _context4.sent;
 
                 if (!scheme) {
-                  _context4.next = 107;
+                  _context4.next = 108;
                   break;
                 }
 
-                _context4.next = 69;
+                _context4.next = 70;
                 return mvcmyquote.getAllCurrenciesWithAddress(rootsessionuuid, walletuuid, tokenaddress)["catch"](function (err) {
                   console.log('error in CurrencyCardView.checkNavigationState: ' + err);
                 });
 
-              case 69:
+              case 70:
                 _existing_currencies = _context4.sent;
 
                 if (!(_existing_currencies && _existing_currencies.length > 0)) {
-                  _context4.next = 90;
+                  _context4.next = 91;
                   break;
                 }
 
                 if (!(_existing_currencies.length > 1)) {
-                  _context4.next = 86;
+                  _context4.next = 87;
                   break;
                 }
 
@@ -590,46 +592,46 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 currencyuuid = currency.uuid;
 
                 if (!(currency.scheme_uuid != scheme.uuid)) {
-                  _context4.next = 84;
+                  _context4.next = 85;
                   break;
                 }
 
                 i = 0;
 
-              case 76:
+              case 77:
                 if (!(i < _existing_currencies.length)) {
-                  _context4.next = 84;
+                  _context4.next = 85;
                   break;
                 }
 
                 if (!(_existing_currencies[i].scheme_uuid == scheme.uuid)) {
-                  _context4.next = 81;
+                  _context4.next = 82;
                   break;
                 }
 
                 currency = _existing_currencies[i];
                 currencyuuid = currency.uuid;
-                return _context4.abrupt("break", 84);
+                return _context4.abrupt("break", 85);
 
-              case 81:
+              case 82:
                 i++;
-                _context4.next = 76;
+                _context4.next = 77;
                 break;
 
-              case 84:
-                _context4.next = 88;
+              case 85:
+                _context4.next = 89;
                 break;
 
-              case 86:
+              case 87:
                 currency = _existing_currencies[0]; // take first and only one
 
                 currencyuuid = currency.uuid;
 
-              case 88:
-                _context4.next = 105;
+              case 89:
+                _context4.next = 106;
                 break;
 
-              case 90:
+              case 91:
                 // no registered currency corresponding to this token address
                 // we add one
                 currency = {};
@@ -644,33 +646,33 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 currency.xtra_data = {
                   origin: 'incoming-payment-request'
                 };
-                _context4.next = 100;
+                _context4.next = 101;
                 return mvcmyquote.synchronizeCurrency(rootsessionuuid, walletuuid, currency)["catch"](function (err) {
                   console.log('could not import currency from token address: ' + err);
                   currency = null;
                 });
 
-              case 100:
+              case 101:
                 if (!currency) {
-                  _context4.next = 105;
+                  _context4.next = 106;
                   break;
                 }
 
                 currencyuuid = currency.uuid; // set description
 
                 _currency_description = currency.name + ' imported on ' + scheme.name;
-                _context4.next = 105;
+                _context4.next = 106;
                 return mvcmyquote.setCurrencyDescription(rootsessionuuid, walletuuid, currencyuuid, _currency_description);
 
-              case 105:
-                _context4.next = 109;
+              case 106:
+                _context4.next = 110;
                 break;
 
-              case 107:
+              case 108:
                 if (transfer_amount && to_address) this.app.alert('This rpc url is not registered. It is not possible to make payments to it: ' + web3_provider_url);
                 this.app.gotoRoute('currencycards', params);
 
-              case 109:
+              case 110:
                 if (!currency) {
                   this.app.gotoRoute('currencycards', params);
                 } //
@@ -679,59 +681,59 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
 
 
                 if (!(carduuid && !cardaddress)) {
-                  _context4.next = 116;
+                  _context4.next = 117;
                   break;
                 }
 
-                _context4.next = 113;
+                _context4.next = 114;
                 return mvcmyquote.getWalletCard(rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {});
 
-              case 113:
+              case 114:
                 card = _context4.sent;
-                _context4.next = 169;
+                _context4.next = 170;
                 break;
 
-              case 116:
-                _context4.next = 118;
+              case 117:
+                _context4.next = 119;
                 return mvcmyquote.getCurrencyCard(rootsessionuuid, walletuuid, currencyuuid)["catch"](function (err) {});
 
-              case 118:
+              case 119:
                 maincurrencycard = _context4.sent;
 
                 if (!cardaddress) {
-                  _context4.next = 132;
+                  _context4.next = 133;
                   break;
                 }
 
-                _context4.next = 122;
+                _context4.next = 123;
                 return mvcmyquote.getCurrencyCardWithAddress(rootsessionuuid, walletuuid, currencyuuid, cardaddress);
 
-              case 122:
+              case 123:
                 card = _context4.sent;
 
                 if (!(card && transfer_amount && to_address)) {
-                  _context4.next = 129;
+                  _context4.next = 130;
                   break;
                 }
 
-                _context4.next = 126;
+                _context4.next = 127;
                 return mvcmyquote.canPayAmount(rootsessionuuid, walletuuid, card.uuid, currencyuuid, transfer_amount);
 
-              case 126:
+              case 127:
                 _context4.t0 = _context4.sent;
-                _context4.next = 130;
+                _context4.next = 131;
                 break;
 
-              case 129:
+              case 130:
                 _context4.t0 = true;
 
-              case 130:
+              case 131:
                 canpay = _context4.t0;
                 if (!canpay) card = null;
 
-              case 132:
+              case 133:
                 if (card) {
-                  _context4.next = 143;
+                  _context4.next = 144;
                   break;
                 }
 
@@ -739,79 +741,79 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 card = maincurrencycard;
 
                 if (!(card && transfer_amount && to_address)) {
-                  _context4.next = 140;
+                  _context4.next = 141;
                   break;
                 }
 
-                _context4.next = 137;
+                _context4.next = 138;
                 return mvcmyquote.canPayAmount(rootsessionuuid, walletuuid, card.uuid, currencyuuid, transfer_amount);
 
-              case 137:
+              case 138:
                 _context4.t1 = _context4.sent;
-                _context4.next = 141;
+                _context4.next = 142;
                 break;
 
-              case 140:
+              case 141:
                 _context4.t1 = true;
 
-              case 141:
+              case 142:
                 _canpay2 = _context4.t1;
 
                 if (!_canpay2) {
                   card = null;
                 }
 
-              case 143:
+              case 144:
                 if (card) {
-                  _context4.next = 168;
+                  _context4.next = 169;
                   break;
                 }
 
-                _context4.next = 146;
+                _context4.next = 147;
                 return mvcmyquote.getTokenCardList(rootsessionuuid, walletuuid, web3_provider_url, tokenaddress)["catch"](function (err) {});
 
-              case 146:
+              case 147:
                 cards = _context4.sent;
                 i = 0;
 
-              case 148:
+              case 149:
                 if (!(i < (cards ? cards.length : 0))) {
-                  _context4.next = 168;
+                  _context4.next = 169;
                   break;
                 }
 
                 _card = cards[i];
 
                 if (!(transfer_amount && to_address)) {
-                  _context4.next = 156;
+                  _context4.next = 157;
                   break;
                 }
 
-                _context4.next = 153;
+                _context4.next = 154;
                 return mvcmyquote.canPayAmount(rootsessionuuid, walletuuid, _card.uuid, currencyuuid, transfer_amount);
 
-              case 153:
+              case 154:
                 _context4.t2 = _context4.sent;
-                _context4.next = 157;
+                _context4.next = 158;
                 break;
 
-              case 156:
+              case 157:
                 _context4.t2 = true;
 
-              case 157:
+              case 158:
                 _canpay = _context4.t2;
 
                 if (!_canpay) {
-                  _context4.next = 165;
+                  _context4.next = 166;
                   break;
                 }
 
                 card = _card; // find the currency for this card, in case it is different
 
-                _context4.next = 162;
+                _context4.next = 163;
                 return mvcmyquote.findCardCurrency(rootsessionuuid, walletuuid, card.uuid)["catch"](function (err) {});
 
-              case 162:
+              case 163:
                 _currency = _context4.sent;
 
                 if (_currency) {
@@ -821,20 +823,20 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   console.log('Warning: could not find currency for card: ' + card.uuid);
                 }
 
-                return _context4.abrupt("break", 168);
+                return _context4.abrupt("break", 169);
 
-              case 165:
+              case 166:
                 i++;
-                _context4.next = 148;
+                _context4.next = 149;
                 break;
 
-              case 168:
+              case 169:
                 if (!card) {
                   // if not found a card yet, go back to main currency card, if it exists and even if it won't do
                   card = maincurrencycard;
                 }
 
-              case 169:
+              case 170:
                 if (!card) {
                   if (transfer_amount && to_address) this.app.alert('Could not find a currency card capable of making corresponding payment. You should load credits/funds on an existing card or add a card with enough credits/funds.');
                   if (!params.currencyuuid && currency) params.currencyuuid = currency.uuid;
@@ -847,9 +849,9 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
 
                 app_nav_target.reached = true;
 
-              case 173:
+              case 174:
                 if (!(this.card && this.currency)) {
-                  _context4.next = 261;
+                  _context4.next = 262;
                   break;
                 }
 
@@ -857,45 +859,45 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 _currency2 = this.currency;
                 _carduuid = _card2.uuid;
                 _currencyuuid2 = _currency2.uuid;
-                _context4.next = 180;
+                _context4.next = 181;
                 return mvcmyquote.getSchemeInfo(rootsessionuuid, _card2.schemeuuid);
 
-              case 180:
+              case 181:
                 _scheme = _context4.sent;
-                _context4.next = 183;
+                _context4.next = 184;
                 return mvcmyquote.getCreditBalance(rootsessionuuid, walletuuid, _carduuid);
 
-              case 183:
+              case 184:
                 credits = _context4.sent;
                 creditbalance = credits.transactionunits;
-                _context4.next = 187;
+                _context4.next = 188;
                 return mvcmyquote.getSchemeTransactionUnitsThreshold(rootsessionuuid, _scheme.uuid);
 
-              case 187:
+              case 188:
                 credits.threshold = _context4.sent;
-                _context4.next = 190;
+                _context4.next = 191;
                 return mvcmyquote.getCurrencyPosition(rootsessionuuid, walletuuid, _currencyuuid2, _carduuid);
 
-              case 190:
+              case 191:
                 position = _context4.sent;
-                _context4.next = 193;
+                _context4.next = 194;
                 return mvcmyquote.formatCurrencyAmount(rootsessionuuid, _currencyuuid2, position);
 
-              case 193:
+              case 194:
                 position_string = _context4.sent;
-                _context4.next = 196;
+                _context4.next = 197;
                 return position.toInteger();
 
-              case 196:
+              case 197:
                 position_int = _context4.sent;
                 // message translated in user's language
                 message_text = ''; // export
 
                 address = _card2.address;
-                _context4.next = 201;
+                _context4.next = 202;
                 return mvcmyquote.getCardPrivateKey(rootsessionuuid, walletuuid, _carduuid)["catch"](function (err) {});
 
-              case 201:
+              case 202:
                 privatekey = _context4.sent;
                 web3providerurl = _scheme.network.ethnodeserver.web3_provider_url;
                 address_string = address ? mvcmyquote.fitString(address, 32) : '';
@@ -925,24 +927,24 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 can_buy_credit_units = false;
 
                 if (!need_credit_units) {
-                  _context4.next = 219;
+                  _context4.next = 220;
                   break;
                 }
 
-                _context4.next = 215;
+                _context4.next = 216;
                 return this._readCurrencyCards();
 
-              case 215:
+              case 216:
                 this.currencycards = _context4.sent;
-                _context4.next = 218;
+                _context4.next = 219;
                 return this._filterCreditPositiveCards();
 
-              case 218:
+              case 219:
                 this.positivecards = _context4.sent;
 
-              case 219:
+              case 220:
                 if (!(creditbalance > 0)) {
-                  _context4.next = 232;
+                  _context4.next = 233;
                   break;
                 }
 
@@ -951,46 +953,46 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 transfer_cost_units = _currency2.uniswap_v2 && _currency2.uniswap_v2.swap_max_cost_units ? parseInt(_currency2.uniswap_v2.swap_max_cost_units) : 8; // max of successive transactions (approve, buy)
 
                 tx_fee.estimated_cost_units = transfer_cost_units;
-                _context4.next = 226;
+                _context4.next = 227;
                 return mvcmyquote.getRecommendedFeeLevel(rootsessionuuid, walletuuid, _carduuid, tx_fee);
 
-              case 226:
+              case 227:
                 feelevel = _context4.sent;
-                _context4.next = 229;
+                _context4.next = 230;
                 return mvcmyquote.canCompleteTransaction(rootsessionuuid, walletuuid, _carduuid, tx_fee, feelevel)["catch"](function (err) {});
 
-              case 229:
+              case 230:
                 can_buy_credit_units = _context4.sent;
-                _context4.next = 233;
+                _context4.next = 234;
                 break;
 
-              case 232:
+              case 233:
                 can_buy_credit_units = false;
 
-              case 233:
+              case 234:
                 if (!can_buy_credit_units) {
-                  _context4.next = 242;
+                  _context4.next = 243;
                   break;
                 }
 
                 if (!(_currency2.ops.cantxfree !== true && _currency2.ops.cantopup !== true && _currency2.ops.canswap === true)) {
-                  _context4.next = 242;
+                  _context4.next = 243;
                   break;
                 }
 
-                _context4.next = 237;
+                _context4.next = 238;
                 return mvcmyquote.getPriceForCreditUnits(rootsessionuuid, _currencyuuid2, this._getCreditsUnitsToBuy(credit_units_requested));
 
-              case 237:
+              case 238:
                 price_struct = _context4.sent;
                 price_struct.credit_units_requested = this._getCreditsUnitsRequested(credit_units_requested);
-                _context4.next = 241;
+                _context4.next = 242;
                 return this._getPriceInfo(price_struct);
 
-              case 241:
+              case 242:
                 priceinfo = _context4.sent;
 
-              case 242:
+              case 243:
                 //
                 // transfer
                 //
@@ -999,36 +1001,36 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 amount_string = this.callparams && this.callparams.amount_string ? this.callparams.amount_string : 0;
 
                 if (!amount_string) {
-                  _context4.next = 249;
+                  _context4.next = 250;
                   break;
                 }
 
                 // TODO: check amount_string is well formatted
                 decimalamount_string = amount_string;
-                _context4.next = 258;
+                _context4.next = 259;
                 break;
 
-              case 249:
+              case 250:
                 amount = this.callparams && this.callparams.amount ? this.callparams.amount : 0;
 
                 if (!(amount > 0)) {
-                  _context4.next = 258;
+                  _context4.next = 259;
                   break;
                 }
 
                 decimals = parseInt(_currency2.decimals);
-                _context4.next = 254;
+                _context4.next = 255;
                 return mvcmyquote.getDecimalAmount(rootsessionuuid, amount, decimals);
 
-              case 254:
+              case 255:
                 decimalamount = _context4.sent;
-                _context4.next = 257;
+                _context4.next = 258;
                 return decimalamount.toFixedString();
 
-              case 257:
+              case 258:
                 decimalamount_string = _context4.sent;
 
-              case 258:
+              case 259:
                 // return url
                 return_url = this.callparams && this.callparams.returnurl ? this.app.decodebase64(this.callparams.returnurl) : null;
                 callback_url = this.callparams && this.callparams.callbackurl ? this.app.decodebase64(this.callparams.callbackurl) : null;
@@ -1058,26 +1060,26 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                   callback_url: callback_url
                 });
 
-              case 261:
-                _context4.next = 266;
+              case 262:
+                _context4.next = 267;
                 break;
 
-              case 263:
-                _context4.prev = 263;
+              case 264:
+                _context4.prev = 264;
                 _context4.t3 = _context4["catch"](4);
                 console.log('exception in CurrencyCardView.checkNavigationState: ' + _context4.t3);
 
-              case 266:
-                _context4.prev = 266;
+              case 267:
+                _context4.prev = 267;
                 this.checking = false;
-                return _context4.finish(266);
+                return _context4.finish(267);
 
-              case 269:
+              case 270:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[4, 263, 266, 269]]);
+        }, _callee4, this, [[4, 264, 267, 270]]);
       }));
 
       function checkNavigationState() {
@@ -1228,7 +1230,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
       var app = this.app;
       var mvcmyquote = this.getMvcMyQuoteObject();
       mvcmyquote.unregisterEventListener('on_refreshPage', this.uuid);
-      this.app.closeDeviceWallet();
+      if (this.opened_devicewallet) this.app.closeDeviceWallet();
     } // user actions
 
   }, {

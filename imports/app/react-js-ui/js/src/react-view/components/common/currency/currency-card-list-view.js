@@ -67,6 +67,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
     _this.getMvcMyQuoteObject = _this.app.getMvcMyQuoteObject;
     _this.uuid = _this.app.guid();
     _this.closing = false;
+    _this.opened_devicewallet = false;
     _this.cards = [];
     _this.state = {
       currencies: [],
@@ -438,12 +439,12 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 unlocked = _context5.sent;
 
                 if (unlocked) {
-                  _context5.next = 21;
+                  _context5.next = 22;
                   break;
                 }
 
                 if (this.closing) {
-                  _context5.next = 18;
+                  _context5.next = 19;
                   break;
                 }
 
@@ -453,22 +454,23 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
               case 13:
                 devicewallet = _context5.sent;
                 walletuuid = devicewallet.uuid;
+                this.opened_devicewallet = false;
 
                 this._setState({
                   isdevicewallet: true
                 });
 
-                _context5.next = 21;
+                _context5.next = 22;
                 break;
 
-              case 18:
+              case 19:
                 _params = app_nav_target ? app_nav_target.params : null;
                 this.app.gotoRoute('login', _params);
                 return _context5.abrupt("return");
 
-              case 21:
+              case 22:
                 if (!(app_nav_target && app_nav_target.route == 'currencycards' && app_nav_target.reached == false)) {
-                  _context5.next = 30;
+                  _context5.next = 31;
                   break;
                 }
 
@@ -476,43 +478,43 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 currencyuuid = params.currencyuuid;
 
                 if (!currencyuuid) {
-                  _context5.next = 29;
+                  _context5.next = 30;
                   break;
                 }
 
-                _context5.next = 27;
+                _context5.next = 28;
                 return mvcmyquote.getCurrencyFromUUID(rootsessionuuid, currencyuuid);
 
-              case 27:
+              case 28:
                 currency = _context5.sent;
 
                 this._setState({
                   currency: currency
                 });
 
-              case 29:
+              case 30:
                 // mark target as reached
                 app_nav_target.reached = true;
 
-              case 30:
-                _context5.next = 32;
+              case 31:
+                _context5.next = 33;
                 return this._readVisibleCurrencies();
 
-              case 32:
+              case 33:
                 currencies = _context5.sent;
 
                 if (currencies) {
-                  _context5.next = 35;
+                  _context5.next = 36;
                   break;
                 }
 
                 return _context5.abrupt("return", Promise.reject('could not get list of currencies'));
 
-              case 35:
-                _context5.next = 37;
+              case 36:
+                _context5.next = 38;
                 return this._readCards();
 
-              case 37:
+              case 38:
                 this.cards = _context5.sent;
                 items = this.cards;
 
@@ -522,35 +524,35 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 });
 
                 if (!this.state.currency) {
-                  _context5.next = 45;
+                  _context5.next = 46;
                   break;
                 }
 
-                _context5.next = 43;
+                _context5.next = 44;
                 return this._filterCards(this.state.currency);
 
-              case 43:
+              case 44:
                 _items = _context5.sent;
 
                 this._setState({
                   items: _items
                 });
 
-              case 45:
-                _context5.next = 50;
+              case 46:
+                _context5.next = 51;
                 break;
 
-              case 47:
-                _context5.prev = 47;
+              case 48:
+                _context5.prev = 48;
                 _context5.t0 = _context5["catch"](3);
                 console.log('exception in CurrencyCardListView.checkNavigationState: ' + _context5.t0);
 
-              case 50:
+              case 51:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[3, 47]]);
+        }, _callee5, this, [[3, 48]]);
       }));
 
       function checkNavigationState() {
@@ -595,7 +597,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
       var app = this.app;
       var mvcmyquote = this.getMvcMyQuoteObject();
       mvcmyquote.unregisterEventListener('on_refreshPage', this.uuid);
-      this.app.closeDeviceWallet();
+      if (this.opened_devicewallet) this.app.closeDeviceWallet();
     } // user actions
 
   }, {

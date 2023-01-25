@@ -25,6 +25,8 @@ var _facebookLogin573x = _interopRequireDefault(require("../../../../../../asset
 
 var _googleLogin573x = _interopRequireDefault(require("../../../../../../assets/google-login-573x102.png"));
 
+var _localDevice573x = _interopRequireDefault(require("../../../../../../assets/local-device-573x102.png"));
+
 var _list = _interopRequireDefault(require("../../utils/list.js"));
 
 var _walletActions = require("@primusmoney/react_client_wallet/imports/view/actions/wallet/wallet-actions.js");
@@ -1171,38 +1173,51 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
               case 19:
                 _context13.t0 = type;
-                _context13.next = _context13.t0 === 0 ? 22 : _context13.t0 === 1 ? 27 : 27;
+                _context13.next = _context13.t0 === 0 ? 22 : _context13.t0 === 1 ? 30 : 30;
                 break;
 
               case 22:
                 if (!(item.credentials !== true)) {
-                  _context13.next = 26;
+                  _context13.next = 29;
+                  break;
+                }
+
+                if (!(item.provider !== 'localdevice')) {
+                  _context13.next = 25;
                   break;
                 }
 
                 throw 'alternative authentication mode with credentials not supported for local authentication';
 
-              case 26:
-                return _context13.abrupt("break", 52);
+              case 25:
+                _context13.next = 27;
+                return this.app.openDeviceWallet()["catch"](function (err) {});
 
               case 27:
+                _context13.next = 29;
+                break;
+
+              case 29:
+                return _context13.abrupt("break", 55);
+
+              case 30:
                 if (!(item.credentials !== true)) {
-                  _context13.next = 51;
+                  _context13.next = 54;
                   break;
                 }
 
                 _context13.t1 = item.mode;
-                _context13.next = _context13.t1 === 'oauth2' ? 31 : 34;
+                _context13.next = _context13.t1 === 'oauth2' ? 34 : 37;
                 break;
 
-              case 31:
-                _context13.next = 33;
+              case 34:
+                _context13.next = 36;
                 return this.oauth2Login(item.provider, schemeuuid);
 
-              case 33:
-                return _context13.abrupt("break", 49);
+              case 36:
+                return _context13.abrupt("break", 52);
 
-              case 34:
+              case 37:
                 // we ask hooks if they handle this mode
                 _mvcmyquote = this.getMvcMyQuoteObject();
                 _rootsessionuuid = this.props.rootsessionuuid;
@@ -1213,49 +1228,49 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
                 _params3.push(item);
 
-                _context13.next = 42;
+                _context13.next = 45;
                 return _mvcmyquote.invokeAsyncHooks('altModeLogin_asynchook', _result, _params3);
 
-              case 42:
+              case 45:
                 _ret = _context13.sent;
 
                 if (!(_ret && _result.gotoRoute && _result.gotoRoute.route)) {
-                  _context13.next = 48;
+                  _context13.next = 51;
                   break;
                 }
 
-                _context13.next = 46;
+                _context13.next = 49;
                 return this.app.gotoRoute(_result.gotoRoute.route, _result.gotoRoute.params);
 
-              case 46:
-                _context13.next = 49;
-                break;
-
-              case 48:
-                throw 'authentication mode is not supported: ' + item.mode;
-
               case 49:
-                _context13.next = 51;
+                _context13.next = 52;
                 break;
 
               case 51:
-                return _context13.abrupt("break", 52);
+                throw 'authentication mode is not supported: ' + item.mode;
 
               case 52:
-                _context13.next = 57;
+                _context13.next = 54;
                 break;
 
               case 54:
-                _context13.prev = 54;
+                return _context13.abrupt("break", 55);
+
+              case 55:
+                _context13.next = 60;
+                break;
+
+              case 57:
+                _context13.prev = 57;
                 _context13.t2 = _context13["catch"](3);
                 console.log('exception in LoginForm.onClickItem:' + _context13.t2);
 
-              case 57:
+              case 60:
               case "end":
                 return _context13.stop();
             }
           }
-        }, _callee13, this, [[3, 54]]);
+        }, _callee13, this, [[3, 57]]);
       }));
 
       function onClickItem(_x27) {
@@ -1322,6 +1337,12 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
               src: _googleLogin573x["default"],
               fluid: true
             }));
+
+          case 'localdevice':
+            return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_Image["default"], {
+              src: _localDevice573x["default"],
+              fluid: true
+            }));
           // webapp additional
 
           default:
@@ -1340,12 +1361,6 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     key: "_getLoginSchemeList",
     value: function _getLoginSchemeList() {
       // built-in logins
-
-      /*let schemeList = [
-      	{name: 'facebook', label: 'facebook', image: 'inline', type: 1, mode: 'oauth2', provider: 'facebook', uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'}, 
-      	{name: 'google', label: 'google', image: 'inline', type: 1, mode: 'oauth2', provider: 'google', uuid: '47b0806f-c3fa-65f6-b356-8715a2bcfa0c'},
-      	{name: 'primusmoney', label: 'connect with primus money', type: 1, credentials: true, uuid: 'd3b4fa61-ed65-11f6-4877-b169441dbe58'}
-      ];*/
       var schemeList = [{
         name: 'facebook',
         label: 'facebook',
@@ -1355,6 +1370,15 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         provider: 'facebook',
         schemeuuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b',
         uuid: 'd8dbb10e-a478-e52c-b96b-29af6f48ae9b'
+      }, {
+        name: 'google',
+        label: 'google',
+        image: 'inline',
+        type: 1,
+        mode: 'oauth2',
+        provider: 'google',
+        schemeuuid: '47b0806f-c3fa-65f6-b356-8715a2bcfa0c',
+        uuid: 'efa3b094-17cf-d48b-fa39-a8d8dbeed52c'
       }, {
         name: 'primusmoney',
         label: 'connect with a primus money account',
@@ -1425,7 +1449,9 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       var schemeList = this._getLoginSchemeList();
 
       for (var i = 0; i < schemeList.length; i++) {
-        if (schemeList[i].uuid === schemeuuid) {
+        var _schemeuuid = schemeList[i].schemeuuid ? schemeList[i].schemeuuid : schemeList[i].uuid;
+
+        if (_schemeuuid === schemeuuid) {
           scheme = schemeList[i];
           break;
         }

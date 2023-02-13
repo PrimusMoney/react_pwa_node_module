@@ -70,12 +70,14 @@ var App = /*#__PURE__*/function (_React$Component) {
     _classCallCheck(this, App);
 
     _this = _super.call(this, props);
-    console.log('App constructor called');
+    var app_id = window.simplestore.app_id ? ++window.simplestore.app_id : window.simplestore.app_id = 1;
+    _this.app_id = 'app-' + app_id;
+    console.log('App constructor called for: ' + _this.app_id);
     _this.exec_env = App.EXEC_ENV;
-    _this.current_version = '0.15.51.2023.01.25';
+    _this.current_version = '0.15.52.2023.02.12';
     App.theapp = _assertThisInitialized(_this);
     _this.basename = App.BASE_NAME ? App.BASE_NAME : "my-pwa";
-    _this.updatetime = 'August 30, 2022';
+    _this.updatetime = 'January 30, 2023';
     _this.App = App;
     _this.mvcmodule = null;
     _this.mvcmyquote = null;
@@ -86,6 +88,7 @@ var App = /*#__PURE__*/function (_React$Component) {
     _this.varmap = Object.create(null);
     _this.boot_webapp = {};
     _this.window_listeners = {};
+    _this.navigation_state_promises = {};
     _this.state = {
       name: 'PoA wallets',
       loading: true,
@@ -105,7 +108,7 @@ var App = /*#__PURE__*/function (_React$Component) {
             switch (_context.prev = _context.next) {
               case 0:
                 _globalscope = window;
-                console.log('App.onLoaded called'); // mvc module
+                console.log('App.onLoaded called for: ' + this.app_id); // mvc module
                 // @primusmoney/react_client_wallet
 
                 React_Client_Wallet = require('@primusmoney/react_client_wallet');
@@ -932,6 +935,17 @@ var App = /*#__PURE__*/function (_React$Component) {
       } else {
         console.log('could not find root component');
       }
+    } // component life cycle
+
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      console.log('App.componentDidMount called for: ' + this.app_id);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      console.log('App.componentWillUnmount called for: ' + this.app_id);
     } // render
 
   }, {
@@ -2389,6 +2403,28 @@ var App = /*#__PURE__*/function (_React$Component) {
         detail: data
       });
       window.dispatchEvent(event);
+    } // promises from components fetching data
+
+  }, {
+    key: "addNavigationStatePromise",
+    value: function addNavigationStatePromise(componentname, uuid, promise) {
+      var key = componentname ? componentname + (uuid ? '-' + uuid : '') : uuid ? uuid : null;
+      if (!key) return;
+      this.navigation_state_promises[key] = promise;
+    }
+  }, {
+    key: "removeNavigationStatePromise",
+    value: function removeNavigationStatePromise(componentname, uuid) {
+      var key = componentname ? componentname + (uuid ? '-' + uuid : '') : uuid ? uuid : null;
+      if (!key) return;
+      if (this.navigation_state_promises[key]) delete this.navigation_state_promises[key];
+    }
+  }, {
+    key: "getNavigationStatePromise",
+    value: function getNavigationStatePromise(componentname, uuid) {
+      var key = componentname ? componentname + (uuid ? '-' + uuid : '') : uuid ? uuid : null;
+      if (!key) return;
+      return this.navigation_state_promises[key];
     } // utils
 
   }, {

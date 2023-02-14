@@ -232,7 +232,7 @@ var Module = /*#__PURE__*/function () {
     key: "_getMonitoredSchemeSession",
     value: function () {
       var _getMonitoredSchemeSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(session, wallet, scheme) {
-        var fetchsession, walletschemeuuid, schemeuuid, walletsession;
+        var fetchsession, walletschemeuuid, schemeuuid, networkconfig, ethnodeserver, provider, ethereumnodeaccessinstance, walletsession;
         return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -246,12 +246,12 @@ var Module = /*#__PURE__*/function () {
 
               case 2:
                 if (!scheme.isRemote()) {
-                  _context3.next = 16;
+                  _context3.next = 20;
                   break;
                 }
 
                 if (!wallet) {
-                  _context3.next = 13;
+                  _context3.next = 17;
                   break;
                 }
 
@@ -259,55 +259,68 @@ var Module = /*#__PURE__*/function () {
                 schemeuuid = scheme.getSchemeUUID();
 
                 if (!this._canWalletHandleScheme(wallet, scheme)) {
-                  _context3.next = 10;
+                  _context3.next = 14;
                   break;
                 }
 
                 // use wallet session
-                fetchsession = wallet._getSession();
-                _context3.next = 11;
+                fetchsession = wallet._getSession(); // FIX v0.30.10: since version 0.30.10 does not pass web3providerurl to lower levels functions
+                // and relies on session.ethereum_node_access_instance in getEthereumNodeAccessInstance(session)
+                // we set it to the correct instance before calling _getEthereumTransaction and other methods
+
+                networkconfig = scheme.getNetworkConfig();
+                ethnodeserver = networkconfig.ethnodeserver ? networkconfig.ethnodeserver : {};
+                provider = ethnodeserver.web3_provider_url ? fetchsession.web3providermap[ethnodeserver.web3_provider_url] : null;
+
+                if (provider) {
+                  ethereumnodeaccessinstance = provider.getEthereumNodeAccessInstance();
+                  fetchsession.ethereum_node_access_instance_org = fetchsession.ethereum_node_access_instance;
+                  fetchsession.ethereum_node_access_instance = ethereumnodeaccessinstance;
+                }
+
+                _context3.next = 15;
                 break;
-
-              case 10:
-                return _context3.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
-
-              case 11:
-                _context3.next = 14;
-                break;
-
-              case 13:
-                return _context3.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
 
               case 14:
-                _context3.next = 26;
+                return _context3.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+
+              case 15:
+                _context3.next = 18;
                 break;
 
-              case 16:
+              case 17:
+                return _context3.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+
+              case 18:
+                _context3.next = 30;
+                break;
+
+              case 20:
                 if (!wallet) {
-                  _context3.next = 23;
+                  _context3.next = 27;
                   break;
                 }
 
                 walletsession = wallet._getSession();
-                _context3.next = 20;
+                _context3.next = 24;
                 return this._getChildSessionOnScheme(walletsession, scheme);
 
-              case 20:
+              case 24:
                 fetchsession = _context3.sent;
-                _context3.next = 26;
+                _context3.next = 30;
                 break;
 
-              case 23:
-                _context3.next = 25;
+              case 27:
+                _context3.next = 29;
                 return this._getChildSessionOnScheme(session, scheme);
 
-              case 25:
+              case 29:
                 fetchsession = _context3.sent;
 
-              case 26:
+              case 30:
                 return _context3.abrupt("return", fetchsession);
 
-              case 27:
+              case 31:
               case "end":
                 return _context3.stop();
             }
@@ -320,7 +333,12 @@ var Module = /*#__PURE__*/function () {
       }
 
       return _getMonitoredSchemeSession;
-    }() //
+    }()
+  }, {
+    key: "_resetMonitoredSchemeSession",
+    value: function _resetMonitoredSchemeSession(session) {
+      session.ethereum_node_access_instance = session.ethereum_node_access_instance_org;
+    } //
     // Card functions
     //
     // TODO: replace by _apicontrollers.__makeWalletCard for version >= 0.20.18

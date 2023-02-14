@@ -1967,9 +1967,14 @@ var Module = /*#__PURE__*/function () {
 
               case 31:
                 ethereumtransaction._ethtx = _context43.sent;
+
+                //ethereumtransaction._ethtx = await apicontrollers.readTransaction(childsession, txhash);
+                // FIX v0.30.10: reset childsession.ethereum_node_access_instance
+                this._resetMonitoredSchemeSession(childsession);
+
                 return _context43.abrupt("return", ethereumtransaction);
 
-              case 33:
+              case 34:
               case "end":
                 return _context43.stop();
             }
@@ -1987,7 +1992,7 @@ var Module = /*#__PURE__*/function () {
     key: "getSchemeEthereumTransactionReceipt",
     value: function () {
       var _getSchemeEthereumTransactionReceipt = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee44(sessionuuid, walletuuid, schemeuuid, txhash) {
-        var global, _apicontrollers, session, wallet, scheme, childsession;
+        var global, _apicontrollers, session, wallet, scheme, childsession, ethereumtransactionreceipt;
 
         return _regeneratorRuntime().wrap(function _callee44$(_context44) {
           while (1) {
@@ -2066,9 +2071,14 @@ var Module = /*#__PURE__*/function () {
 
               case 25:
                 childsession = _context44.sent;
-                return _context44.abrupt("return", _apicontrollers.getEthereumTransactionReceipt(childsession, txhash));
+                _context44.next = 28;
+                return _apicontrollers.getEthereumTransactionReceipt(childsession, txhash);
 
-              case 27:
+              case 28:
+                ethereumtransactionreceipt = _context44.sent;
+                return _context44.abrupt("return", ethereumtransactionreceipt);
+
+              case 30:
               case "end":
                 return _context44.stop();
             }
@@ -2704,6 +2714,9 @@ var Module = /*#__PURE__*/function () {
                 return mvcclientwalletmodule._attachSessionToWallet(session, wallet);
 
               case 37:
+                if (!session.WALLET_ATTACHED) session.WALLET_ATTACHED = wallet.uuid; // TODO: remove for version > 0.30.10
+
+              case 38:
               case "end":
                 return _context56.stop();
             }
@@ -5334,6 +5347,13 @@ var Module = /*#__PURE__*/function () {
 
       return _getMonitoredSchemeSession;
     }()
+  }, {
+    key: "_resetMonitoredSchemeSession",
+    value: function _resetMonitoredSchemeSession(session) {
+      var global = this.global;
+      var mvccurrencies = global.getModuleObject('mvc-currencies');
+      return mvccurrencies._resetMonitoredSchemeSession(session);
+    }
   }, {
     key: "_fetchTransaction",
     value: function () {

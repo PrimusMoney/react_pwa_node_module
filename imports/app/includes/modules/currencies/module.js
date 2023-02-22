@@ -97,7 +97,60 @@ var Module = /*#__PURE__*/function () {
     } //
     // hooks
     //
-    //
+
+  }, {
+    key: "_canWalletHandleScheme",
+    value: function _canWalletHandleScheme(wallet, scheme) {
+      if (!wallet || !scheme) return false;
+
+      if (scheme.isRemote()) {
+        var walletschemeuuid = wallet.getSchemeUUID(); // TODO: we could look if authserver are the same
+
+        if (walletschemeuuid && walletschemeuuid === scheme.getSchemeUUID()) return true;else return false;
+      } else {
+        return true;
+      }
+    }
+  }, {
+    key: "_createDummyWalletSession",
+    value: function () {
+      var _createDummyWalletSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(walletsession) {
+        var global, Session, fetchsession;
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // we create a dummy session (not registered in session_array) and
+                // we set it to the correct instance before calling _getEthereumTransaction and other methods
+                global = this.global;
+                Session = global.getModuleClass('common', 'Session');
+                fetchsession = new Session(global);
+                fetchsession.setSessionUUID(walletsession.getSessionUUID()); // serving as placeholder for authkey
+
+                fetchsession.DUMMY_SESSION_UUID = walletsession.guid();
+                fetchsession.DUMMY_SESSION_WALLET = walletsession; // point to walletsession properties (avoid storage to make this session unharmful)
+
+                fetchsession.authkey = walletsession.authkey;
+                fetchsession.authkey_server_access_instance = walletsession.authkey_server_access_instance;
+                fetchsession.cryptokeymap = walletsession.cryptokeymap;
+                fetchsession.user = walletsession.user;
+                fetchsession.xtraconfig = walletsession.xtraconfig;
+                return _context.abrupt("return", fetchsession);
+
+              case 12:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function _createDummyWalletSession(_x) {
+        return _createDummyWalletSession2.apply(this, arguments);
+      }
+
+      return _createDummyWalletSession;
+    }() //
     // Currencies functions
     //
 
@@ -143,12 +196,12 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "readLocalCurrencies",
     value: function () {
-      var _readLocalCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(session) {
+      var _readLocalCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(session) {
         var global, commonmodule, walletmodule, _keys, clientAccess, currencies;
 
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 global = this.global;
                 commonmodule = global.getModuleObject('common');
@@ -156,7 +209,7 @@ var Module = /*#__PURE__*/function () {
                 _keys = ['shared', 'currencies', 'currencies']; // look in 'shared' branch
 
                 clientAccess = session.getClientStorageAccessInstance();
-                _context.next = 7;
+                _context2.next = 7;
                 return new Promise(function (resolve, reject) {
                   clientAccess.readClientSideJson(_keys, function (err, res) {
                     if (err) {
@@ -171,18 +224,18 @@ var Module = /*#__PURE__*/function () {
                 });
 
               case 7:
-                currencies = _context.sent;
-                return _context.abrupt("return", currencies);
+                currencies = _context2.sent;
+                return _context2.abrupt("return", currencies);
 
               case 9:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
-      function readLocalCurrencies(_x) {
+      function readLocalCurrencies(_x2) {
         return _readLocalCurrencies.apply(this, arguments);
       }
 
@@ -198,12 +251,12 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "saveLocalCurrencies",
     value: function () {
-      var _saveLocalCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(session, currencies) {
+      var _saveLocalCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(session, currencies) {
         var global, i, _keys, clientAccess;
 
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 global = this.global;
 
@@ -215,7 +268,7 @@ var Module = /*#__PURE__*/function () {
                 // create json
 
                 clientAccess = session.getClientStorageAccessInstance();
-                return _context2.abrupt("return", new Promise(function (resolve, reject) {
+                return _context3.abrupt("return", new Promise(function (resolve, reject) {
                   clientAccess.saveClientSideJson(_keys, currencies, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
@@ -223,13 +276,13 @@ var Module = /*#__PURE__*/function () {
 
               case 5:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
-      function saveLocalCurrencies(_x2, _x3) {
+      function saveLocalCurrencies(_x3, _x4) {
         return _saveLocalCurrencies.apply(this, arguments);
       }
 
@@ -238,20 +291,20 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "saveLocalCurrency",
     value: function () {
-      var _saveLocalCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(session, currency) {
+      var _saveLocalCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(session, currency) {
         var currencies, bInList, i;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.next = 2;
+                _context4.next = 2;
                 return this.readLocalCurrencies(session);
 
               case 2:
-                currencies = _context3.sent;
+                currencies = _context4.sent;
 
                 if (!currencies) {
-                  _context3.next = 18;
+                  _context4.next = 18;
                   break;
                 }
 
@@ -261,41 +314,41 @@ var Module = /*#__PURE__*/function () {
 
               case 6:
                 if (!(i < currencies.length)) {
-                  _context3.next = 14;
+                  _context4.next = 14;
                   break;
                 }
 
                 if (!(currency.uuid == currencies[i].uuid)) {
-                  _context3.next = 11;
+                  _context4.next = 11;
                   break;
                 }
 
                 bInList = true;
                 currencies[i] = currency;
-                return _context3.abrupt("break", 14);
+                return _context4.abrupt("break", 14);
 
               case 11:
                 i++;
-                _context3.next = 6;
+                _context4.next = 6;
                 break;
 
               case 14:
                 // add it if it is not
                 if (!bInList) currencies.push(currency);
-                return _context3.abrupt("return", this.saveLocalCurrencies(session, currencies));
+                return _context4.abrupt("return", this.saveLocalCurrencies(session, currencies));
 
               case 18:
-                return _context3.abrupt("return", Promise.reject('could not retrieve the list of schemes'));
+                return _context4.abrupt("return", Promise.reject('could not retrieve the list of schemes'));
 
               case 19:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function saveLocalCurrency(_x4, _x5) {
+      function saveLocalCurrency(_x5, _x6) {
         return _saveLocalCurrency.apply(this, arguments);
       }
 
@@ -304,26 +357,26 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCurrencyScheme",
     value: function () {
-      var _getCurrencyScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(session, currency) {
-        var global, walletmodule, currencyschemeuuid, scheme, web3url, defaultlocalscheme;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      var _getCurrencyScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(session, currency) {
+        var global, walletmodule, currencyschemeuuid, scheme;
+        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 if (session) {
-                  _context4.next = 2;
+                  _context5.next = 2;
                   break;
                 }
 
-                return _context4.abrupt("return", Promise.reject('session is undefined'));
+                return _context5.abrupt("return", Promise.reject('session is undefined'));
 
               case 2:
                 if (currency) {
-                  _context4.next = 4;
+                  _context5.next = 4;
                   break;
                 }
 
-                return _context4.abrupt("return", Promise.reject('currency is undefined'));
+                return _context5.abrupt("return", Promise.reject('currency is undefined'));
 
               case 4:
                 global = this.global;
@@ -332,94 +385,38 @@ var Module = /*#__PURE__*/function () {
                 currencyschemeuuid = currency.scheme_uuid ? currency.scheme_uuid : null;
 
                 if (!currencyschemeuuid) {
-                  _context4.next = 13;
+                  _context5.next = 13;
                   break;
                 }
 
-                _context4.next = 10;
+                _context5.next = 10;
                 return walletmodule.getSchemeFromUUID(session, currencyschemeuuid)["catch"](function (err) {});
 
               case 10:
-                scheme = _context4.sent;
-                _context4.next = 24;
+                scheme = _context5.sent;
+                _context5.next = 15;
                 break;
 
               case 13:
-                // scheme has probably already been created with web3providerurl
-                web3url = currency.web3providerurl;
-                _context4.next = 16;
-                return walletmodule.getSchemeFromWeb3Url(session, web3url)["catch"](function (err) {});
+                walletmodule = global.getModuleObject('wallet'); // pick local default (as default)
+
+                scheme = walletmodule.getDefaultScheme(session, 0);
+                /* 			// local scheme has probably already been created with web3providerurl
+                			var web3url = (currency.ethnodeserver && currency.ethnodeserver.web3_provider_url ? currency.ethnodeserver.web3_provider_url : (currency.web3providerurl ? currency.web3providerurl : null));
+                			scheme = await walletmodule.getSchemeFromWeb3Url(session, web3url)
+                			.catch(err => {}); // note: returns local schemes, use getLocalSchemeFromWeb3Url for version > 0.30.10
+                
+                			if (!scheme) {
+                				// if not, we create a local scheme now and save it
+                				var defaultlocalscheme = await walletmodule.getDefaultScheme(session, 0);
+                				scheme = await defaultlocalscheme.cloneOnWeb3ProviderUrl(web3url)
+                				.catch(err => {});
+                			} */
+
+              case 15:
+                return _context5.abrupt("return", scheme);
 
               case 16:
-                scheme = _context4.sent;
-
-                if (scheme) {
-                  _context4.next = 24;
-                  break;
-                }
-
-                _context4.next = 20;
-                return walletmodule.getDefaultScheme(session, 0);
-
-              case 20:
-                defaultlocalscheme = _context4.sent;
-                _context4.next = 23;
-                return defaultlocalscheme.cloneOnWeb3ProviderUrl(web3url)["catch"](function (err) {});
-
-              case 23:
-                scheme = _context4.sent;
-
-              case 24:
-                return _context4.abrupt("return", scheme);
-
-              case 25:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function getCurrencyScheme(_x6, _x7) {
-        return _getCurrencyScheme.apply(this, arguments);
-      }
-
-      return getCurrencyScheme;
-    }()
-  }, {
-    key: "getCurrencyWeb3ProviderUrl",
-    value: function () {
-      var _getCurrencyWeb3ProviderUrl = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(session, currency) {
-        var scheme;
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                if (!currency.web3providerurl) {
-                  _context5.next = 4;
-                  break;
-                }
-
-                return _context5.abrupt("return", currency.web3providerurl);
-
-              case 4:
-                _context5.next = 6;
-                return this.getCurrencyScheme(session, currency);
-
-              case 6:
-                scheme = _context5.sent;
-
-                if (!scheme) {
-                  _context5.next = 11;
-                  break;
-                }
-
-                return _context5.abrupt("return", scheme.getWeb3ProviderUrl());
-
-              case 11:
-                console.log('currency is badly configured ' + currency.uuid);
-
-              case 12:
               case "end":
                 return _context5.stop();
             }
@@ -427,11 +424,11 @@ var Module = /*#__PURE__*/function () {
         }, _callee5, this);
       }));
 
-      function getCurrencyWeb3ProviderUrl(_x8, _x9) {
-        return _getCurrencyWeb3ProviderUrl.apply(this, arguments);
+      function getCurrencyScheme(_x7, _x8) {
+        return _getCurrencyScheme.apply(this, arguments);
       }
 
-      return getCurrencyWeb3ProviderUrl;
+      return getCurrencyScheme;
     }()
   }]);
 

@@ -57,8 +57,8 @@ var Header = /*#__PURE__*/function (_React$Component) {
 
     _this = _super.call(this, props);
     _this.app = _this.props.app;
-    _this.getMvcModuleObject = _this.app.getMvcModuleObject;
-    _this.closing = false; // load dynamic menu links
+    _this.getMvcModuleObject = _this.app.getMvcModuleObject; //this.closing = false;
+    // load dynamic menu links
 
     var MenuLinks = require('./menulinks/menulinks.js');
 
@@ -118,8 +118,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
 
   }, {
     key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      this.closing = true;
+    value: function componentWillUnmount() {//this.closing = true;
     } // render
 
   }, {
@@ -148,13 +147,13 @@ var Header = /*#__PURE__*/function (_React$Component) {
         case 'link':
           return /*#__PURE__*/_react["default"].createElement(_reactRouterBootstrap.LinkContainer, {
             key: index,
-            to: item.route
+            to: item.path
           }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.NavDropdown.Item, null, item.label));
 
         case 'click':
           return /*#__PURE__*/_react["default"].createElement(_reactRouterBootstrap.LinkContainer, {
             key: index,
-            to: item.route
+            to: item.path
           }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.NavDropdown.Item, {
             onClick: item.onclick
           }, item.label));
@@ -182,6 +181,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
         menulinks.push({
           type: 'click',
           route: 'login',
+          path: '/login',
           onclick: function onclick() {
             _this4.app.gotoRoute('login');
           },
@@ -192,6 +192,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       menulinks.push({
         type: 'link',
         route: 'logout',
+        path: '/logout',
         label: 'Logout'
       });
 
@@ -217,6 +218,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       menulinks.push({
         type: 'link',
         route: 'currencycards',
+        path: '/currencycards',
         label: 'Currency Cards'
       });
       menulinks.push({
@@ -225,6 +227,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       menulinks.push({
         type: 'link',
         route: 'deeplink',
+        path: '/deeplink',
         label: 'Enter url'
       });
       menulinks.push({
@@ -233,6 +236,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       menulinks.push({
         type: 'link',
         route: 'datawipe',
+        path: '/datawipe',
         label: 'Wipe all data'
       });
       menulinks.push({
@@ -241,6 +245,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       menulinks.push({
         type: 'link',
         route: 'about',
+        path: '/about',
         label: 'About'
       });
       return menulinks;
@@ -255,6 +260,7 @@ var Header = /*#__PURE__*/function (_React$Component) {
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "Header"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.Navbar, {
+        className: "HeaderNavBar",
         bg: "light",
         variant: "light",
         expand: "lg"

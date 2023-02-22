@@ -17,8 +17,6 @@ var _Image = _interopRequireDefault(require("react-bootstrap/Image"));
 
 var _reactActivity = require("react-activity");
 
-require("react-activity/dist/react-activity.css");
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _facebookLogin573x = _interopRequireDefault(require("../../../../../../assets/facebook-login-573x102.png"));
@@ -77,17 +75,19 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     _this.app = _this.props.app;
     _this.getMvcModuleObject = _this.app.getMvcModuleObject;
     _this.getMvcMyQuoteObject = _this.app.getMvcMyQuoteObject;
+    _this.uuid = _this.app.guid();
     var username = '';
     var password = '';
     _this.nav_state_params = null;
 
-    var logging_pending = _this.app.getVariable('logging_pending');
+    var logging_pending = _this.app.getVariable('logging_pending'); //this.closing = false;
 
-    _this.closing = false;
+
     _this.login_scheme_list_webapp = null;
     _this.login_scheme_list_dev = null;
     _this.default_local_schemeuuid = null;
     _this.state = {
+      loadinginfo: 'loading...',
       processinginfo: 'processing authentication',
       processing: logging_pending ? true : false,
       schemeuuid: null,
@@ -103,7 +103,8 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   _createClass(LoginForm, [{
     key: "_setState",
     value: function _setState(state) {
-      if (this.closing !== true) this.setState(state);
+      //if (this.closing !== true)
+      this.setState(state);
     } // post render commit phase
 
   }, {
@@ -111,6 +112,10 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     value: function componentDidUpdate(prevProps, prevState) {
       console.log('LoginForm.componentDidUpdate called');
       var mvcmodule = this.getMvcModuleObject();
+
+      if (this.props.isLoginPending != prevProps.isLoginPending) {//debugger;
+      }
+
       var logging_pending = this.app.getVariable('logging_pending');
 
       if (this.state.processing && this.state.processing != logging_pending) {
@@ -137,68 +142,68 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
-    key: "checkNavigationState",
+    key: "fetchNavigationState",
     value: function () {
-      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var _fetchNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
         var mvcmyquote, rootsessionuuid, localscheme, app_nav_state, app_nav_target, startconditions, urlParams, txhash, currencyuuid, sessionuuid, schemeuuid, params, wallet, dataobj, _params;
 
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                console.log('LoginForm.fetchNavigationState called');
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid; // load additional login for webapp and dev
 
-                _context.next = 4;
+                _context.next = 5;
                 return mvcmyquote.loadConfig('login-webapp');
 
-              case 4:
+              case 5:
                 this.login_scheme_list_webapp = _context.sent;
 
                 if (!(this.app.exec_env === 'dev')) {
-                  _context.next = 9;
+                  _context.next = 10;
                   break;
                 }
 
-                _context.next = 8;
+                _context.next = 9;
                 return mvcmyquote.loadConfig('login-dev');
 
-              case 8:
+              case 9:
                 this.login_scheme_list_dev = _context.sent;
 
-              case 9:
-                _context.next = 11;
+              case 10:
+                _context.next = 12;
                 return mvcmyquote.getDefaultLocalSchemeInfo(rootsessionuuid);
 
-              case 11:
+              case 12:
                 localscheme = _context.sent;
                 this.default_local_schemeuuid = localscheme.uuid; // look if a transaction is defined in the url
 
                 app_nav_state = this.app.getNavigationState();
                 app_nav_target = app_nav_state.target;
 
-                if (!(app_nav_target && app_nav_target.route == 'login' && app_nav_target.reached == false)) {
-                  _context.next = 21;
+                if (app_nav_target && app_nav_target.route == 'login' && app_nav_target.reached == false) {
+                  console.log('LoginForm.fetchNavigationState target reached'); // we want to login before completing previous route
+
+                  this.nav_state_params = app_nav_target.params; // we reset processing and logging_pending in case they're not clean
+                  //await this.setProcessing(false);
+
+                  app_nav_target.reached = true;
+                }
+
+                if (!app_nav_target.params.sessionuuid) {
+                  _context.next = 65;
                   break;
                 }
 
-                console.log('LoginForm.checkNavigationState target reached'); // we want to login before completing previous route
-
-                this.nav_state_params = app_nav_target.params; // we reset processing and logging_pending in case they're not clean
-                //await this.setProcessing(false);
-
-                app_nav_target.reached = true;
-                _context.next = 68;
-                break;
-
-              case 21:
-                console.log('LoginForm.checkNavigationState starting from a clean slate'); // starting from a clean slate
+                console.log('LoginForm.fetchNavigationState starting from a clean slate'); // starting from a clean slate
 
                 startconditions = this.app.getVariable('start_conditions');
                 urlParams = startconditions.urlParams;
 
                 if (!urlParams) {
-                  _context.next = 68;
+                  _context.next = 65;
                   break;
                 }
 
@@ -207,21 +212,21 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 sessionuuid = urlParams.get('sessionuuid');
                 schemeuuid = urlParams.get('schemeuuid'); // give possibility to hooks to find alternative alt logins (e.g. openid)
 
-                _context.next = 31;
+                _context.next = 28;
                 return this.preLogin('bootstrap');
 
-              case 31:
+              case 28:
                 if (!sessionuuid) {
-                  _context.next = 55;
+                  _context.next = 52;
                   break;
                 }
 
                 // we need to reconnect to a pre-existing session
                 // (e.g. coming back from oauth2 authentication)
-                console.log('LoginForm.checkNavigationState reconnecting to session:' + sessionuuid);
+                console.log('LoginForm.fetchNavigationState reconnecting to session:' + sessionuuid);
 
                 if (!schemeuuid) {
-                  _context.next = 53;
+                  _context.next = 50;
                   break;
                 }
 
@@ -231,104 +236,142 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(startconditions.walletforscheme_treating !== true)) {
-                  _context.next = 53;
-                  break;
-                }
-
-                console.log('LoginForm.checkNavigationState looking for a wallet for scheme ' + schemeuuid);
-                startconditions.walletforscheme_treating = true; // set processing flag on
-
-                _context.next = 40;
-                return this.setProcessing(true);
-
-              case 40:
-                _context.next = 42;
-                return this._getWalletForScheme(params)["catch"](function (err) {
-                  console.log('error in LoginForm._getWalletForScheme:' + err);
-                });
-
-              case 42:
-                wallet = _context.sent;
-
-                if (!wallet) {
                   _context.next = 50;
                   break;
                 }
 
-                console.log('LoginForm.checkNavigationState found wallet for session:' + sessionuuid);
-                _context.next = 47;
-                return this.postLogin('bootstrap');
+                console.log('LoginForm.fetchNavigationState looking for a wallet for scheme ' + schemeuuid);
+                startconditions.walletforscheme_treating = true; // set processing flag on
 
-              case 47:
-                startconditions.walletforscheme_treated = true;
-                _context.next = 53;
-                break;
+                _context.next = 37;
+                return this.setProcessing(true);
 
-              case 50:
-                console.log('LoginForm.checkNavigationState reset url, could not find wallet for session:' + sessionuuid); // we restart on a clean url
+              case 37:
+                _context.next = 39;
+                return this._getWalletForScheme(params)["catch"](function (err) {
+                  console.log('error in LoginForm._getWalletForScheme:' + err);
+                });
 
-                _context.next = 53;
-                return this.app.resetHref();
+              case 39:
+                wallet = _context.sent;
 
-              case 53:
-                _context.next = 68;
-                break;
-
-              case 55:
-                if (!(txhash && currencyuuid)) {
-                  _context.next = 68;
+                if (!wallet) {
+                  _context.next = 47;
                   break;
                 }
 
-                _context.next = 58;
+                console.log('LoginForm.fetchNavigationState found wallet for session:' + sessionuuid);
+                _context.next = 44;
+                return this.postLogin('bootstrap');
+
+              case 44:
+                startconditions.walletforscheme_treated = true;
+                _context.next = 50;
+                break;
+
+              case 47:
+                console.log('LoginForm.fetchNavigationState reset url, could not find wallet for session:' + sessionuuid); // we restart on a clean url
+
+                _context.next = 50;
+                return this.app.resetHref();
+
+              case 50:
+                _context.next = 65;
+                break;
+
+              case 52:
+                if (!(txhash && currencyuuid)) {
+                  _context.next = 65;
+                  break;
+                }
+
+                _context.next = 55;
                 return this.app.getStartDataObject()["catch"](function (err) {
                   console.log('error calling App.getStartDataObject: ' + err);
                 });
 
-              case 58:
+              case 55:
                 dataobj = _context.sent;
 
                 if (!dataobj) {
-                  _context.next = 66;
+                  _context.next = 63;
                   break;
                 }
 
                 if (!(dataobj.viewed !== true)) {
-                  _context.next = 64;
+                  _context.next = 61;
                   break;
                 }
 
                 _params = {
                   dataobject: dataobj
                 };
-                _context.next = 64;
+                _context.next = 61;
                 return this.app.gotoMyQuotePage(_params)["catch"](function (err) {
                   console.log('error calling App.gotoMyQuotePage: ' + err);
                 });
 
-              case 64:
-                _context.next = 68;
+              case 61:
+                _context.next = 65;
                 break;
 
-              case 66:
-                _context.next = 68;
+              case 63:
+                _context.next = 65;
                 return this.app.onEmptyStartDataObject(txhash, currencyuuid)["catch"](function (err) {
                   console.log('error calling App.onEmptyStartDataObject: ' + err);
                 });
 
-              case 68:
+              case 65:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function fetchNavigationState() {
+        return _fetchNavigationState.apply(this, arguments);
+      }
+
+      return fetchNavigationState;
+    }()
+  }, {
+    key: "checkNavigationState",
+    value: function () {
+      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+        var fetchNavigationStatePromise, data;
+        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                console.log('LoginForm.checkNavigationState called'); // use navigation promises to be re-entrant
+
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise('LoginForm', this.uuid);
+
+                if (!fetchNavigationStatePromise) {
+                  fetchNavigationStatePromise = this.fetchNavigationState();
+                  this.app.addNavigationStatePromise('LoginForm', this.uuid, fetchNavigationStatePromise);
+                } // retrieve data
+
+
+                _context2.next = 5;
+                return fetchNavigationStatePromise;
+
+              case 5:
+                data = _context2.sent;
+                // use data to set internal state
                 console.log('LoginForm.checkNavigationState loaded');
 
                 this._setState({
                   loaded: true
                 });
 
-              case 70:
+              case 8:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
       function checkNavigationState() {
@@ -341,16 +384,15 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      console.log('LoginForm.componentWillUnmount called');
-      this.closing = true;
+      console.log('LoginForm.componentWillUnmount called'); //this.closing = true;
     }
   }, {
     key: "setProcessing",
     value: function () {
-      var _setProcessing = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(bChoice) {
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+      var _setProcessing = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(bChoice) {
+        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 console.log('LoginForm.setProcessing called with:' + bChoice);
 
@@ -370,10 +412,10 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
               case 2:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
       function setProcessing(_x) {
@@ -385,11 +427,11 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getWalletForScheme",
     value: function () {
-      var _getWalletForScheme2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(params) {
+      var _getWalletForScheme2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(params) {
         var mvcmodule, mvcmyquote, rootsessionuuid, childsessionuuid, schemeuuid, username, password, persistedwallet, result, prms, ret, walletlist, i, wallet, walletinfo, unlocked, currentwalletname, currentwalletuuid, walletname, walletuuid, islocked;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 mvcmodule = this.getMvcModuleObject();
                 mvcmyquote = this.getMvcMyQuoteObject();
@@ -406,146 +448,146 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 prms.push(schemeuuid);
                 prms.push(username); //prms.push(password);
 
-                _context3.next = 15;
+                _context4.next = 15;
                 return mvcmyquote.invokeAsyncHooks('getWalletForScheme_asynchook', result, prms);
 
               case 15:
-                ret = _context3.sent;
+                ret = _context4.sent;
 
                 if (ret && result.persistedwallet) {
                   persistedwallet = result.persistedwallet;
                 }
 
                 if (persistedwallet) {
-                  _context3.next = 35;
+                  _context4.next = 35;
                   break;
                 }
 
-                _context3.next = 20;
+                _context4.next = 20;
                 return this._doFetchWalletList(mvcmodule, rootsessionuuid)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 20:
-                walletlist = _context3.sent;
+                walletlist = _context4.sent;
                 i = 0;
 
               case 22:
                 if (!(i < walletlist.length)) {
-                  _context3.next = 35;
+                  _context4.next = 35;
                   break;
                 }
 
                 wallet = walletlist[i];
 
                 if (!(username && wallet.name !== username)) {
-                  _context3.next = 26;
+                  _context4.next = 26;
                   break;
                 }
 
-                return _context3.abrupt("continue", 32);
+                return _context4.abrupt("continue", 32);
 
               case 26:
-                _context3.next = 28;
+                _context4.next = 28;
                 return mvcmyquote.getWalletInfo(rootsessionuuid, wallet.uuid)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 28:
-                walletinfo = _context3.sent;
+                walletinfo = _context4.sent;
 
                 if (!(walletinfo && walletinfo.schemeuuid === schemeuuid)) {
-                  _context3.next = 32;
+                  _context4.next = 32;
                   break;
                 }
 
                 persistedwallet = walletinfo;
-                return _context3.abrupt("break", 35);
+                return _context4.abrupt("break", 35);
 
               case 32:
                 i++;
-                _context3.next = 22;
+                _context4.next = 22;
                 break;
 
               case 35:
                 if (!(username && password)) {
-                  _context3.next = 51;
+                  _context4.next = 51;
                   break;
                 }
 
                 if (persistedwallet) {
-                  _context3.next = 40;
+                  _context4.next = 40;
                   break;
                 }
 
-                _context3.next = 39;
+                _context4.next = 39;
                 return mvcmyquote.makeWallet(rootsessionuuid, username, schemeuuid, password)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 39:
-                persistedwallet = _context3.sent;
+                persistedwallet = _context4.sent;
 
               case 40:
                 if (persistedwallet) {
-                  _context3.next = 43;
+                  _context4.next = 43;
                   break;
                 }
 
                 this.app.alert('Could not create wallet with these credentials');
-                return _context3.abrupt("return");
+                return _context4.abrupt("return");
 
               case 43:
-                _context3.next = 45;
+                _context4.next = 45;
                 return this._doOpenWallet(mvcmodule, rootsessionuuid, persistedwallet.uuid, persistedwallet.name, password)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 45:
-                unlocked = _context3.sent;
+                unlocked = _context4.sent;
 
                 if (unlocked) {
-                  _context3.next = 49;
+                  _context4.next = 49;
                   break;
                 }
 
                 console.log('LoginForm._getWalletForScheme wallet authentication failed');
-                return _context3.abrupt("return");
+                return _context4.abrupt("return");
 
               case 49:
-                _context3.next = 70;
+                _context4.next = 70;
                 break;
 
               case 51:
                 if (persistedwallet) {
-                  _context3.next = 57;
+                  _context4.next = 57;
                   break;
                 }
 
-                _context3.next = 54;
+                _context4.next = 54;
                 return mvcmyquote.makeWalletFromSession(childsessionuuid, schemeuuid)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 54:
-                persistedwallet = _context3.sent;
-                _context3.next = 59;
+                persistedwallet = _context4.sent;
+                _context4.next = 59;
                 break;
 
               case 57:
-                _context3.next = 59;
+                _context4.next = 59;
                 return mvcmyquote.attachSessionToWallet(childsessionuuid, persistedwallet.uuid)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 59:
                 if (persistedwallet) {
-                  _context3.next = 62;
+                  _context4.next = 62;
                   break;
                 }
 
                 this.app.alert('Could not create wallet for oauth2');
-                return _context3.abrupt("return");
+                return _context4.abrupt("return");
 
               case 62:
                 // synchronize redux
@@ -554,23 +596,23 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 walletname = persistedwallet.name;
                 walletuuid = persistedwallet.uuid;
                 if (currentwalletname != walletname || currentwalletuuid == walletuuid) this.props.doSetWallet(walletname, walletuuid);
-                _context3.next = 69;
+                _context4.next = 69;
                 return this._doCheckWalletLock(mvcmodule, rootsessionuuid, walletuuid)["catch"](function (err) {
                   console.log('error in LoginForm._getWalletForScheme:' + err);
                 });
 
               case 69:
-                islocked = _context3.sent;
+                islocked = _context4.sent;
 
               case 70:
-                return _context3.abrupt("return", persistedwallet);
+                return _context4.abrupt("return", persistedwallet);
 
               case 71:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
       function _getWalletForScheme(_x2) {
@@ -583,40 +625,8 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_doFetchWalletList",
     value: function () {
-      var _doFetchWalletList2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(mvcmodule, sessionuuid) {
+      var _doFetchWalletList2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(mvcmodule, sessionuuid) {
         var _this2 = this;
-
-        var result;
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                result = new Promise(function (resolve, reject) {
-                  _this2.props.doFetchWalletList(mvcmodule, sessionuuid, function (err, res) {
-                    if (err) reject(err);else resolve(res);
-                  });
-                });
-                return _context4.abrupt("return", result);
-
-              case 2:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4);
-      }));
-
-      function _doFetchWalletList(_x3, _x4) {
-        return _doFetchWalletList2.apply(this, arguments);
-      }
-
-      return _doFetchWalletList;
-    }()
-  }, {
-    key: "_doModifyWallet",
-    value: function () {
-      var _doModifyWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(mvcmodule, sessionuuid, walletuuid, walletinfo) {
-        var _this3 = this;
 
         var result;
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
@@ -624,7 +634,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 result = new Promise(function (resolve, reject) {
-                  _this3.props.doModifyWallet(mvcmodule, sessionuuid, walletuuid, walletinfo, function (err, res) {
+                  _this2.props.doFetchWalletList(mvcmodule, sessionuuid, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
                 });
@@ -638,17 +648,17 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         }, _callee5);
       }));
 
-      function _doModifyWallet(_x5, _x6, _x7, _x8) {
-        return _doModifyWallet2.apply(this, arguments);
+      function _doFetchWalletList(_x3, _x4) {
+        return _doFetchWalletList2.apply(this, arguments);
       }
 
-      return _doModifyWallet;
+      return _doFetchWalletList;
     }()
   }, {
-    key: "_doImportWallet",
+    key: "_doModifyWallet",
     value: function () {
-      var _doImportWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(mvcmodule, sessionuuid, configurl, authname, password, options) {
-        var _this4 = this;
+      var _doModifyWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(mvcmodule, sessionuuid, walletuuid, walletinfo) {
+        var _this3 = this;
 
         var result;
         return _regeneratorRuntime().wrap(function _callee6$(_context6) {
@@ -656,7 +666,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             switch (_context6.prev = _context6.next) {
               case 0:
                 result = new Promise(function (resolve, reject) {
-                  _this4.props.doImportWallet(mvcmodule, sessionuuid, configurl, authname, password, options, function (err, res) {
+                  _this3.props.doModifyWallet(mvcmodule, sessionuuid, walletuuid, walletinfo, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
                 });
@@ -670,17 +680,17 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         }, _callee6);
       }));
 
-      function _doImportWallet(_x9, _x10, _x11, _x12, _x13, _x14) {
-        return _doImportWallet2.apply(this, arguments);
+      function _doModifyWallet(_x5, _x6, _x7, _x8) {
+        return _doModifyWallet2.apply(this, arguments);
       }
 
-      return _doImportWallet;
+      return _doModifyWallet;
     }()
   }, {
-    key: "_doOpenWallet",
+    key: "_doImportWallet",
     value: function () {
-      var _doOpenWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(mvcmodule, sessionuuid, walletuuid, walletname, password) {
-        var _this5 = this;
+      var _doImportWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(mvcmodule, sessionuuid, configurl, authname, password, options) {
+        var _this4 = this;
 
         var result;
         return _regeneratorRuntime().wrap(function _callee7$(_context7) {
@@ -688,7 +698,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             switch (_context7.prev = _context7.next) {
               case 0:
                 result = new Promise(function (resolve, reject) {
-                  _this5.props.doOpenWallet(mvcmodule, sessionuuid, walletuuid, walletname, password, function (err, res) {
+                  _this4.props.doImportWallet(mvcmodule, sessionuuid, configurl, authname, password, options, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
                 });
@@ -702,17 +712,17 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         }, _callee7);
       }));
 
-      function _doOpenWallet(_x15, _x16, _x17, _x18, _x19) {
-        return _doOpenWallet2.apply(this, arguments);
+      function _doImportWallet(_x9, _x10, _x11, _x12, _x13, _x14) {
+        return _doImportWallet2.apply(this, arguments);
       }
 
-      return _doOpenWallet;
+      return _doImportWallet;
     }()
   }, {
-    key: "_doCheckWalletLock",
+    key: "_doOpenWallet",
     value: function () {
-      var _doCheckWalletLock2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(mvcmodule, sessionuuid, walletuuid) {
-        var _this6 = this;
+      var _doOpenWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(mvcmodule, sessionuuid, walletuuid, walletname, password) {
+        var _this5 = this;
 
         var result;
         return _regeneratorRuntime().wrap(function _callee8$(_context8) {
@@ -720,7 +730,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
             switch (_context8.prev = _context8.next) {
               case 0:
                 result = new Promise(function (resolve, reject) {
-                  _this6.props.doCheckWalletLock(mvcmodule, sessionuuid, walletuuid, function (err, res) {
+                  _this5.props.doOpenWallet(mvcmodule, sessionuuid, walletuuid, walletname, password, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
                 });
@@ -734,6 +744,38 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
         }, _callee8);
       }));
 
+      function _doOpenWallet(_x15, _x16, _x17, _x18, _x19) {
+        return _doOpenWallet2.apply(this, arguments);
+      }
+
+      return _doOpenWallet;
+    }()
+  }, {
+    key: "_doCheckWalletLock",
+    value: function () {
+      var _doCheckWalletLock2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(mvcmodule, sessionuuid, walletuuid) {
+        var _this6 = this;
+
+        var result;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                result = new Promise(function (resolve, reject) {
+                  _this6.props.doCheckWalletLock(mvcmodule, sessionuuid, walletuuid, function (err, res) {
+                    if (err) reject(err);else resolve(res);
+                  });
+                });
+                return _context9.abrupt("return", result);
+
+              case 2:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9);
+      }));
+
       function _doCheckWalletLock(_x20, _x21, _x22) {
         return _doCheckWalletLock2.apply(this, arguments);
       }
@@ -743,15 +785,15 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "preLogin",
     value: function () {
-      var _preLogin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(mode) {
+      var _preLogin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(mode) {
         var mvcmyquote, rootsessionuuid, _this$state, schemeuuid, username, password, result, params, ret, _schemeuuid, _username, _password;
 
-        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
                 console.log('LoginForm.preLogin called');
-                _context9.prev = 1;
+                _context10.prev = 1;
                 // we give a chance for hooks to fill or modify the credentials
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
@@ -763,11 +805,11 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 params.push(schemeuuid);
                 params.push(username); //params.push(password);
 
-                _context9.next = 13;
+                _context10.next = 13;
                 return mvcmyquote.invokeAsyncHooks('preLogin_asynchook', result, params);
 
               case 13:
-                ret = _context9.sent;
+                ret = _context10.sent;
 
                 if (ret && result.credentials) {
                   _schemeuuid = result.credentials.schemeuuid;
@@ -781,20 +823,20 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                   });
                 }
 
-                _context9.next = 20;
+                _context10.next = 20;
                 break;
 
               case 17:
-                _context9.prev = 17;
-                _context9.t0 = _context9["catch"](1);
-                console.log('exception in LoginForm.preLogin:' + _context9.t0);
+                _context10.prev = 17;
+                _context10.t0 = _context10["catch"](1);
+                console.log('exception in LoginForm.preLogin:' + _context10.t0);
 
               case 20:
               case "end":
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee9, this, [[1, 17]]);
+        }, _callee10, this, [[1, 17]]);
       }));
 
       function preLogin(_x23) {
@@ -806,15 +848,15 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "postLogin",
     value: function () {
-      var _postLogin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(mode) {
+      var _postLogin = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(mode) {
         var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, dataobj, _params2, start_parameters, nav_state_params, _previous_app_state, target;
 
-        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
                 console.log('LoginForm.postLogin called with mode: ' + (mode ? mode : 'unknown'));
-                _context10.prev = 1;
+                _context11.prev = 1;
                 // we notify hooks login completed and about to jump to dataobject or action
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
@@ -824,59 +866,59 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 params.push(mode ? mode : 'none');
                 params.push(rootsessionuuid);
                 params.push(walletuuid);
-                _context10.next = 12;
+                _context11.next = 12;
                 return mvcmyquote.invokeAsyncHooks('postLogin_asynchook', result, params);
 
               case 12:
-                ret = _context10.sent;
+                ret = _context11.sent;
 
                 if (!(ret && result.gotoRoute && result.gotoRoute.route)) {
-                  _context10.next = 19;
+                  _context11.next = 19;
                   break;
                 }
 
-                _context10.next = 16;
+                _context11.next = 16;
                 return this.app.gotoRoute(result.gotoRoute.route, result.gotoRoute.params);
 
               case 16:
-                _context10.next = 18;
+                _context11.next = 18;
                 return this.setProcessing(false);
 
               case 18:
-                return _context10.abrupt("return");
+                return _context11.abrupt("return");
 
               case 19:
-                _context10.next = 24;
+                _context11.next = 24;
                 break;
 
               case 21:
-                _context10.prev = 21;
-                _context10.t0 = _context10["catch"](1);
-                console.log('exception in LoginForm.postLogin:' + _context10.t0);
+                _context11.prev = 21;
+                _context11.t0 = _context11["catch"](1);
+                console.log('exception in LoginForm.postLogin:' + _context11.t0);
 
               case 24:
-                _context10.prev = 24;
+                _context11.prev = 24;
 
                 if (!(mode == 'bootstrap')) {
-                  _context10.next = 48;
+                  _context11.next = 48;
                   break;
                 }
 
-                _context10.next = 28;
+                _context11.next = 28;
                 return this.app.getStartDataObject()["catch"](function (err) {
                   console.log('error calling App.getStartDataObject: ' + err);
                 });
 
               case 28:
-                dataobj = _context10.sent;
+                dataobj = _context11.sent;
 
                 if (!dataobj) {
-                  _context10.next = 36;
+                  _context11.next = 36;
                   break;
                 }
 
                 if (!(dataobj.viewed !== true)) {
-                  _context10.next = 34;
+                  _context11.next = 34;
                   break;
                 }
 
@@ -884,40 +926,40 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                   action: 'view',
                   dataobject: dataobj
                 };
-                _context10.next = 34;
+                _context11.next = 34;
                 return this.app.gotoMyQuotePage(_params2)["catch"](function (err) {
                   console.log('error calling App.gotoMyQuotePage: ' + err);
                 });
 
               case 34:
-                _context10.next = 46;
+                _context11.next = 46;
                 break;
 
               case 36:
-                _context10.next = 38;
+                _context11.next = 38;
                 return this.app.getStartParameters();
 
               case 38:
-                start_parameters = _context10.sent;
+                start_parameters = _context11.sent;
 
                 if (!start_parameters.route) {
-                  _context10.next = 44;
+                  _context11.next = 44;
                   break;
                 }
 
-                _context10.next = 42;
+                _context11.next = 42;
                 return this.app.gotoRoute(start_parameters.route, start_parameters);
 
               case 42:
-                _context10.next = 46;
+                _context11.next = 46;
                 break;
 
               case 44:
-                _context10.next = 46;
+                _context11.next = 46;
                 return this.app.gotoRoute('home');
 
               case 46:
-                _context10.next = 55;
+                _context11.next = 55;
                 break;
 
               case 48:
@@ -927,33 +969,33 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 target = _previous_app_state ? _previous_app_state['target'] : null;
 
                 if (!(target && target.route && target.params)) {
-                  _context10.next = 55;
+                  _context11.next = 55;
                   break;
                 }
 
                 if (!target.params.action) target.params.action = nav_state_params && nav_state_params.action ? nav_state_params.action : 'create';
-                _context10.next = 55;
+                _context11.next = 55;
                 return this.app.gotoRoute(target.route, target.params);
 
               case 55:
-                _context10.next = 60;
+                _context11.next = 60;
                 break;
 
               case 57:
-                _context10.prev = 57;
-                _context10.t1 = _context10["catch"](24);
-                console.log('exception in LoginForm.postLogin:' + _context10.t1);
+                _context11.prev = 57;
+                _context11.t1 = _context11["catch"](24);
+                console.log('exception in LoginForm.postLogin:' + _context11.t1);
 
               case 60:
-                _context10.next = 62;
+                _context11.next = 62;
                 return this.setProcessing(false);
 
               case 62:
               case "end":
-                return _context10.stop();
+                return _context11.stop();
             }
           }
-        }, _callee10, this, [[1, 21], [24, 57]]);
+        }, _callee11, this, [[1, 21], [24, 57]]);
       }));
 
       function postLogin(_x24) {
@@ -965,16 +1007,16 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onSubmit",
     value: function () {
-      var _onSubmit = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11() {
+      var _onSubmit = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
         var mvcmyquote, rootsessionuuid, _this$state2, schemeuuid, username, password, params, wallet;
 
-        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
                 console.log('LoginForm.onSubmit pressed!');
-                _context11.prev = 1;
-                _context11.next = 4;
+                _context12.prev = 1;
+                _context12.next = 4;
                 return this.preLogin('submit');
 
               case 4:
@@ -985,42 +1027,42 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 params.schemeuuid = schemeuuid;
                 params.username = username;
                 params.password = password;
-                _context11.next = 13;
+                _context12.next = 13;
                 return this._getWalletForScheme(params)["catch"](function (err) {
                   console.log('error in LoginForm.onSubmit:' + err);
                 });
 
               case 13:
-                wallet = _context11.sent;
+                wallet = _context12.sent;
 
                 if (wallet) {
-                  _context11.next = 17;
+                  _context12.next = 17;
                   break;
                 }
 
                 console.log('LoginForm.onSubmit login failed');
-                return _context11.abrupt("return");
+                return _context12.abrupt("return");
 
               case 17:
                 console.log('logged in successful');
-                _context11.next = 20;
+                _context12.next = 20;
                 return this.postLogin('submit');
 
               case 20:
-                _context11.next = 25;
+                _context12.next = 25;
                 break;
 
               case 22:
-                _context11.prev = 22;
-                _context11.t0 = _context11["catch"](1);
-                console.log('exception in LoginForm.onSubmit:' + _context11.t0);
+                _context12.prev = 22;
+                _context12.t0 = _context12["catch"](1);
+                console.log('exception in LoginForm.onSubmit:' + _context12.t0);
 
               case 25:
               case "end":
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, this, [[1, 22]]);
+        }, _callee12, this, [[1, 22]]);
       }));
 
       function onSubmit() {
@@ -1032,26 +1074,26 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "oauth2Login",
     value: function () {
-      var _oauth2Login = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12(servicename, schemeuuid) {
+      var _oauth2Login = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(servicename, schemeuuid) {
         var mvcmyquote, rootsessionuuid, childsessionuuid, cleanurl, redirectappurl, _previous_app_state, target, actionparams, _root, dataobject_routes, _keys, i, params, authorizeurl;
 
-        return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
           while (1) {
-            switch (_context12.prev = _context12.next) {
+            switch (_context13.prev = _context13.next) {
               case 0:
                 console.log('LoginForm.oauth2Login called');
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
-                _context12.next = 5;
+                _context13.next = 5;
                 return mvcmyquote.createChildSession(rootsessionuuid);
 
               case 5:
-                childsessionuuid = _context12.sent;
-                _context12.next = 8;
+                childsessionuuid = _context13.sent;
+                _context13.next = 8;
                 return this.app.getCleanUrl();
 
               case 8:
-                cleanurl = _context12.sent;
+                cleanurl = _context13.sent;
                 redirectappurl = cleanurl; // oauth2 authentication part
 
                 redirectappurl += '?sessionuuid=' + childsessionuuid;
@@ -1060,52 +1102,84 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 _previous_app_state = this.app._getPreviousNavigationState();
                 target = _previous_app_state ? _previous_app_state['target'] : null;
 
-                if (target && target.route && target.params) {
-                  actionparams = target.params;
-                  _root = this.app.getVariable('Root');
-                  dataobject_routes = _root._getDataObjectRoutes();
-
-                  if (dataobject_routes.includes(target.route) !== true) {
-                    _keys = Object.keys(actionparams);
-
-                    for (i = 0; i < _keys.length; i++) {
-                      redirectappurl += '&' + _keys[i] + '=' + actionparams[_keys[i]];
-                    }
-                  } else {
-                    if (actionparams.txhash && actionparams.currencyuuid) {
-                      redirectappurl += '&route=' + target.route;
-                      redirectappurl += '&tx=' + actionparams.txhash;
-                      redirectappurl += '&ccy=' + actionparams.currencyuuid;
-                    }
-                  }
+                if (!(target && target.route && target.params)) {
+                  _context13.next = 31;
+                  break;
                 }
 
+                actionparams = target.params;
+                _root = this.app.getVariable('Root');
+                dataobject_routes = _root._getDataObjectRoutes();
+
+                if (!(dataobject_routes.includes(target.route) !== true)) {
+                  _context13.next = 30;
+                  break;
+                }
+
+                // we add the previous parameters
+                _keys = Object.keys(actionparams);
+                i = 0;
+
+              case 21:
+                if (!(i < _keys.length)) {
+                  _context13.next = 28;
+                  break;
+                }
+
+                if (!(_keys[i] == 'sessionuuid')) {
+                  _context13.next = 24;
+                  break;
+                }
+
+                return _context13.abrupt("continue", 25);
+
+              case 24:
+                // trim previous sessionuuid
+                redirectappurl += '&' + _keys[i] + '=' + actionparams[_keys[i]];
+
+              case 25:
+                i++;
+                _context13.next = 21;
+                break;
+
+              case 28:
+                _context13.next = 31;
+                break;
+
+              case 30:
+                if (actionparams.txhash && actionparams.currencyuuid) {
+                  redirectappurl += '&route=' + target.route;
+                  redirectappurl += '&tx=' + actionparams.txhash;
+                  redirectappurl += '&ccy=' + actionparams.currencyuuid;
+                }
+
+              case 31:
                 params = {
                   client: 'web',
                   closewindow: '0',
                   appurl: redirectappurl
                 }; //var params = {client: 'web', closewindow: '0', appurl: 'none'};
 
-                _context12.next = 18;
+                _context13.next = 34;
                 return mvcmyquote.oauth2AuthorizeUrl(childsessionuuid, schemeuuid, params)["catch"](function (err) {
                   console.log('error in LoginForm.oauth2Login:' + err);
                 });
 
-              case 18:
-                authorizeurl = _context12.sent;
-                _context12.next = 21;
+              case 34:
+                authorizeurl = _context13.sent;
+                _context13.next = 37;
                 return this.setProcessing(true);
 
-              case 21:
-                _context12.next = 23;
+              case 37:
+                _context13.next = 39;
                 return this.app.gotoUrl(authorizeurl);
 
-              case 23:
+              case 39:
               case "end":
-                return _context12.stop();
+                return _context13.stop();
             }
           }
-        }, _callee12, this);
+        }, _callee13, this);
       }));
 
       function oauth2Login(_x25, _x26) {
@@ -1117,12 +1191,12 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onClickItem",
     value: function () {
-      var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13(item) {
+      var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee14(item) {
         var type, schemeuuid, mvcmyquote, rootsessionuuid, result, params, ret, _mvcmyquote, _rootsessionuuid, _result, _params3, _ret;
 
-        return _regeneratorRuntime().wrap(function _callee13$(_context13) {
+        return _regeneratorRuntime().wrap(function _callee14$(_context14) {
           while (1) {
-            switch (_context13.prev = _context13.next) {
+            switch (_context14.prev = _context14.next) {
               case 0:
                 type = item.type;
                 schemeuuid = item.schemeuuid ? item.schemeuuid : item.uuid;
@@ -1131,10 +1205,10 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                   schemeuuid: schemeuuid
                 });
 
-                _context13.prev = 3;
+                _context14.prev = 3;
 
                 if (!(item.credentials === true)) {
-                  _context13.next = 19;
+                  _context14.next = 19;
                   break;
                 }
 
@@ -1145,14 +1219,14 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 params = [];
                 params.push(rootsessionuuid);
                 params.push(item);
-                _context13.next = 13;
+                _context14.next = 13;
                 return mvcmyquote.invokeAsyncHooks('getLoginCredentials_asynchook', result, params);
 
               case 13:
-                ret = _context13.sent;
+                ret = _context14.sent;
 
                 if (!(ret && result.credentials)) {
-                  _context13.next = 19;
+                  _context14.next = 19;
                   break;
                 }
 
@@ -1164,58 +1238,58 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
 
                 if (!(result.credentials.automatic_submit !== false)) {
-                  _context13.next = 19;
+                  _context14.next = 19;
                   break;
                 }
 
-                _context13.next = 19;
+                _context14.next = 19;
                 return this.onSubmit();
 
               case 19:
-                _context13.t0 = type;
-                _context13.next = _context13.t0 === 0 ? 22 : _context13.t0 === 1 ? 30 : 30;
+                _context14.t0 = type;
+                _context14.next = _context14.t0 === 0 ? 22 : _context14.t0 === 1 ? 30 : 30;
                 break;
 
               case 22:
                 if (!(item.credentials !== true)) {
-                  _context13.next = 29;
+                  _context14.next = 29;
                   break;
                 }
 
                 if (!(item.provider !== 'localdevice')) {
-                  _context13.next = 25;
+                  _context14.next = 25;
                   break;
                 }
 
                 throw 'alternative authentication mode with credentials not supported for local authentication';
 
               case 25:
-                _context13.next = 27;
+                _context14.next = 27;
                 return this.app.openDeviceWallet()["catch"](function (err) {});
 
               case 27:
-                _context13.next = 29;
+                _context14.next = 29;
                 break;
 
               case 29:
-                return _context13.abrupt("break", 55);
+                return _context14.abrupt("break", 55);
 
               case 30:
                 if (!(item.credentials !== true)) {
-                  _context13.next = 54;
+                  _context14.next = 54;
                   break;
                 }
 
-                _context13.t1 = item.mode;
-                _context13.next = _context13.t1 === 'oauth2' ? 34 : 37;
+                _context14.t1 = item.mode;
+                _context14.next = _context14.t1 === 'oauth2' ? 34 : 37;
                 break;
 
               case 34:
-                _context13.next = 36;
+                _context14.next = 36;
                 return this.oauth2Login(item.provider, schemeuuid);
 
               case 36:
-                return _context13.abrupt("break", 52);
+                return _context14.abrupt("break", 52);
 
               case 37:
                 // we ask hooks if they handle this mode
@@ -1228,49 +1302,49 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
 
                 _params3.push(item);
 
-                _context13.next = 45;
+                _context14.next = 45;
                 return _mvcmyquote.invokeAsyncHooks('altModeLogin_asynchook', _result, _params3);
 
               case 45:
-                _ret = _context13.sent;
+                _ret = _context14.sent;
 
                 if (!(_ret && _result.gotoRoute && _result.gotoRoute.route)) {
-                  _context13.next = 51;
+                  _context14.next = 51;
                   break;
                 }
 
-                _context13.next = 49;
+                _context14.next = 49;
                 return this.app.gotoRoute(_result.gotoRoute.route, _result.gotoRoute.params);
 
               case 49:
-                _context13.next = 52;
+                _context14.next = 52;
                 break;
 
               case 51:
                 throw 'authentication mode is not supported: ' + item.mode;
 
               case 52:
-                _context13.next = 54;
+                _context14.next = 54;
                 break;
 
               case 54:
-                return _context13.abrupt("break", 55);
+                return _context14.abrupt("break", 55);
 
               case 55:
-                _context13.next = 60;
+                _context14.next = 60;
                 break;
 
               case 57:
-                _context13.prev = 57;
-                _context13.t2 = _context13["catch"](3);
-                console.log('exception in LoginForm.onClickItem:' + _context13.t2);
+                _context14.prev = 57;
+                _context14.t2 = _context14["catch"](3);
+                console.log('exception in LoginForm.onClickItem:' + _context14.t2);
 
               case 60:
               case "end":
-                return _context13.stop();
+                return _context14.stop();
             }
           }
-        }, _callee13, this, [[3, 57]]);
+        }, _callee14, this, [[3, 57]]);
       }));
 
       function onClickItem(_x27) {
@@ -1495,7 +1569,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       if (loaded !== true) {
         return /*#__PURE__*/_react["default"].createElement("div", {
           className: "Splash"
-        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.processinginfo), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null));
+        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.loadinginfo), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null));
       } // during processing of submit
 
 

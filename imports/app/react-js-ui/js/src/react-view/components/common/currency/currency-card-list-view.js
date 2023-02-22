@@ -65,16 +65,16 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
     _this.app = _this.props.app;
     _this.getMvcModuleObject = _this.app.getMvcModuleObject;
     _this.getMvcMyQuoteObject = _this.app.getMvcMyQuoteObject;
-    _this.uuid = _this.app.guid();
-    _this.closing = false;
-    _this.opened_devicewallet = false;
+    _this.uuid = _this.app.guid(); //this.closing = false;
+
     _this.cards = [];
     _this.state = {
       currencies: [],
       items: [],
       currency: null,
       signingkey: null,
-      isaprivatekey: false
+      isaprivatekey: false,
+      opened_devicewallet: false
     };
     return _this;
   }
@@ -82,7 +82,8 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   _createClass(CurrencyCardListView, [{
     key: "_setState",
     value: function _setState(state) {
-      if (this.closing !== true) this.setState(state);
+      //if (this.closing !== true)
+      this.setState(state);
     } // post render commit phase
 
   }, {
@@ -415,62 +416,63 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
       return _readVisibleCurrencies;
     }()
   }, {
-    key: "checkNavigationState",
+    key: "fetchNavigationState",
     value: function () {
-      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
-        var mvcmyquote, rootsessionuuid, walletuuid, app_nav_state, app_nav_target, unlocked, devicewallet, _params, params, currencyuuid, currency, currencies, items, _items;
+      var _fetchNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+        var mvcmyquote, rootsessionuuid, walletuuid, isdevicewallet, opened_devicewallet, currencies, currency, items, app_nav_state, app_nav_target, unlocked, devicewallet, _params, params, currencyuuid;
 
         return _regeneratorRuntime().wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
+                console.log('CurrencyCardListView.fetchNavigationState called');
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
-                walletuuid = this.props.currentwalletuuid;
-                _context5.prev = 3;
+                walletuuid = this.props.currentwalletuuid; // navigation state data
+
+                isdevicewallet = false;
+                opened_devicewallet = false;
+                items = [];
+                _context5.prev = 7;
                 // check if navigation asks for a specific currency
                 app_nav_state = this.app.getNavigationState();
                 app_nav_target = app_nav_state.target; // check wallet is unlocked
 
-                _context5.next = 8;
+                _context5.next = 12;
                 return this.app.checkWalletUnlocked()["catch"](function (err) {});
 
-              case 8:
+              case 12:
                 unlocked = _context5.sent;
 
                 if (unlocked) {
-                  _context5.next = 22;
+                  _context5.next = 26;
                   break;
                 }
 
-                if (this.closing) {
-                  _context5.next = 19;
+                if (walletuuid) {
+                  _context5.next = 23;
                   break;
                 }
 
-                _context5.next = 13;
+                _context5.next = 17;
                 return this.app.openDeviceWallet()["catch"](function (err) {});
 
-              case 13:
+              case 17:
                 devicewallet = _context5.sent;
                 walletuuid = devicewallet.uuid;
-                this.opened_devicewallet = false;
-
-                this._setState({
-                  isdevicewallet: true
-                });
-
-                _context5.next = 22;
+                opened_devicewallet = true;
+                isdevicewallet = true;
+                _context5.next = 26;
                 break;
 
-              case 19:
+              case 23:
                 _params = app_nav_target ? app_nav_target.params : null;
                 this.app.gotoRoute('login', _params);
                 return _context5.abrupt("return");
 
-              case 22:
+              case 26:
                 if (!(app_nav_target && app_nav_target.route == 'currencycards' && app_nav_target.reached == false)) {
-                  _context5.next = 31;
+                  _context5.next = 34;
                   break;
                 }
 
@@ -478,84 +480,138 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 currencyuuid = params.currencyuuid;
 
                 if (!currencyuuid) {
-                  _context5.next = 30;
+                  _context5.next = 33;
                   break;
                 }
 
-                _context5.next = 28;
+                _context5.next = 32;
                 return mvcmyquote.getCurrencyFromUUID(rootsessionuuid, currencyuuid);
 
-              case 28:
+              case 32:
                 currency = _context5.sent;
 
-                this._setState({
-                  currency: currency
-                });
-
-              case 30:
+              case 33:
                 // mark target as reached
                 app_nav_target.reached = true;
 
-              case 31:
-                _context5.next = 33;
+              case 34:
+                _context5.next = 36;
                 return this._readVisibleCurrencies();
 
-              case 33:
+              case 36:
                 currencies = _context5.sent;
 
                 if (currencies) {
-                  _context5.next = 36;
+                  _context5.next = 39;
                   break;
                 }
 
                 return _context5.abrupt("return", Promise.reject('could not get list of currencies'));
 
-              case 36:
-                _context5.next = 38;
+              case 39:
+                _context5.next = 41;
                 return this._readCards();
 
-              case 38:
+              case 41:
                 this.cards = _context5.sent;
                 items = this.cards;
+                _context5.next = 48;
+                break;
 
-                this._setState({
+              case 45:
+                _context5.prev = 45;
+                _context5.t0 = _context5["catch"](7);
+                console.log('exception in CurrencyCardListView.fetchNavigationState: ' + _context5.t0);
+
+              case 48:
+                return _context5.abrupt("return", {
+                  isdevicewallet: isdevicewallet,
+                  opened_devicewallet: opened_devicewallet,
                   currencies: currencies,
+                  currency: currency,
                   items: items
                 });
 
-                if (!this.state.currency) {
-                  _context5.next = 46;
-                  break;
-                }
-
-                _context5.next = 44;
-                return this._filterCards(this.state.currency);
-
-              case 44:
-                _items = _context5.sent;
-
-                this._setState({
-                  items: _items
-                });
-
-              case 46:
-                _context5.next = 51;
-                break;
-
-              case 48:
-                _context5.prev = 48;
-                _context5.t0 = _context5["catch"](3);
-                console.log('exception in CurrencyCardListView.checkNavigationState: ' + _context5.t0);
-
-              case 51:
+              case 49:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[3, 48]]);
+        }, _callee5, this, [[7, 45]]);
       }));
 
-      function checkNavigationState() {
+      function fetchNavigationState() {
+        return _fetchNavigationState.apply(this, arguments);
+      }
+
+      return fetchNavigationState;
+    }()
+  }, {
+    key: "checkNavigationState",
+    value: function () {
+      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(bForce) {
+        var fetchNavigationStatePromise, data, items;
+        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                console.log('CurrencyCardListView.checkNavigationState called'); // use navigation promises to be re-entrant
+
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise('CurrencyCardListView', this.uuid);
+
+                if (!fetchNavigationStatePromise || bForce) {
+                  fetchNavigationStatePromise = this.fetchNavigationState();
+                  this.app.addNavigationStatePromise('CurrencyCardListView', this.uuid, fetchNavigationStatePromise);
+                } // retrieve data
+
+
+                _context6.next = 5;
+                return fetchNavigationStatePromise;
+
+              case 5:
+                data = _context6.sent;
+                // use data to set internal state		
+                if (data.isdevicewallet) this._setState({
+                  isdevicewallet: data.isdevicewallet,
+                  opened_devicewallet: data.opened_devicewallet
+                });
+
+                if (!data.currency) {
+                  _context6.next = 14;
+                  break;
+                }
+
+                _context6.next = 10;
+                return this._filterCards(data.currency);
+
+              case 10:
+                items = _context6.sent;
+
+                this._setState({
+                  currencies: data.currencies,
+                  currency: data.currency,
+                  items: items
+                });
+
+                _context6.next = 15;
+                break;
+
+              case 14:
+                this._setState({
+                  currencies: data.currencies,
+                  currency: null,
+                  items: data.items
+                });
+
+              case 15:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function checkNavigationState(_x3) {
         return _checkNavigationState.apply(this, arguments);
       }
 
@@ -564,22 +620,22 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onRefreshPage",
     value: function () {
-      var _onRefreshPage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      var _onRefreshPage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
                 console.log('CurrencyCardListView.onRefreshPage called');
-                this.checkNavigationState()["catch"](function (err) {
+                this.checkNavigationState(true)["catch"](function (err) {
                   console.log('error in checkNavigationState: ' + err);
                 });
 
               case 2:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
 
       function onRefreshPage() {
@@ -592,40 +648,40 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
-      console.log('CurrencyCardListView.componentWillUnmount called');
-      this.closing = true;
+      console.log('CurrencyCardListView.componentWillUnmount called'); //this.closing = true;
+
       var app = this.app;
       var mvcmyquote = this.getMvcMyQuoteObject();
       mvcmyquote.unregisterEventListener('on_refreshPage', this.uuid);
-      if (this.opened_devicewallet) this.app.closeDeviceWallet();
+      if (this.state.opened_devicewallet === true) this.app.closeDeviceWallet();
     } // user actions
 
   }, {
     key: "onGenerateCard",
     value: function () {
-      var _onGenerateCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+      var _onGenerateCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
         var mvcmyquote, rootsessionuuid, privatekey;
-        return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
                 console.log('onGenerateCard pressed!');
 
                 if (!this.state.currentcard) {
-                  _context7.next = 3;
+                  _context8.next = 3;
                   break;
                 }
 
-                return _context7.abrupt("return");
+                return _context8.abrupt("return");
 
               case 3:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
-                _context7.next = 7;
+                _context8.next = 7;
                 return mvcmyquote.generatePrivateKey(rootsessionuuid);
 
               case 7:
-                privatekey = _context7.sent;
+                privatekey = _context8.sent;
 
                 this._setState({
                   signingkey: privatekey
@@ -633,10 +689,10 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
 
               case 9:
               case "end":
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee8, this);
       }));
 
       function onGenerateCard() {
@@ -648,20 +704,20 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onAddCard",
     value: function () {
-      var _onAddCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
+      var _onAddCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9() {
         var _this3 = this;
 
         var _this$state, currency, signingkey, currencyuuid, options, card;
 
-        return _regeneratorRuntime().wrap(function _callee8$(_context8) {
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
                 console.log('onAddCard pressed!');
                 _this$state = this.state, currency = _this$state.currency, signingkey = _this$state.signingkey;
 
                 if (!(currency && currency.uuid)) {
-                  _context8.next = 9;
+                  _context9.next = 9;
                   break;
                 }
 
@@ -669,13 +725,13 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 options = {
                   allow_readonly: false
                 };
-                _context8.next = 7;
+                _context9.next = 7;
                 return this.app.createCurrencyCard(currencyuuid, signingkey, options)["catch"](function (err) {
                   _this3.app.alert('Could not created currency card');
                 });
 
               case 7:
-                card = _context8.sent;
+                card = _context9.sent;
 
                 if (card) {
                   this.app.refreshPage();
@@ -683,10 +739,10 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
 
               case 9:
               case "end":
-                return _context8.stop();
+                return _context9.stop();
             }
           }
-        }, _callee8, this);
+        }, _callee9, this);
       }));
 
       function onAddCard() {
@@ -698,22 +754,22 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onSelectCurrency",
     value: function () {
-      var _onSelectCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(uuid) {
-        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+      var _onSelectCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(uuid) {
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
-                return _context9.abrupt("return", this._selectCurrency(uuid));
+                return _context10.abrupt("return", this._selectCurrency(uuid));
 
               case 1:
               case "end":
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee9, this);
+        }, _callee10, this);
       }));
 
-      function onSelectCurrency(_x3) {
+      function onSelectCurrency(_x4) {
         return _onSelectCurrency.apply(this, arguments);
       }
 
@@ -722,11 +778,11 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onClickItem",
     value: function () {
-      var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(item) {
+      var _onClickItem = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(item) {
         var currencyuuid, carduuid, params;
-        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
                 currencyuuid = item.currencyuuid;
                 carduuid = item.uuid;
@@ -741,13 +797,13 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
 
               case 4:
               case "end":
-                return _context10.stop();
+                return _context11.stop();
             }
           }
-        }, _callee10, this);
+        }, _callee11, this);
       }));
 
-      function onClickItem(_x4) {
+      function onClickItem(_x5) {
         return _onClickItem.apply(this, arguments);
       }
 
@@ -766,6 +822,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "Form"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
+        className: "CurrencyFormGroup",
         controlId: "currency"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormLabel, null, "Currency"), /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
         controlId: "pickccy",
@@ -789,6 +846,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
           value: item.uuid
         }, item.symbol);
       }))))), currency ? /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
+        className: "NewCurrencyFCardormGroup",
         controlId: "newcurrencycard"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormLabel, null, "Private Key\xA0", currency && currency.name ? 'for ' + (currency.description ? currency.description : currency.name) : ''), /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
         controlId: "newcard",
@@ -796,6 +854,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormControl, {
         className: "CardPrivateKeyInput",
         autoFocus: true,
+        autoComplete: "off",
         type: "text",
         value: signingkey ? signingkey : '',
         onChange: function onChange(e) {

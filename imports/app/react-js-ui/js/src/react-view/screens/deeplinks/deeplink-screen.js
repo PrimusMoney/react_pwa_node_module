@@ -144,6 +144,7 @@ var DeepLinkScreen = /*#__PURE__*/function (_React$Component) {
       }, "You can enter a link that you have received by mail or have copied from the web. Pressing the button will lead you to the corresponding page."), /*#__PURE__*/_react["default"].createElement("div", {
         className: "Form"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
+        className: "form-group",
         controlId: "url"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormLabel, null, "Url"), /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormControl, {
         autoFocus: true,

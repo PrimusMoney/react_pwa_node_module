@@ -56,7 +56,7 @@ var HomeLinks = /*#__PURE__*/function () {
             }
           }
         } catch (e) {
-          console.log('exception in MenuLinks.getMenuLinks for xtra menu links: ' + e);
+          console.log('exception in MenuLinks.getHomeLinks for xtra menu links: ' + e);
         }
       }
 

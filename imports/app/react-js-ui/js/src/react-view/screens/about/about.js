@@ -133,7 +133,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
     key: "checkContext",
     value: function () {
       var _checkContext = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, boot_webapp, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, wallet;
+        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, boot_webapp, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, user, wallet;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -167,13 +167,20 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
                 walletinfo = {};
                 walletuuid = this.props.currentwalletuuid;
                 _context.next = 24;
-                return mvcmodule.getWalletInfo(rootsessionuuid, walletuuid)["catch"](function (err) {});
+                return mvcmodule.getUserInfo(rootsessionuuid)["catch"](function (err) {});
 
               case 24:
+                user = _context.sent;
+                _context.next = 27;
+                return mvcmodule.getWalletInfo(rootsessionuuid, walletuuid)["catch"](function (err) {});
+
+              case 27:
                 wallet = _context.sent;
 
                 if (wallet) {
                   walletinfo.name = wallet.name;
+                  walletinfo.uuid = walletuuid;
+                  walletinfo.useruuid = user ? user.useruuid : null;
                 }
 
                 this.setState({
@@ -182,7 +189,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
                   walletinfo: walletinfo
                 });
 
-              case 27:
+              case 30:
               case "end":
                 return _context.stop();
             }
@@ -252,7 +259,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
         className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("div", null, 'online status: ' + (connectioninfo.online_status_string ? connectioninfo.online_status_string : ''))), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
-      }, /*#__PURE__*/_react["default"].createElement("div", null, 'current wallet: ' + (walletinfo.name ? walletinfo.name : 'none'))), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
+      }, /*#__PURE__*/_react["default"].createElement("div", null, 'current wallet: ' + (walletinfo.name ? walletinfo.name : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'wallet uuid: ' + (walletinfo.uuid ? walletinfo.uuid : 'none')), /*#__PURE__*/_react["default"].createElement("div", null, 'user uuid: ' + (walletinfo.useruuid ? walletinfo.useruuid : 'none'))), /*#__PURE__*/_react["default"].createElement("div", null, "\xA0"), /*#__PURE__*/_react["default"].createElement("div", {
         className: "TextBox"
       }, /*#__PURE__*/_react["default"].createElement("span", null, "Privacy policy: "), /*#__PURE__*/_react["default"].createElement("span", {
         className: "ShareLink",

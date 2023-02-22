@@ -11,8 +11,6 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _reactActivity = require("react-activity");
 
-require("react-activity/dist/react-activity.css");
-
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }

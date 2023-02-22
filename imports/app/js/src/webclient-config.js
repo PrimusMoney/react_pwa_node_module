@@ -179,11 +179,13 @@ WebClientConfig.builtin_remote_schemes = {
       activate: true,
       rest_server_url: 'https://oauth2.primusmoney.com',
       rest_server_api_path: '/erc20-dapp/api/oauth2'
-    },
-    ethnodeserver: {
-      name: 'firenze',
-      activate: false
     }
+    /* ,
+    ethnodeserver: {
+    name: 'firenze',
+    activate: false
+    } */
+
   },
   google: {
     name: 'google oauth2 scheme',
@@ -204,11 +206,13 @@ WebClientConfig.builtin_remote_schemes = {
       activate: true,
       rest_server_url: 'https://oauth2.primusmoney.com',
       rest_server_api_path: '/erc20-dapp/api/oauth2'
-    },
-    ethnodeserver: {
-      name: 'firenze',
-      activate: false
     }
+    /* ,
+    ethnodeserver: {
+    name: 'firenze',
+    activate: false
+    } */
+
   },
   primusmoney: {
     name: 'primusmoney firenze scheme',

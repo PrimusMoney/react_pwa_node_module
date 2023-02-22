@@ -114,6 +114,11 @@ body {
   align-self: normal;
 }
 
+.dropdown-menu.show {
+  right: 0;
+  left: unset;
+}
+
 .Container {
   display: flex;
   flex-direction: column;
@@ -270,6 +275,7 @@ span.ProposalCol {
   width: 50vw;
 }
 
+
 .CurrencyCard {
    display: flex;
 }
@@ -339,7 +345,10 @@ span.CurrencyCardIconCol span{
   font-size: xx-small
 }
 
-/* Header bard */
+/* Header bar */
+.HeaderNavBar {
+  padding: 5pt;
+}
 span.Lock {
   display: inline-block;
   height: 1em;
@@ -370,9 +379,22 @@ span.Lock {
   right: 0;
 }
 
+/* Messages */
+
+.ActionError {
+	color: red;
+}
+
 /* Currency Card List */
 
+.CurrencyFormGroup {
+  margin-right: 2rem;
+  margin-left: 2rem;
+}
+
 .PickCurrencyLine {
+  margin-right: 2rem;
+  margin-left: 2rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -382,7 +404,14 @@ span.Lock {
   max-width: 40vw;
 }
 
+.NewCurrencyFCardormGroup {
+  margin-right: 2rem;
+  margin-left: 2rem;
+}
+
 .AddCardLine {
+  margin-right: 2rem;
+  margin-left: 2rem;
   display: flex;
   flex-direction: row;
   font-size: xx-small;
@@ -415,65 +444,18 @@ span.CurrencyCardIcons {
   justify-content: center;
 }
 
-/* Bounty */
-.Bounty {
-  display: flex;
-}
-
-span.Bounty {
-  margin: 15px;
-}
-
-span.BountyNumberCol {
-  margin: 15px;
-  width: 50vw;
-}
-
-span.BountyAnswerCheckCol {
-  margin: 15px;
-  width: 50vw;
-}
-
-.BountyAnswerCheckboxLine {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-span.input-group-text {
-  padding: 0rem;
-}
-
-.BountyAnswerCheckboxCheck {
-  min-width: 5vw;
-}
-
-.BountyAnswerCheckboxLabel {
-  font-size: xx-small;
-  flex: 1 0 50%;
-}
 
 /* Claim */
-.ClaimerCardLine {
+.DetailCardLine {
   display: flex;
   flex-direction: row;
   font-size: xx-small;
   justify-content: space-between;
+  margin-right: 2rem;
+  margin-left: 2rem;
 }
 
 .GenerateCardIcon {
   width: 10vw;
   padding-left: 10pt;
 }
-
-span.AcceptReject {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-
-button.AcceptReject{
-  width: 140px;
-  margin: 10px;
-}
-

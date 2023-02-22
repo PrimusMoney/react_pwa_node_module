@@ -42,10 +42,12 @@ var MenuLinks = /*#__PURE__*/function () {
               case 'link':
                 {
                   var route = menulink_def.route;
+                  var path = menulink_def.path;
                   var label = app.t(menulink_def.label);
                   menulinks.push({
                     type: 'link',
                     route: route,
+                    path: path,
                     label: label
                   });
                 }

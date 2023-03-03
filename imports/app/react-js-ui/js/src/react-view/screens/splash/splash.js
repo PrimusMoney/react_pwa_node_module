@@ -9,7 +9,7 @@ exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
-var _reactActivity = require("react-activity");
+var _BeatLoader = _interopRequireDefault(require("react-spinners/BeatLoader"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
@@ -134,7 +134,7 @@ var SplashScreen = /*#__PURE__*/function (_React$Component) {
     value: function renderSplashInfo() {
       return /*#__PURE__*/_react["default"].createElement("div", {
         className: "Splash"
-      }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.splashinfo), /*#__PURE__*/_react["default"].createElement("div", null), /*#__PURE__*/_react["default"].createElement("div", null, this.state.dev_message), /*#__PURE__*/_react["default"].createElement("div", null), /*#__PURE__*/_react["default"].createElement("div", null, "loading app..."), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null), /*#__PURE__*/_react["default"].createElement("div", null), this.renderDebugLogs());
+      }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.splashinfo), /*#__PURE__*/_react["default"].createElement("div", null), /*#__PURE__*/_react["default"].createElement("div", null, this.state.dev_message), /*#__PURE__*/_react["default"].createElement("div", null), /*#__PURE__*/_react["default"].createElement("div", null, "loading app..."), /*#__PURE__*/_react["default"].createElement(_BeatLoader["default"], null), /*#__PURE__*/_react["default"].createElement("div", null), this.renderDebugLogs());
     }
   }, {
     key: "render",

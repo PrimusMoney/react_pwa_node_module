@@ -15,7 +15,7 @@ var _reactBootstrap = require("react-bootstrap");
 
 var _Image = _interopRequireDefault(require("react-bootstrap/Image"));
 
-var _reactActivity = require("react-activity");
+var _BeatLoader = _interopRequireDefault(require("react-spinners/BeatLoader"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
@@ -346,11 +346,11 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
               case 0:
                 console.log('LoginForm.checkNavigationState called'); // use navigation promises to be re-entrant
 
-                fetchNavigationStatePromise = this.app.getNavigationStatePromise('LoginForm', this.uuid);
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise(this.constructor.name, this.uuid);
 
                 if (!fetchNavigationStatePromise) {
                   fetchNavigationStatePromise = this.fetchNavigationState();
-                  this.app.addNavigationStatePromise('LoginForm', this.uuid, fetchNavigationStatePromise);
+                  this.app.addNavigationStatePromise(this.constructor.name, this.uuid, fetchNavigationStatePromise);
                 } // retrieve data
 
 
@@ -1569,14 +1569,14 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
       if (loaded !== true) {
         return /*#__PURE__*/_react["default"].createElement("div", {
           className: "Splash"
-        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.loadinginfo), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null));
+        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.loadinginfo), /*#__PURE__*/_react["default"].createElement(_BeatLoader["default"], null));
       } // during processing of submit
 
 
       if (processing === true) {
         return /*#__PURE__*/_react["default"].createElement("div", {
           className: "Splash"
-        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.processinginfo), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null));
+        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.processinginfo), /*#__PURE__*/_react["default"].createElement(_BeatLoader["default"], null));
       }
 
       return /*#__PURE__*/_react["default"].createElement("div", {

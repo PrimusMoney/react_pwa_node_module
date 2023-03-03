@@ -133,7 +133,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
     key: "checkContext",
     value: function () {
       var _checkContext = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, boot_webapp, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, user, wallet;
+        var mvcmodule, mvcmyquote, rootsessionuuid, connectioninfo, isonline, settingsinfo, boot_webapp, webapp_name, firstboot, webapp_firstboot, walletinfo, walletuuid, wallet, user;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -167,16 +167,28 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
                 walletinfo = {};
                 walletuuid = this.props.currentwalletuuid;
                 _context.next = 24;
-                return mvcmodule.getUserInfo(rootsessionuuid)["catch"](function (err) {});
-
-              case 24:
-                user = _context.sent;
-                _context.next = 27;
                 return mvcmodule.getWalletInfo(rootsessionuuid, walletuuid)["catch"](function (err) {});
 
-              case 27:
+              case 24:
                 wallet = _context.sent;
+                _context.next = 27;
+                return mvcmyquote.getWalletUserInfo(rootsessionuuid, walletuuid)["catch"](function (err) {});
 
+              case 27:
+                user = _context.sent;
+
+                if (!(!user || !user.useruuid)) {
+                  _context.next = 32;
+                  break;
+                }
+
+                _context.next = 31;
+                return mvcmodule.getUserInfo(rootsessionuuid)["catch"](function (err) {});
+
+              case 31:
+                user = _context.sent;
+
+              case 32:
                 if (wallet) {
                   walletinfo.name = wallet.name;
                   walletinfo.uuid = walletuuid;
@@ -189,7 +201,7 @@ var AboutScreen = /*#__PURE__*/function (_React$Component) {
                   walletinfo: walletinfo
                 });
 
-              case 30:
+              case 34:
               case "end":
                 return _context.stop();
             }

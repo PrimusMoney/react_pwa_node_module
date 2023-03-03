@@ -187,7 +187,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
                 _privkey = _context.sent;
                 _currencycards[j].cansign = _privkey ? true : false;
                 _context.next = 28;
-                return mvcmyquote.getCurrencyPosition(rootsessionuuid, walletuuid, currency.uuid, _currencycards[j].uuid);
+                return mvcmyquote.getCurrencyCardPosition(rootsessionuuid, walletuuid, currency.uuid, _currencycards[j].uuid);
 
               case 28:
                 pos = _context.sent;
@@ -557,11 +557,11 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
               case 0:
                 console.log('CurrencyCardListView.checkNavigationState called'); // use navigation promises to be re-entrant
 
-                fetchNavigationStatePromise = this.app.getNavigationStatePromise('CurrencyCardListView', this.uuid);
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise(this.constructor.name, this.uuid);
 
                 if (!fetchNavigationStatePromise || bForce) {
                   fetchNavigationStatePromise = this.fetchNavigationState();
-                  this.app.addNavigationStatePromise('CurrencyCardListView', this.uuid, fetchNavigationStatePromise);
+                  this.app.addNavigationStatePromise(this.constructor.name, this.uuid, fetchNavigationStatePromise);
                 } // retrieve data
 
 
@@ -846,7 +846,7 @@ var CurrencyCardListView = /*#__PURE__*/function (_React$Component) {
           value: item.uuid
         }, item.symbol);
       }))))), currency ? /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
-        className: "NewCurrencyFCardormGroup",
+        className: "NewCurrencyCardFormGroup",
         controlId: "newcurrencycard"
       }, /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormLabel, null, "Private Key\xA0", currency && currency.name ? 'for ' + (currency.description ? currency.description : currency.name) : ''), /*#__PURE__*/_react["default"].createElement(_reactBootstrap.FormGroup, {
         controlId: "newcard",

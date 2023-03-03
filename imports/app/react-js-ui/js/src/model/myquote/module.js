@@ -2335,60 +2335,16 @@ var Module = /*#__PURE__*/function () {
     key: "unlockWallet",
     value: function () {
       var _unlockWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee49(sessionuuid, walletuuid, passphrase) {
-        var _apicontrollers, session, wallet;
-
+        var global, mvcclientwalletmodule;
         return _regeneratorRuntime().wrap(function _callee49$(_context49) {
           while (1) {
             switch (_context49.prev = _context49.next) {
               case 0:
-                if (sessionuuid) {
-                  _context49.next = 2;
-                  break;
-                }
+                global = this.global;
+                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
+                return _context49.abrupt("return", mvcclientwalletmodule.unlockWallet(sessionuuid, walletuuid, passphrase));
 
-                return _context49.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context49.next = 4;
-                  break;
-                }
-
-                return _context49.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                _apicontrollers = this._getClientAPI();
-                _context49.next = 7;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 7:
-                session = _context49.sent;
-
-                if (session) {
-                  _context49.next = 10;
-                  break;
-                }
-
-                return _context49.abrupt("return", Promise.reject('could not create session ' + sessionuuid));
-
-              case 10:
-                _context49.next = 12;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 12:
-                wallet = _context49.sent;
-
-                if (wallet) {
-                  _context49.next = 15;
-                  break;
-                }
-
-                return _context49.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 15:
-                return _context49.abrupt("return", wallet.unlock(passphrase));
-
-              case 16:
+              case 3:
               case "end":
                 return _context49.stop();
             }
@@ -2455,21 +2411,77 @@ var Module = /*#__PURE__*/function () {
       }
 
       return getWalletInfo;
-    }()
+    }() // TODO: use mvcclientwalletmodule.getWalletUserInfo(sessionuuid, walletuuid) for version >= 0.30.17
+
   }, {
-    key: "makeWallet",
+    key: "getWalletUserInfo",
     value: function () {
-      var _makeWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee52(sessionuuid, authname, schemeuuid, password) {
-        var global, mvcclientwalletmodule;
+      var _getWalletUserInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee52(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, wallet, walletsession;
+
         return _regeneratorRuntime().wrap(function _callee52$(_context52) {
           while (1) {
             switch (_context52.prev = _context52.next) {
               case 0:
-                global = this.global;
-                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                return _context52.abrupt("return", mvcclientwalletmodule.makeWallet(sessionuuid, authname, schemeuuid, password));
+                if (sessionuuid) {
+                  _context52.next = 2;
+                  break;
+                }
 
-              case 3:
+                return _context52.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                if (walletuuid) {
+                  _context52.next = 4;
+                  break;
+                }
+
+                return _context52.abrupt("return", Promise.reject('wallet uuid is undefined'));
+
+              case 4:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context52.next = 8;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 8:
+                session = _context52.sent;
+
+                if (session) {
+                  _context52.next = 11;
+                  break;
+                }
+
+                return _context52.abrupt("return", Promise.reject('could not create session ' + sessionuuid));
+
+              case 11:
+                _context52.next = 13;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid);
+
+              case 13:
+                wallet = _context52.sent;
+
+                if (wallet) {
+                  _context52.next = 16;
+                  break;
+                }
+
+                return _context52.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
+
+              case 16:
+                walletsession = wallet._getSession();
+
+                if (walletsession) {
+                  _context52.next = 19;
+                  break;
+                }
+
+                return _context52.abrupt("return", Promise.reject('could not find session for wallet ' + walletuuid));
+
+              case 19:
+                return _context52.abrupt("return", _apicontrollers.getUserInfo(walletsession));
+
+              case 20:
               case "end":
                 return _context52.stop();
             }
@@ -2477,16 +2489,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee52, this);
       }));
 
-      function makeWallet(_x129, _x130, _x131, _x132) {
-        return _makeWallet.apply(this, arguments);
+      function getWalletUserInfo(_x129, _x130) {
+        return _getWalletUserInfo.apply(this, arguments);
       }
 
-      return makeWallet;
+      return getWalletUserInfo;
     }()
   }, {
-    key: "makeWalletFromSession",
+    key: "makeWallet",
     value: function () {
-      var _makeWalletFromSession = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee53(sessionuuid, schemeuuid) {
+      var _makeWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee53(sessionuuid, authname, schemeuuid, password) {
         var global, mvcclientwalletmodule;
         return _regeneratorRuntime().wrap(function _callee53$(_context53) {
           while (1) {
@@ -2494,7 +2506,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                return _context53.abrupt("return", mvcclientwalletmodule.makeWalletFromSession(sessionuuid, schemeuuid));
+                return _context53.abrupt("return", mvcclientwalletmodule.makeWallet(sessionuuid, authname, schemeuuid, password));
 
               case 3:
               case "end":
@@ -2504,121 +2516,26 @@ var Module = /*#__PURE__*/function () {
         }, _callee53, this);
       }));
 
-      function makeWalletFromSession(_x133, _x134) {
-        return _makeWalletFromSession.apply(this, arguments);
+      function makeWallet(_x131, _x132, _x133, _x134) {
+        return _makeWallet.apply(this, arguments);
       }
 
-      return makeWalletFromSession;
-    }() // TODO: should use mvclientwalletmodule.attachSessionToWallet for version >= 0.20.17
-
+      return makeWallet;
+    }()
   }, {
-    key: "attachSessionToWallet",
+    key: "makeWalletFromSession",
     value: function () {
-      var _attachSessionToWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee54(sessionuuid, walletuuid) {
-        var global, _apicontrollers, commonmodule, session, wallet, scheme, mvcclientwalletmodule, network, isanonymous;
-
+      var _makeWalletFromSession = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee54(sessionuuid, schemeuuid) {
+        var global, mvcclientwalletmodule;
         return _regeneratorRuntime().wrap(function _callee54$(_context54) {
           while (1) {
             switch (_context54.prev = _context54.next) {
               case 0:
-                if (sessionuuid) {
-                  _context54.next = 2;
-                  break;
-                }
-
-                return _context54.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
                 global = this.global;
-                _apicontrollers = this._getClientAPI();
-                commonmodule = global.getModuleObject('common'); // look if session already exists
-
-                _context54.next = 7;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 7:
-                session = _context54.sent;
-
-                if (session) {
-                  _context54.next = 13;
-                  break;
-                }
-
-                _context54.next = 11;
-                return commonmodule.createBlankSessionObject();
-
-              case 11:
-                session = _context54.sent;
-                session.setSessionUUID(sessionuuid);
-
-              case 13:
-                if (session) {
-                  _context54.next = 15;
-                  break;
-                }
-
-                return _context54.abrupt("return", Promise.reject('could not create session ' + sessionuuid));
-
-              case 15:
-                _context54.next = 17;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 17:
-                wallet = _context54.sent;
-
-                if (wallet) {
-                  _context54.next = 20;
-                  break;
-                }
-
-                return _context54.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 20:
-                _context54.next = 22;
-                return wallet.getScheme();
-
-              case 22:
-                scheme = _context54.sent;
-
-                if (scheme) {
-                  _context54.next = 25;
-                  break;
-                }
-
-                throw new Error('could not find scheme for wallet ' + walletuuid);
-
-              case 25:
-                // set network config to the session
-                //var network = scheme.getNetworkConfig();
                 mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                network = mvcclientwalletmodule._getSchemeNetworkConfig(scheme);
-                _context54.next = 29;
-                return _apicontrollers.setSessionNetworkConfig(session, network);
+                return _context54.abrupt("return", mvcclientwalletmodule.makeWalletFromSession(sessionuuid, schemeuuid));
 
-              case 29:
-                // save schemeuuid in session var (because missing 2021.11.13)
-                session.setSessionVariable('schemeuuid', scheme.getSchemeUUID());
-                _context54.next = 32;
-                return mvcclientwalletmodule._isAnonymousAsync(session);
-
-              case 32:
-                isanonymous = _context54.sent;
-
-                if (!isanonymous) {
-                  _context54.next = 35;
-                  break;
-                }
-
-                return _context54.abrupt("return", Promise.reject('session needs to be authenticated'));
-
-              case 35:
-                _context54.next = 37;
-                return mvcclientwalletmodule._attachSessionToWallet(session, wallet);
-
-              case 37:
-                if (!session.WALLET_ATTACHED) session.WALLET_ATTACHED = wallet.uuid; // TODO: remove for version > 0.30.10
-
-              case 38:
+              case 3:
               case "end":
                 return _context54.stop();
             }
@@ -2626,16 +2543,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee54, this);
       }));
 
-      function attachSessionToWallet(_x135, _x136) {
-        return _attachSessionToWallet.apply(this, arguments);
+      function makeWalletFromSession(_x135, _x136) {
+        return _makeWalletFromSession.apply(this, arguments);
       }
 
-      return attachSessionToWallet;
+      return makeWalletFromSession;
     }()
   }, {
-    key: "lockWallet",
+    key: "attachSessionToWallet",
     value: function () {
-      var _lockWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee55(sessionuuid, walletuuid) {
+      var _attachSessionToWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee55(sessionuuid, walletuuid) {
         var global, mvcclientwalletmodule;
         return _regeneratorRuntime().wrap(function _callee55$(_context55) {
           while (1) {
@@ -2643,7 +2560,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                return _context55.abrupt("return", mvcclientwalletmodule.lockWallet(sessionuuid, walletuuid));
+                return _context55.abrupt("return", mvcclientwalletmodule.attachSessionToWallet(sessionuuid, walletuuid));
 
               case 3:
               case "end":
@@ -2653,7 +2570,34 @@ var Module = /*#__PURE__*/function () {
         }, _callee55, this);
       }));
 
-      function lockWallet(_x137, _x138) {
+      function attachSessionToWallet(_x137, _x138) {
+        return _attachSessionToWallet.apply(this, arguments);
+      }
+
+      return attachSessionToWallet;
+    }()
+  }, {
+    key: "lockWallet",
+    value: function () {
+      var _lockWallet = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee56(sessionuuid, walletuuid) {
+        var global, mvcclientwalletmodule;
+        return _regeneratorRuntime().wrap(function _callee56$(_context56) {
+          while (1) {
+            switch (_context56.prev = _context56.next) {
+              case 0:
+                global = this.global;
+                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
+                return _context56.abrupt("return", mvcclientwalletmodule.lockWallet(sessionuuid, walletuuid));
+
+              case 3:
+              case "end":
+                return _context56.stop();
+            }
+          }
+        }, _callee56, this);
+      }));
+
+      function lockWallet(_x139, _x140) {
         return _lockWallet.apply(this, arguments);
       }
 
@@ -2665,31 +2609,31 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "canCardSign",
     value: function () {
-      var _canCardSign = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee56(sessionuuid, walletuuid, carduuid) {
+      var _canCardSign = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee57(sessionuuid, walletuuid, carduuid) {
         var global, mvcmodule, _privkey;
 
-        return _regeneratorRuntime().wrap(function _callee56$(_context56) {
+        return _regeneratorRuntime().wrap(function _callee57$(_context57) {
           while (1) {
-            switch (_context56.prev = _context56.next) {
+            switch (_context57.prev = _context57.next) {
               case 0:
                 global = this.global;
                 mvcmodule = global.getModuleObject('mvc');
-                _context56.next = 4;
+                _context57.next = 4;
                 return mvcmodule.getCardPrivateKey(sessionuuid, walletuuid, carduuid);
 
               case 4:
-                _privkey = _context56.sent;
-                return _context56.abrupt("return", _privkey ? true : false);
+                _privkey = _context57.sent;
+                return _context57.abrupt("return", _privkey ? true : false);
 
               case 6:
               case "end":
-                return _context56.stop();
+                return _context57.stop();
             }
           }
-        }, _callee56, this);
+        }, _callee57, this);
       }));
 
-      function canCardSign(_x139, _x140, _x141) {
+      function canCardSign(_x141, _x142, _x143) {
         return _canCardSign.apply(this, arguments);
       }
 
@@ -2698,98 +2642,98 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCardList",
     value: function () {
-      var _getCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee57(sessionuuid, walletuuid) {
+      var _getCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee58(sessionuuid, walletuuid) {
         var global, _apicontrollers, mvcclientwalletmodule, session, wallet, cards, array, i, cardinfo;
 
-        return _regeneratorRuntime().wrap(function _callee57$(_context57) {
+        return _regeneratorRuntime().wrap(function _callee58$(_context58) {
           while (1) {
-            switch (_context57.prev = _context57.next) {
+            switch (_context58.prev = _context58.next) {
               case 0:
                 if (sessionuuid) {
-                  _context57.next = 2;
+                  _context58.next = 2;
                   break;
                 }
 
-                return _context57.abrupt("return", Promise.reject('session uuid is undefined'));
+                return _context58.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
                 if (walletuuid) {
-                  _context57.next = 4;
+                  _context58.next = 4;
                   break;
                 }
 
-                return _context57.abrupt("return", Promise.reject('wallet uuid is undefined'));
+                return _context58.abrupt("return", Promise.reject('wallet uuid is undefined'));
 
               case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
                 mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                _context57.next = 9;
+                _context58.next = 9;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 9:
-                session = _context57.sent;
+                session = _context58.sent;
 
                 if (session) {
-                  _context57.next = 12;
+                  _context58.next = 12;
                   break;
                 }
 
-                return _context57.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context58.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 12:
-                _context57.next = 14;
+                _context58.next = 14;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid);
 
               case 14:
-                wallet = _context57.sent;
+                wallet = _context58.sent;
 
                 if (wallet) {
-                  _context57.next = 17;
+                  _context58.next = 17;
                   break;
                 }
 
-                return _context57.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
+                return _context58.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
 
               case 17:
-                _context57.next = 19;
+                _context58.next = 19;
                 return wallet.getCardList(true);
 
               case 19:
-                cards = _context57.sent;
+                cards = _context58.sent;
                 array = [];
                 i = 0;
 
               case 22:
                 if (!(i < cards.length)) {
-                  _context57.next = 30;
+                  _context58.next = 30;
                   break;
                 }
 
-                _context57.next = 25;
+                _context58.next = 25;
                 return mvcclientwalletmodule.getCardInfo(sessionuuid, walletuuid, cards[i].uuid);
 
               case 25:
-                cardinfo = _context57.sent;
+                cardinfo = _context58.sent;
                 array.push(cardinfo);
 
               case 27:
                 i++;
-                _context57.next = 22;
+                _context58.next = 22;
                 break;
 
               case 30:
-                return _context57.abrupt("return", array);
+                return _context58.abrupt("return", array);
 
               case 31:
               case "end":
-                return _context57.stop();
+                return _context58.stop();
             }
           }
-        }, _callee57, this);
+        }, _callee58, this);
       }));
 
-      function getCardList(_x142, _x143) {
+      function getCardList(_x144, _x145) {
         return _getCardList.apply(this, arguments);
       }
 
@@ -2798,26 +2742,26 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCardListOnWeb3Url",
     value: function () {
-      var _getCardListOnWeb3Url = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee58(sessionuuid, walletuuid, web3url) {
+      var _getCardListOnWeb3Url = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee59(sessionuuid, walletuuid, web3url) {
         var global, mvcmodule;
-        return _regeneratorRuntime().wrap(function _callee58$(_context58) {
+        return _regeneratorRuntime().wrap(function _callee59$(_context59) {
           while (1) {
-            switch (_context58.prev = _context58.next) {
+            switch (_context59.prev = _context59.next) {
               case 0:
                 console.log('OBSOLETE: Module.getCardListOnWeb3Url should no longer be used!');
                 global = this.global;
                 mvcmodule = global.getModuleObject('mvc');
-                return _context58.abrupt("return", mvcmodule.getCardListOnWeb3Url(sessionuuid, walletuuid, web3url));
+                return _context59.abrupt("return", mvcmodule.getCardListOnWeb3Url(sessionuuid, walletuuid, web3url));
 
               case 4:
               case "end":
-                return _context58.stop();
+                return _context59.stop();
             }
           }
-        }, _callee58, this);
+        }, _callee59, this);
       }));
 
-      function getCardListOnWeb3Url(_x144, _x145, _x146) {
+      function getCardListOnWeb3Url(_x146, _x147, _x148) {
         return _getCardListOnWeb3Url.apply(this, arguments);
       }
 
@@ -2826,130 +2770,8 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "createCard",
     value: function () {
-      var _createCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee59(sessionuuid, walletuuid, web3providerurl, privatekey) {
+      var _createCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee60(sessionuuid, walletuuid, web3providerurl, privatekey) {
         var global, _apicontrollers, session, wallet, card, bSave, mvcmodule, cardinfo;
-
-        return _regeneratorRuntime().wrap(function _callee59$(_context59) {
-          while (1) {
-            switch (_context59.prev = _context59.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context59.next = 2;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context59.next = 4;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                if (web3providerurl) {
-                  _context59.next = 6;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('web3 url is undefined'));
-
-              case 6:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context59.next = 10;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 10:
-                session = _context59.sent;
-
-                if (session) {
-                  _context59.next = 13;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 13:
-                _context59.next = 15;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 15:
-                wallet = _context59.sent;
-
-                if (wallet) {
-                  _context59.next = 18;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 18:
-                _context59.next = 20;
-                return _apicontrollers.createWalletCardFromPrivateKey(session, wallet, web3providerurl, privatekey);
-
-              case 20:
-                card = _context59.sent;
-
-                if (card) {
-                  _context59.next = 23;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('could not create card'));
-
-              case 23:
-                if (!card.isLocked()) {
-                  _context59.next = 26;
-                  break;
-                }
-
-                _context59.next = 26;
-                return card.unlock();
-
-              case 26:
-                _context59.next = 28;
-                return card.save();
-
-              case 28:
-                bSave = _context59.sent;
-
-                if (bSave) {
-                  _context59.next = 31;
-                  break;
-                }
-
-                return _context59.abrupt("return", Promise.reject('could not save card'));
-
-              case 31:
-                mvcmodule = global.getModuleObject('mvc');
-                cardinfo = {};
-
-                mvcmodule._fillCardInfo(cardinfo, card);
-
-                return _context59.abrupt("return", cardinfo);
-
-              case 35:
-              case "end":
-                return _context59.stop();
-            }
-          }
-        }, _callee59, this);
-      }));
-
-      function createCard(_x147, _x148, _x149, _x150) {
-        return _createCard.apply(this, arguments);
-      }
-
-      return createCard;
-    }()
-  }, {
-    key: "getWalletCard",
-    value: function () {
-      var _getWalletCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee60(sessionuuid, walletuuid, carduuid) {
-        var global, _apicontrollers, session, wallet, card, bSave, mvcclientwalletmodule, cardinfo;
 
         return _regeneratorRuntime().wrap(function _callee60$(_context60) {
           while (1) {
@@ -2971,81 +2793,89 @@ var Module = /*#__PURE__*/function () {
                 return _context60.abrupt("return", Promise.reject('wallet uuid is undefined'));
 
               case 4:
+                if (web3providerurl) {
+                  _context60.next = 6;
+                  break;
+                }
+
+                return _context60.abrupt("return", Promise.reject('web3 url is undefined'));
+
+              case 6:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context60.next = 8;
+                _context60.next = 10;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 8:
+              case 10:
                 session = _context60.sent;
 
                 if (session) {
-                  _context60.next = 11;
+                  _context60.next = 13;
                   break;
                 }
 
                 return _context60.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 11:
-                _context60.next = 13;
+              case 13:
+                _context60.next = 15;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid);
 
-              case 13:
+              case 15:
                 wallet = _context60.sent;
 
                 if (wallet) {
-                  _context60.next = 16;
+                  _context60.next = 18;
                   break;
                 }
 
                 return _context60.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
 
-              case 16:
-                _context60.next = 18;
-                return wallet.getCardFromUUID(carduuid);
-
               case 18:
+                _context60.next = 20;
+                return _apicontrollers.createWalletCardFromPrivateKey(session, wallet, web3providerurl, privatekey);
+
+              case 20:
                 card = _context60.sent;
 
                 if (card) {
-                  _context60.next = 21;
+                  _context60.next = 23;
                   break;
                 }
 
-                return _context60.abrupt("return", Promise.reject('could not find card ' + carduuid));
+                return _context60.abrupt("return", Promise.reject('could not create card'));
 
-              case 21:
+              case 23:
                 if (!card.isLocked()) {
-                  _context60.next = 24;
+                  _context60.next = 26;
                   break;
                 }
 
-                _context60.next = 24;
+                _context60.next = 26;
                 return card.unlock();
 
-              case 24:
-                _context60.next = 26;
+              case 26:
+                _context60.next = 28;
                 return card.save();
 
-              case 26:
+              case 28:
                 bSave = _context60.sent;
 
                 if (bSave) {
-                  _context60.next = 29;
+                  _context60.next = 31;
                   break;
                 }
 
                 return _context60.abrupt("return", Promise.reject('could not save card'));
 
-              case 29:
-                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
+              case 31:
+                mvcmodule = global.getModuleObject('mvc');
                 cardinfo = {};
 
-                mvcclientwalletmodule._fillCardInfo(cardinfo, card);
+                mvcmodule._fillCardInfo(cardinfo, card);
 
                 return _context60.abrupt("return", cardinfo);
 
-              case 33:
+              case 35:
               case "end":
                 return _context60.stop();
             }
@@ -3053,7 +2883,121 @@ var Module = /*#__PURE__*/function () {
         }, _callee60, this);
       }));
 
-      function getWalletCard(_x151, _x152, _x153) {
+      function createCard(_x149, _x150, _x151, _x152) {
+        return _createCard.apply(this, arguments);
+      }
+
+      return createCard;
+    }()
+  }, {
+    key: "getWalletCard",
+    value: function () {
+      var _getWalletCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee61(sessionuuid, walletuuid, carduuid) {
+        var global, _apicontrollers, session, wallet, card, bSave, mvcclientwalletmodule, cardinfo;
+
+        return _regeneratorRuntime().wrap(function _callee61$(_context61) {
+          while (1) {
+            switch (_context61.prev = _context61.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context61.next = 2;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                if (walletuuid) {
+                  _context61.next = 4;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('wallet uuid is undefined'));
+
+              case 4:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context61.next = 8;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 8:
+                session = _context61.sent;
+
+                if (session) {
+                  _context61.next = 11;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 11:
+                _context61.next = 13;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid);
+
+              case 13:
+                wallet = _context61.sent;
+
+                if (wallet) {
+                  _context61.next = 16;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
+
+              case 16:
+                _context61.next = 18;
+                return wallet.getCardFromUUID(carduuid);
+
+              case 18:
+                card = _context61.sent;
+
+                if (card) {
+                  _context61.next = 21;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('could not find card ' + carduuid));
+
+              case 21:
+                if (!card.isLocked()) {
+                  _context61.next = 24;
+                  break;
+                }
+
+                _context61.next = 24;
+                return card.unlock();
+
+              case 24:
+                _context61.next = 26;
+                return card.save();
+
+              case 26:
+                bSave = _context61.sent;
+
+                if (bSave) {
+                  _context61.next = 29;
+                  break;
+                }
+
+                return _context61.abrupt("return", Promise.reject('could not save card'));
+
+              case 29:
+                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
+                cardinfo = {};
+
+                mvcclientwalletmodule._fillCardInfo(cardinfo, card);
+
+                return _context61.abrupt("return", cardinfo);
+
+              case 33:
+              case "end":
+                return _context61.stop();
+            }
+          }
+        }, _callee61, this);
+      }));
+
+      function getWalletCard(_x153, _x154, _x155) {
         return _getWalletCard.apply(this, arguments);
       }
 
@@ -3062,42 +3006,15 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCardSchemeInfo",
     value: function () {
-      var _getCardSchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee61(sessionuuid, walletuuid, carduuid) {
+      var _getCardSchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee62(sessionuuid, walletuuid, carduuid) {
         var global, mvcmodule;
-        return _regeneratorRuntime().wrap(function _callee61$(_context61) {
-          while (1) {
-            switch (_context61.prev = _context61.next) {
-              case 0:
-                global = this.global;
-                mvcmodule = global.getModuleObject('mvc');
-                return _context61.abrupt("return", mvcmodule.getCardSchemeInfo(sessionuuid, walletuuid, carduuid));
-
-              case 3:
-              case "end":
-                return _context61.stop();
-            }
-          }
-        }, _callee61, this);
-      }));
-
-      function getCardSchemeInfo(_x154, _x155, _x156) {
-        return _getCardSchemeInfo.apply(this, arguments);
-      }
-
-      return getCardSchemeInfo;
-    }()
-  }, {
-    key: "getCardInfoFromAddressOnScheme",
-    value: function () {
-      var _getCardInfoFromAddressOnScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee62(sessionuuid, walletuuid, schemeuuid, address) {
-        var global, mvcclientwalletmodule;
         return _regeneratorRuntime().wrap(function _callee62$(_context62) {
           while (1) {
             switch (_context62.prev = _context62.next) {
               case 0:
                 global = this.global;
-                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
-                return _context62.abrupt("return", mvcclientwalletmodule.getCardInfoFromAddressOnScheme(sessionuuid, walletuuid, schemeuuid, address));
+                mvcmodule = global.getModuleObject('mvc');
+                return _context62.abrupt("return", mvcmodule.getCardSchemeInfo(sessionuuid, walletuuid, carduuid));
 
               case 3:
               case "end":
@@ -3107,7 +3024,34 @@ var Module = /*#__PURE__*/function () {
         }, _callee62, this);
       }));
 
-      function getCardInfoFromAddressOnScheme(_x157, _x158, _x159, _x160) {
+      function getCardSchemeInfo(_x156, _x157, _x158) {
+        return _getCardSchemeInfo.apply(this, arguments);
+      }
+
+      return getCardSchemeInfo;
+    }()
+  }, {
+    key: "getCardInfoFromAddressOnScheme",
+    value: function () {
+      var _getCardInfoFromAddressOnScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee63(sessionuuid, walletuuid, schemeuuid, address) {
+        var global, mvcclientwalletmodule;
+        return _regeneratorRuntime().wrap(function _callee63$(_context63) {
+          while (1) {
+            switch (_context63.prev = _context63.next) {
+              case 0:
+                global = this.global;
+                mvcclientwalletmodule = global.getModuleObject('mvc-client-wallet');
+                return _context63.abrupt("return", mvcclientwalletmodule.getCardInfoFromAddressOnScheme(sessionuuid, walletuuid, schemeuuid, address));
+
+              case 3:
+              case "end":
+                return _context63.stop();
+            }
+          }
+        }, _callee63, this);
+      }));
+
+      function getCardInfoFromAddressOnScheme(_x159, _x160, _x161, _x162) {
         return _getCardInfoFromAddressOnScheme.apply(this, arguments);
       }
 
@@ -3117,54 +3061,23 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCreditBalance",
     value: function () {
-      var _getCreditBalance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee63(sessionuuid, walletuuid, carduuid) {
-        var global, mvccurrencies, currency;
-        return _regeneratorRuntime().wrap(function _callee63$(_context63) {
-          while (1) {
-            switch (_context63.prev = _context63.next) {
-              case 0:
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context63.next = 4;
-                return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
-
-              case 4:
-                currency = _context63.sent;
-                return _context63.abrupt("return", mvccurrencies.getCreditBalance(sessionuuid, walletuuid, carduuid, currency.uuid));
-
-              case 6:
-              case "end":
-                return _context63.stop();
-            }
-          }
-        }, _callee63, this);
-      }));
-
-      function getCreditBalance(_x161, _x162, _x163) {
-        return _getCreditBalance.apply(this, arguments);
-      }
-
-      return getCreditBalance;
-    }()
-  }, {
-    key: "topUpCard",
-    value: function () {
-      var _topUpCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee64(sessionuuid, walletuuid, carduuid) {
+      var _getCreditBalance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee64(sessionuuid, walletuuid, carduuid) {
         var global, mvccurrencies, currency;
         return _regeneratorRuntime().wrap(function _callee64$(_context64) {
           while (1) {
             switch (_context64.prev = _context64.next) {
               case 0:
+                console.log('OBSOLETE: Module.getCreditBalance should no longer be used!');
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context64.next = 4;
+                _context64.next = 5;
                 return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
 
-              case 4:
+              case 5:
                 currency = _context64.sent;
-                return _context64.abrupt("return", mvccurrencies.topUpCard(sessionuuid, walletuuid, carduuid, currency.uuid));
+                return _context64.abrupt("return", mvccurrencies.getCreditBalance(sessionuuid, walletuuid, carduuid, currency.uuid));
 
-              case 6:
+              case 7:
               case "end":
                 return _context64.stop();
             }
@@ -3172,7 +3085,71 @@ var Module = /*#__PURE__*/function () {
         }, _callee64, this);
       }));
 
-      function topUpCard(_x164, _x165, _x166) {
+      function getCreditBalance(_x163, _x164, _x165) {
+        return _getCreditBalance.apply(this, arguments);
+      }
+
+      return getCreditBalance;
+    }()
+  }, {
+    key: "getCurrencyCardCreditBalance",
+    value: function () {
+      var _getCurrencyCardCreditBalance = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee65(sessionuuid, walletuuid, carduuid) {
+        var global, mvccurrencies, currency;
+        return _regeneratorRuntime().wrap(function _callee65$(_context65) {
+          while (1) {
+            switch (_context65.prev = _context65.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                _context65.next = 4;
+                return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
+
+              case 4:
+                currency = _context65.sent;
+                return _context65.abrupt("return", mvccurrencies.getCurrencyCardCreditBalance(sessionuuid, walletuuid, carduuid, currency.uuid));
+
+              case 6:
+              case "end":
+                return _context65.stop();
+            }
+          }
+        }, _callee65, this);
+      }));
+
+      function getCurrencyCardCreditBalance(_x166, _x167, _x168) {
+        return _getCurrencyCardCreditBalance.apply(this, arguments);
+      }
+
+      return getCurrencyCardCreditBalance;
+    }()
+  }, {
+    key: "topUpCard",
+    value: function () {
+      var _topUpCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee66(sessionuuid, walletuuid, carduuid) {
+        var global, mvccurrencies, currency;
+        return _regeneratorRuntime().wrap(function _callee66$(_context66) {
+          while (1) {
+            switch (_context66.prev = _context66.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                _context66.next = 4;
+                return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
+
+              case 4:
+                currency = _context66.sent;
+                return _context66.abrupt("return", mvccurrencies.topUpCard(sessionuuid, walletuuid, carduuid, currency.uuid));
+
+              case 6:
+              case "end":
+                return _context66.stop();
+            }
+          }
+        }, _callee66, this);
+      }));
+
+      function topUpCard(_x169, _x170, _x171) {
         return _topUpCard.apply(this, arguments);
       }
 
@@ -3181,35 +3158,35 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "transferTransactionUnits",
     value: function () {
-      var _transferTransactionUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee65(sessionuuid, walletuuid, cardfromuuid, cardtouuid, units) {
+      var _transferTransactionUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee67(sessionuuid, walletuuid, cardfromuuid, cardtouuid, units) {
         var feelevel,
             global,
             mvccurrencies,
             currency,
-            _args65 = arguments;
-        return _regeneratorRuntime().wrap(function _callee65$(_context65) {
+            _args67 = arguments;
+        return _regeneratorRuntime().wrap(function _callee67$(_context67) {
           while (1) {
-            switch (_context65.prev = _context65.next) {
+            switch (_context67.prev = _context67.next) {
               case 0:
-                feelevel = _args65.length > 5 && _args65[5] !== undefined ? _args65[5] : null;
+                feelevel = _args67.length > 5 && _args67[5] !== undefined ? _args67[5] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context65.next = 5;
+                _context67.next = 5;
                 return this.findCardCurrency(sessionuuid, walletuuid, cardfromuuid);
 
               case 5:
-                currency = _context65.sent;
-                return _context65.abrupt("return", mvccurrencies.transferTransactionUnits(sessionuuid, walletuuid, cardfromuuid, currency.uuid, cardtouuid, units, feelevel));
+                currency = _context67.sent;
+                return _context67.abrupt("return", mvccurrencies.transferTransactionUnits(sessionuuid, walletuuid, cardfromuuid, currency.uuid, cardtouuid, units, feelevel));
 
               case 7:
               case "end":
-                return _context65.stop();
+                return _context67.stop();
             }
           }
-        }, _callee65, this);
+        }, _callee67, this);
       }));
 
-      function transferTransactionUnits(_x167, _x168, _x169, _x170, _x171) {
+      function transferTransactionUnits(_x172, _x173, _x174, _x175, _x176) {
         return _transferTransactionUnits.apply(this, arguments);
       }
 
@@ -3218,35 +3195,35 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "sendTransactionUnits",
     value: function () {
-      var _sendTransactionUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee66(sessionuuid, walletuuid, cardfromuuid, toaddress, units) {
+      var _sendTransactionUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee68(sessionuuid, walletuuid, cardfromuuid, toaddress, units) {
         var feelevel,
             global,
             mvccurrencies,
             currency,
-            _args66 = arguments;
-        return _regeneratorRuntime().wrap(function _callee66$(_context66) {
+            _args68 = arguments;
+        return _regeneratorRuntime().wrap(function _callee68$(_context68) {
           while (1) {
-            switch (_context66.prev = _context66.next) {
+            switch (_context68.prev = _context68.next) {
               case 0:
-                feelevel = _args66.length > 5 && _args66[5] !== undefined ? _args66[5] : null;
+                feelevel = _args68.length > 5 && _args68[5] !== undefined ? _args68[5] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context66.next = 5;
+                _context68.next = 5;
                 return this.findCardCurrency(sessionuuid, walletuuid, cardfromuuid);
 
               case 5:
-                currency = _context66.sent;
-                return _context66.abrupt("return", mvccurrencies.sendTransactionUnits(sessionuuid, walletuuid, cardfromuuid, currency.uuid, toaddress, units, feelevel));
+                currency = _context68.sent;
+                return _context68.abrupt("return", mvccurrencies.sendTransactionUnits(sessionuuid, walletuuid, cardfromuuid, currency.uuid, toaddress, units, feelevel));
 
               case 7:
               case "end":
-                return _context66.stop();
+                return _context68.stop();
             }
           }
-        }, _callee66, this);
+        }, _callee68, this);
       }));
 
-      function sendTransactionUnits(_x172, _x173, _x174, _x175, _x176) {
+      function sendTransactionUnits(_x177, _x178, _x179, _x180, _x181) {
         return _sendTransactionUnits.apply(this, arguments);
       }
 
@@ -3255,25 +3232,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCurrencyTransactionUnitsThreshold",
     value: function () {
-      var _getCurrencyTransactionUnitsThreshold = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee67(sessionuuid, walletuuid, currencyuuid) {
+      var _getCurrencyTransactionUnitsThreshold = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee69(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee67$(_context67) {
+        return _regeneratorRuntime().wrap(function _callee69$(_context69) {
           while (1) {
-            switch (_context67.prev = _context67.next) {
+            switch (_context69.prev = _context69.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context67.abrupt("return", mvccurrencies.getCurrencyTransactionUnitsThreshold(sessionuuid, walletuuid, currencyuuid));
+                return _context69.abrupt("return", mvccurrencies.getCurrencyTransactionUnitsThreshold(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
-                return _context67.stop();
+                return _context69.stop();
             }
           }
-        }, _callee67, this);
+        }, _callee69, this);
       }));
 
-      function getCurrencyTransactionUnitsThreshold(_x177, _x178, _x179) {
+      function getCurrencyTransactionUnitsThreshold(_x182, _x183, _x184) {
         return _getCurrencyTransactionUnitsThreshold.apply(this, arguments);
       }
 
@@ -3282,30 +3259,30 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getRecommendedFeeLevel",
     value: function () {
-      var _getRecommendedFeeLevel = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee68(sessionuuid, walletuuid, carduuid, tx_fee) {
+      var _getRecommendedFeeLevel = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee70(sessionuuid, walletuuid, carduuid, tx_fee) {
         var global, mvccurrencies, currency;
-        return _regeneratorRuntime().wrap(function _callee68$(_context68) {
+        return _regeneratorRuntime().wrap(function _callee70$(_context70) {
           while (1) {
-            switch (_context68.prev = _context68.next) {
+            switch (_context70.prev = _context70.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context68.next = 4;
+                _context70.next = 4;
                 return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
 
               case 4:
-                currency = _context68.sent;
-                return _context68.abrupt("return", mvccurrencies.getRecommendedFeeLevel(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee));
+                currency = _context70.sent;
+                return _context70.abrupt("return", mvccurrencies.getRecommendedFeeLevel(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee));
 
               case 6:
               case "end":
-                return _context68.stop();
+                return _context70.stop();
             }
           }
-        }, _callee68, this);
+        }, _callee70, this);
       }));
 
-      function getRecommendedFeeLevel(_x180, _x181, _x182, _x183) {
+      function getRecommendedFeeLevel(_x185, _x186, _x187, _x188) {
         return _getRecommendedFeeLevel.apply(this, arguments);
       }
 
@@ -3314,35 +3291,35 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "computeTransactionFee",
     value: function () {
-      var _computeTransactionFee = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee69(sessionuuid, walletuuid, carduuid, tx_fee) {
+      var _computeTransactionFee = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee71(sessionuuid, walletuuid, carduuid, tx_fee) {
         var feelevel,
             global,
             mvccurrencies,
             currency,
-            _args69 = arguments;
-        return _regeneratorRuntime().wrap(function _callee69$(_context69) {
+            _args71 = arguments;
+        return _regeneratorRuntime().wrap(function _callee71$(_context71) {
           while (1) {
-            switch (_context69.prev = _context69.next) {
+            switch (_context71.prev = _context71.next) {
               case 0:
-                feelevel = _args69.length > 4 && _args69[4] !== undefined ? _args69[4] : null;
+                feelevel = _args71.length > 4 && _args71[4] !== undefined ? _args71[4] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context69.next = 5;
+                _context71.next = 5;
                 return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
 
               case 5:
-                currency = _context69.sent;
-                return _context69.abrupt("return", mvccurrencies.computeTransactionFee(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee, feelevel));
+                currency = _context71.sent;
+                return _context71.abrupt("return", mvccurrencies.computeTransactionFee(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee, feelevel));
 
               case 7:
               case "end":
-                return _context69.stop();
+                return _context71.stop();
             }
           }
-        }, _callee69, this);
+        }, _callee71, this);
       }));
 
-      function computeTransactionFee(_x184, _x185, _x186, _x187) {
+      function computeTransactionFee(_x189, _x190, _x191, _x192) {
         return _computeTransactionFee.apply(this, arguments);
       }
 
@@ -3351,35 +3328,35 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "canCompleteTransaction",
     value: function () {
-      var _canCompleteTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee70(sessionuuid, walletuuid, carduuid, tx_fee) {
+      var _canCompleteTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee72(sessionuuid, walletuuid, carduuid, tx_fee) {
         var feelevel,
             global,
             mvccurrencies,
             currency,
-            _args70 = arguments;
-        return _regeneratorRuntime().wrap(function _callee70$(_context70) {
+            _args72 = arguments;
+        return _regeneratorRuntime().wrap(function _callee72$(_context72) {
           while (1) {
-            switch (_context70.prev = _context70.next) {
+            switch (_context72.prev = _context72.next) {
               case 0:
-                feelevel = _args70.length > 4 && _args70[4] !== undefined ? _args70[4] : null;
+                feelevel = _args72.length > 4 && _args72[4] !== undefined ? _args72[4] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                _context70.next = 5;
+                _context72.next = 5;
                 return this.findCardCurrency(sessionuuid, walletuuid, carduuid);
 
               case 5:
-                currency = _context70.sent;
-                return _context70.abrupt("return", mvccurrencies.canCompleteTransaction(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee, feelevel));
+                currency = _context72.sent;
+                return _context72.abrupt("return", mvccurrencies.canCompleteTransaction(sessionuuid, walletuuid, carduuid, currency.uuid, tx_fee, feelevel));
 
               case 7:
               case "end":
-                return _context70.stop();
+                return _context72.stop();
             }
           }
-        }, _callee70, this);
+        }, _callee72, this);
       }));
 
-      function canCompleteTransaction(_x188, _x189, _x190, _x191) {
+      function canCompleteTransaction(_x193, _x194, _x195, _x196) {
         return _canCompleteTransaction.apply(this, arguments);
       }
 
@@ -3391,65 +3368,7 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_createDecimalAmount",
     value: function () {
-      var _createDecimalAmount2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee71(session, amount, decimals) {
-        var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee71$(_context71) {
-          while (1) {
-            switch (_context71.prev = _context71.next) {
-              case 0:
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context71.abrupt("return", mvccurrencies._createDecimalAmount(session, amount, decimals));
-
-              case 3:
-              case "end":
-                return _context71.stop();
-            }
-          }
-        }, _callee71, this);
-      }));
-
-      function _createDecimalAmount(_x192, _x193, _x194) {
-        return _createDecimalAmount2.apply(this, arguments);
-      }
-
-      return _createDecimalAmount;
-    }()
-  }, {
-    key: "transferCurrencyAmount",
-    value: function () {
-      var _transferCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee72(sessionuuid, walletuuid, cardfromuuid, cardtouuid, currencyuuid, currencyamount) {
-        var feelevel,
-            global,
-            mvccurrencies,
-            _args72 = arguments;
-        return _regeneratorRuntime().wrap(function _callee72$(_context72) {
-          while (1) {
-            switch (_context72.prev = _context72.next) {
-              case 0:
-                feelevel = _args72.length > 6 && _args72[6] !== undefined ? _args72[6] : null;
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context72.abrupt("return", mvccurrencies.transferCurrencyAmount(sessionuuid, walletuuid, cardfromuuid, cardtouuid, currencyuuid, currencyamount, feelevel));
-
-              case 4:
-              case "end":
-                return _context72.stop();
-            }
-          }
-        }, _callee72, this);
-      }));
-
-      function transferCurrencyAmount(_x195, _x196, _x197, _x198, _x199, _x200) {
-        return _transferCurrencyAmount.apply(this, arguments);
-      }
-
-      return transferCurrencyAmount;
-    }()
-  }, {
-    key: "_getPretradeScheme",
-    value: function () {
-      var _getPretradeScheme2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee73(session, currency) {
+      var _createDecimalAmount2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee73(session, amount, decimals) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee73$(_context73) {
           while (1) {
@@ -3457,7 +3376,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context73.abrupt("return", mvccurrencies._getPretradeScheme(session, currency));
+                return _context73.abrupt("return", mvccurrencies._createDecimalAmount(session, amount, decimals));
 
               case 3:
               case "end":
@@ -3467,26 +3386,28 @@ var Module = /*#__PURE__*/function () {
         }, _callee73, this);
       }));
 
-      function _getPretradeScheme(_x201, _x202) {
-        return _getPretradeScheme2.apply(this, arguments);
+      function _createDecimalAmount(_x197, _x198, _x199) {
+        return _createDecimalAmount2.apply(this, arguments);
       }
 
-      return _getPretradeScheme;
+      return _createDecimalAmount;
     }()
   }, {
-    key: "loadConfig",
+    key: "transferCurrencyAmount",
     value: function () {
-      var _loadConfig = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee74(configname) {
-        var global, _apicontrollers, clientmodule;
-
+      var _transferCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee74(sessionuuid, walletuuid, cardfromuuid, cardtouuid, currencyuuid, currencyamount) {
+        var feelevel,
+            global,
+            mvccurrencies,
+            _args74 = arguments;
         return _regeneratorRuntime().wrap(function _callee74$(_context74) {
           while (1) {
             switch (_context74.prev = _context74.next) {
               case 0:
+                feelevel = _args74.length > 6 && _args74[6] !== undefined ? _args74[6] : null;
                 global = this.global;
-                _apicontrollers = this._getClientAPI();
-                clientmodule = global.getModuleObject('webclient');
-                return _context74.abrupt("return", clientmodule.loadConfig(configname));
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context74.abrupt("return", mvccurrencies.transferCurrencyAmount(sessionuuid, walletuuid, cardfromuuid, cardtouuid, currencyuuid, currencyamount, feelevel));
 
               case 4:
               case "end":
@@ -3496,17 +3417,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee74, this);
       }));
 
-      function loadConfig(_x203) {
-        return _loadConfig.apply(this, arguments);
+      function transferCurrencyAmount(_x200, _x201, _x202, _x203, _x204, _x205) {
+        return _transferCurrencyAmount.apply(this, arguments);
       }
 
-      return loadConfig;
-    }() // mvc-currencies
-
+      return transferCurrencyAmount;
+    }()
   }, {
-    key: "getCurrencies",
+    key: "_getPretradeScheme",
     value: function () {
-      var _getCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee75(sessionuuid, walletuuid) {
+      var _getPretradeScheme2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee75(session, currency) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee75$(_context75) {
           while (1) {
@@ -3514,7 +3434,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context75.abrupt("return", mvccurrencies.getCurrencies(sessionuuid, walletuuid));
+                return _context75.abrupt("return", mvccurrencies._getPretradeScheme(session, currency));
 
               case 3:
               case "end":
@@ -3524,26 +3444,28 @@ var Module = /*#__PURE__*/function () {
         }, _callee75, this);
       }));
 
-      function getCurrencies(_x204, _x205) {
-        return _getCurrencies.apply(this, arguments);
+      function _getPretradeScheme(_x206, _x207) {
+        return _getPretradeScheme2.apply(this, arguments);
       }
 
-      return getCurrencies;
+      return _getPretradeScheme;
     }()
   }, {
-    key: "getCurrencyFromUUID",
+    key: "loadConfig",
     value: function () {
-      var _getCurrencyFromUUID = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee76(sessionuuid, currencyuuid) {
-        var global, mvccurrencies;
+      var _loadConfig = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee76(configname) {
+        var global, _apicontrollers, clientmodule;
+
         return _regeneratorRuntime().wrap(function _callee76$(_context76) {
           while (1) {
             switch (_context76.prev = _context76.next) {
               case 0:
                 global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context76.abrupt("return", mvccurrencies.getCurrencyFromUUID(sessionuuid, currencyuuid));
+                _apicontrollers = this._getClientAPI();
+                clientmodule = global.getModuleObject('webclient');
+                return _context76.abrupt("return", clientmodule.loadConfig(configname));
 
-              case 3:
+              case 4:
               case "end":
                 return _context76.stop();
             }
@@ -3551,16 +3473,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee76, this);
       }));
 
-      function getCurrencyFromUUID(_x206, _x207) {
-        return _getCurrencyFromUUID.apply(this, arguments);
+      function loadConfig(_x208) {
+        return _loadConfig.apply(this, arguments);
       }
 
-      return getCurrencyFromUUID;
-    }()
+      return loadConfig;
+    }() // mvc-currencies
+
   }, {
-    key: "getCurrencyInfo",
+    key: "getCurrencies",
     value: function () {
-      var _getCurrencyInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee77(sessionuuid, walletuuid, currencyuuid) {
+      var _getCurrencies = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee77(sessionuuid, walletuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee77$(_context77) {
           while (1) {
@@ -3568,7 +3491,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context77.abrupt("return", mvccurrencies.getCurrencyInfo(sessionuuid, walletuuid, currencyuuid));
+                return _context77.abrupt("return", mvccurrencies.getCurrencies(sessionuuid, walletuuid));
 
               case 3:
               case "end":
@@ -3578,16 +3501,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee77, this);
       }));
 
-      function getCurrencyInfo(_x208, _x209, _x210) {
-        return _getCurrencyInfo.apply(this, arguments);
+      function getCurrencies(_x209, _x210) {
+        return _getCurrencies.apply(this, arguments);
       }
 
-      return getCurrencyInfo;
+      return getCurrencies;
     }()
   }, {
-    key: "getCurrencyTotalSupply",
+    key: "getCurrencyFromUUID",
     value: function () {
-      var _getCurrencyTotalSupply = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee78(sessionuuid, walletuuid, currencyuuid) {
+      var _getCurrencyFromUUID = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee78(sessionuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee78$(_context78) {
           while (1) {
@@ -3595,7 +3518,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context78.abrupt("return", mvccurrencies.getCurrencyTotalSupply(sessionuuid, walletuuid, currencyuuid));
+                return _context78.abrupt("return", mvccurrencies.getCurrencyFromUUID(sessionuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -3605,16 +3528,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee78, this);
       }));
 
-      function getCurrencyTotalSupply(_x211, _x212, _x213) {
-        return _getCurrencyTotalSupply.apply(this, arguments);
+      function getCurrencyFromUUID(_x211, _x212) {
+        return _getCurrencyFromUUID.apply(this, arguments);
       }
 
-      return getCurrencyTotalSupply;
+      return getCurrencyFromUUID;
     }()
   }, {
-    key: "importCurrencyFromTokenUUID",
+    key: "getCurrencyInfo",
     value: function () {
-      var _importCurrencyFromTokenUUID = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee79(sessionuuid, walletuuid, carduuid, tokenuuid) {
+      var _getCurrencyInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee79(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee79$(_context79) {
           while (1) {
@@ -3622,7 +3545,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context79.abrupt("return", mvccurrencies.importCurrencyFromTokenUUID(sessionuuid, walletuuid, carduuid, tokenuuid));
+                return _context79.abrupt("return", mvccurrencies.getCurrencyInfo(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -3632,16 +3555,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee79, this);
       }));
 
-      function importCurrencyFromTokenUUID(_x214, _x215, _x216, _x217) {
-        return _importCurrencyFromTokenUUID.apply(this, arguments);
+      function getCurrencyInfo(_x213, _x214, _x215) {
+        return _getCurrencyInfo.apply(this, arguments);
       }
 
-      return importCurrencyFromTokenUUID;
+      return getCurrencyInfo;
     }()
   }, {
-    key: "importCurrencyFromTokenAddress",
+    key: "getCurrencyTotalSupply",
     value: function () {
-      var _importCurrencyFromTokenAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee80(sessionuuid, walletuuid, carduuid, tokenaddress, options) {
+      var _getCurrencyTotalSupply = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee80(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee80$(_context80) {
           while (1) {
@@ -3649,7 +3572,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context80.abrupt("return", mvccurrencies.importCurrencyFromTokenAddress(sessionuuid, walletuuid, carduuid, tokenaddress, options));
+                return _context80.abrupt("return", mvccurrencies.getCurrencyTotalSupply(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -3659,16 +3582,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee80, this);
       }));
 
-      function importCurrencyFromTokenAddress(_x218, _x219, _x220, _x221, _x222) {
-        return _importCurrencyFromTokenAddress.apply(this, arguments);
+      function getCurrencyTotalSupply(_x216, _x217, _x218) {
+        return _getCurrencyTotalSupply.apply(this, arguments);
       }
 
-      return importCurrencyFromTokenAddress;
+      return getCurrencyTotalSupply;
     }()
   }, {
-    key: "getAllCurrenciesWithAddress",
+    key: "importCurrencyFromTokenUUID",
     value: function () {
-      var _getAllCurrenciesWithAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee81(sessionuuid, walletuuid, address) {
+      var _importCurrencyFromTokenUUID = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee81(sessionuuid, walletuuid, carduuid, tokenuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee81$(_context81) {
           while (1) {
@@ -3676,7 +3599,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context81.abrupt("return", mvccurrencies.getAllCurrenciesWithAddress(sessionuuid, walletuuid, address));
+                return _context81.abrupt("return", mvccurrencies.importCurrencyFromTokenUUID(sessionuuid, walletuuid, carduuid, tokenuuid));
 
               case 3:
               case "end":
@@ -3686,16 +3609,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee81, this);
       }));
 
-      function getAllCurrenciesWithAddress(_x223, _x224, _x225) {
-        return _getAllCurrenciesWithAddress.apply(this, arguments);
+      function importCurrencyFromTokenUUID(_x219, _x220, _x221, _x222) {
+        return _importCurrencyFromTokenUUID.apply(this, arguments);
       }
 
-      return getAllCurrenciesWithAddress;
+      return importCurrencyFromTokenUUID;
     }()
   }, {
-    key: "synchronizeCurrency",
+    key: "importCurrencyFromTokenAddress",
     value: function () {
-      var _synchronizeCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee82(sessionuuid, walletuuid, currency) {
+      var _importCurrencyFromTokenAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee82(sessionuuid, walletuuid, carduuid, tokenaddress, options) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee82$(_context82) {
           while (1) {
@@ -3703,7 +3626,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context82.abrupt("return", mvccurrencies.synchronizeCurrency(sessionuuid, walletuuid, currency));
+                return _context82.abrupt("return", mvccurrencies.importCurrencyFromTokenAddress(sessionuuid, walletuuid, carduuid, tokenaddress, options));
 
               case 3:
               case "end":
@@ -3713,16 +3636,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee82, this);
       }));
 
-      function synchronizeCurrency(_x226, _x227, _x228) {
-        return _synchronizeCurrency.apply(this, arguments);
+      function importCurrencyFromTokenAddress(_x223, _x224, _x225, _x226, _x227) {
+        return _importCurrencyFromTokenAddress.apply(this, arguments);
       }
 
-      return synchronizeCurrency;
+      return importCurrencyFromTokenAddress;
     }()
   }, {
-    key: "setCurrencyDescription",
+    key: "getAllCurrenciesWithAddress",
     value: function () {
-      var _setCurrencyDescription = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee83(sessionuuid, walletuuid, currencyuuid, description) {
+      var _getAllCurrenciesWithAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee83(sessionuuid, walletuuid, address) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee83$(_context83) {
           while (1) {
@@ -3730,7 +3653,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context83.abrupt("return", mvccurrencies.setCurrencyDescription(sessionuuid, walletuuid, currencyuuid, description));
+                return _context83.abrupt("return", mvccurrencies.getAllCurrenciesWithAddress(sessionuuid, walletuuid, address));
 
               case 3:
               case "end":
@@ -3740,16 +3663,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee83, this);
       }));
 
-      function setCurrencyDescription(_x229, _x230, _x231, _x232) {
-        return _setCurrencyDescription.apply(this, arguments);
+      function getAllCurrenciesWithAddress(_x228, _x229, _x230) {
+        return _getAllCurrenciesWithAddress.apply(this, arguments);
       }
 
-      return setCurrencyDescription;
+      return getAllCurrenciesWithAddress;
     }()
   }, {
-    key: "getCurrenciesFromAddress",
+    key: "synchronizeCurrency",
     value: function () {
-      var _getCurrenciesFromAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee84(sessionuuid, walletuuid, schemeuuid, address) {
+      var _synchronizeCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee84(sessionuuid, walletuuid, currency) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee84$(_context84) {
           while (1) {
@@ -3757,7 +3680,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context84.abrupt("return", mvccurrencies.getCurrenciesFromAddress(sessionuuid, walletuuid, schemeuuid, address));
+                return _context84.abrupt("return", mvccurrencies.synchronizeCurrency(sessionuuid, walletuuid, currency));
 
               case 3:
               case "end":
@@ -3767,16 +3690,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee84, this);
       }));
 
-      function getCurrenciesFromAddress(_x233, _x234, _x235, _x236) {
-        return _getCurrenciesFromAddress.apply(this, arguments);
+      function synchronizeCurrency(_x231, _x232, _x233) {
+        return _synchronizeCurrency.apply(this, arguments);
       }
 
-      return getCurrenciesFromAddress;
+      return synchronizeCurrency;
     }()
   }, {
-    key: "getCurrencyScheme",
+    key: "setCurrencyDescription",
     value: function () {
-      var _getCurrencyScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee85(sessionuuid, walletuuid, currencyuuid) {
+      var _setCurrencyDescription = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee85(sessionuuid, walletuuid, currencyuuid, description) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee85$(_context85) {
           while (1) {
@@ -3784,7 +3707,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context85.abrupt("return", mvccurrencies.getCurrencyScheme(sessionuuid, walletuuid, currencyuuid));
+                return _context85.abrupt("return", mvccurrencies.setCurrencyDescription(sessionuuid, walletuuid, currencyuuid, description));
 
               case 3:
               case "end":
@@ -3794,16 +3717,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee85, this);
       }));
 
-      function getCurrencyScheme(_x237, _x238, _x239) {
-        return _getCurrencyScheme.apply(this, arguments);
+      function setCurrencyDescription(_x234, _x235, _x236, _x237) {
+        return _setCurrencyDescription.apply(this, arguments);
       }
 
-      return getCurrencyScheme;
+      return setCurrencyDescription;
     }()
   }, {
-    key: "findCardCurrency",
+    key: "getCurrenciesFromAddress",
     value: function () {
-      var _findCardCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee86(sessionuuid, walletuuid, carduuid) {
+      var _getCurrenciesFromAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee86(sessionuuid, walletuuid, schemeuuid, address) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee86$(_context86) {
           while (1) {
@@ -3811,7 +3734,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context86.abrupt("return", mvccurrencies.findCardCurrency(sessionuuid, walletuuid, carduuid));
+                return _context86.abrupt("return", mvccurrencies.getCurrenciesFromAddress(sessionuuid, walletuuid, schemeuuid, address));
 
               case 3:
               case "end":
@@ -3821,16 +3744,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee86, this);
       }));
 
-      function findCardCurrency(_x240, _x241, _x242) {
-        return _findCardCurrency.apply(this, arguments);
+      function getCurrenciesFromAddress(_x238, _x239, _x240, _x241) {
+        return _getCurrenciesFromAddress.apply(this, arguments);
       }
 
-      return findCardCurrency;
+      return getCurrenciesFromAddress;
     }()
   }, {
-    key: "getCurrencyCard",
+    key: "getCurrencyScheme",
     value: function () {
-      var _getCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee87(sessionuuid, walletuuid, currencyuuid) {
+      var _getCurrencyScheme = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee87(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee87$(_context87) {
           while (1) {
@@ -3838,7 +3761,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context87.abrupt("return", mvccurrencies.getCurrencyCard(sessionuuid, walletuuid, currencyuuid));
+                return _context87.abrupt("return", mvccurrencies.getCurrencyScheme(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -3848,16 +3771,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee87, this);
       }));
 
-      function getCurrencyCard(_x243, _x244, _x245) {
-        return _getCurrencyCard.apply(this, arguments);
+      function getCurrencyScheme(_x242, _x243, _x244) {
+        return _getCurrencyScheme.apply(this, arguments);
       }
 
-      return getCurrencyCard;
+      return getCurrencyScheme;
     }()
   }, {
-    key: "setCurrencyCard",
+    key: "findCardCurrency",
     value: function () {
-      var _setCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee88(sessionuuid, walletuuid, currencyuuid, carduuid) {
+      var _findCardCurrency = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee88(sessionuuid, walletuuid, carduuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee88$(_context88) {
           while (1) {
@@ -3865,7 +3788,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context88.abrupt("return", mvccurrencies.setCurrencyCard(sessionuuid, walletuuid, currencyuuid, carduuid));
+                return _context88.abrupt("return", mvccurrencies.findCardCurrency(sessionuuid, walletuuid, carduuid));
 
               case 3:
               case "end":
@@ -3875,16 +3798,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee88, this);
       }));
 
-      function setCurrencyCard(_x246, _x247, _x248, _x249) {
-        return _setCurrencyCard.apply(this, arguments);
+      function findCardCurrency(_x245, _x246, _x247) {
+        return _findCardCurrency.apply(this, arguments);
       }
 
-      return setCurrencyCard;
+      return findCardCurrency;
     }()
   }, {
-    key: "createCurrencyCard",
+    key: "getCurrencyCard",
     value: function () {
-      var _createCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee89(sessionuuid, walletuuid, currencyuuid, privatekey) {
+      var _getCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee89(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee89$(_context89) {
           while (1) {
@@ -3892,7 +3815,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context89.abrupt("return", mvccurrencies.createCurrencyCard(sessionuuid, walletuuid, currencyuuid, privatekey));
+                return _context89.abrupt("return", mvccurrencies.getCurrencyCard(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -3902,16 +3825,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee89, this);
       }));
 
-      function createCurrencyCard(_x250, _x251, _x252, _x253) {
-        return _createCurrencyCard.apply(this, arguments);
+      function getCurrencyCard(_x248, _x249, _x250) {
+        return _getCurrencyCard.apply(this, arguments);
       }
 
-      return createCurrencyCard;
+      return getCurrencyCard;
     }()
   }, {
-    key: "getCurrencyCardWithAddress",
+    key: "setCurrencyCard",
     value: function () {
-      var _getCurrencyCardWithAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee90(sessionuuid, walletuuid, currencyuuid, address) {
+      var _setCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee90(sessionuuid, walletuuid, currencyuuid, carduuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee90$(_context90) {
           while (1) {
@@ -3919,7 +3842,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context90.abrupt("return", mvccurrencies.getCurrencyCardWithAddress(sessionuuid, walletuuid, currencyuuid, address));
+                return _context90.abrupt("return", mvccurrencies.setCurrencyCard(sessionuuid, walletuuid, currencyuuid, carduuid));
 
               case 3:
               case "end":
@@ -3929,16 +3852,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee90, this);
       }));
 
-      function getCurrencyCardWithAddress(_x254, _x255, _x256, _x257) {
-        return _getCurrencyCardWithAddress.apply(this, arguments);
+      function setCurrencyCard(_x251, _x252, _x253, _x254) {
+        return _setCurrencyCard.apply(this, arguments);
       }
 
-      return getCurrencyCardWithAddress;
+      return setCurrencyCard;
     }()
   }, {
-    key: "createReadOnlyCurrencyCard",
+    key: "createCurrencyCard",
     value: function () {
-      var _createReadOnlyCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee91(sessionuuid, walletuuid, currencyuuid, address) {
+      var _createCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee91(sessionuuid, walletuuid, currencyuuid, privatekey) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee91$(_context91) {
           while (1) {
@@ -3946,7 +3869,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context91.abrupt("return", mvccurrencies.createReadOnlyCurrencyCard(sessionuuid, walletuuid, currencyuuid, address));
+                return _context91.abrupt("return", mvccurrencies.createCurrencyCard(sessionuuid, walletuuid, currencyuuid, privatekey));
 
               case 3:
               case "end":
@@ -3956,16 +3879,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee91, this);
       }));
 
-      function createReadOnlyCurrencyCard(_x258, _x259, _x260, _x261) {
-        return _createReadOnlyCurrencyCard.apply(this, arguments);
+      function createCurrencyCard(_x255, _x256, _x257, _x258) {
+        return _createCurrencyCard.apply(this, arguments);
       }
 
-      return createReadOnlyCurrencyCard;
+      return createCurrencyCard;
     }()
   }, {
-    key: "generateCurrencyCard",
+    key: "getCurrencyCardWithAddress",
     value: function () {
-      var _generateCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee92(sessionuuid, walletuuid, currencyuuid) {
+      var _getCurrencyCardWithAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee92(sessionuuid, walletuuid, currencyuuid, address) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee92$(_context92) {
           while (1) {
@@ -3973,7 +3896,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context92.abrupt("return", mvccurrencies.generateCurrencyCard(sessionuuid, walletuuid, currencyuuid));
+                return _context92.abrupt("return", mvccurrencies.getCurrencyCardWithAddress(sessionuuid, walletuuid, currencyuuid, address));
 
               case 3:
               case "end":
@@ -3983,16 +3906,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee92, this);
       }));
 
-      function generateCurrencyCard(_x262, _x263, _x264) {
-        return _generateCurrencyCard.apply(this, arguments);
+      function getCurrencyCardWithAddress(_x259, _x260, _x261, _x262) {
+        return _getCurrencyCardWithAddress.apply(this, arguments);
       }
 
-      return generateCurrencyCard;
+      return getCurrencyCardWithAddress;
     }()
   }, {
-    key: "getCurrencyPosition",
+    key: "createReadOnlyCurrencyCard",
     value: function () {
-      var _getCurrencyPosition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee93(sessionuuid, walletuuid, currencyuuid, carduuid) {
+      var _createReadOnlyCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee93(sessionuuid, walletuuid, currencyuuid, address) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee93$(_context93) {
           while (1) {
@@ -4000,7 +3923,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context93.abrupt("return", mvccurrencies.getCurrencyPosition(sessionuuid, walletuuid, currencyuuid, carduuid));
+                return _context93.abrupt("return", mvccurrencies.createReadOnlyCurrencyCard(sessionuuid, walletuuid, currencyuuid, address));
 
               case 3:
               case "end":
@@ -4010,16 +3933,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee93, this);
       }));
 
-      function getCurrencyPosition(_x265, _x266, _x267, _x268) {
-        return _getCurrencyPosition.apply(this, arguments);
+      function createReadOnlyCurrencyCard(_x263, _x264, _x265, _x266) {
+        return _createReadOnlyCurrencyCard.apply(this, arguments);
       }
 
-      return getCurrencyPosition;
+      return createReadOnlyCurrencyCard;
     }()
   }, {
-    key: "getCurrencyCardCredits",
+    key: "generateCurrencyCard",
     value: function () {
-      var _getCurrencyCardCredits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee94(sessionuuid, walletuuid, currencyuuid) {
+      var _generateCurrencyCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee94(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee94$(_context94) {
           while (1) {
@@ -4027,7 +3950,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context94.abrupt("return", mvccurrencies.getCurrencyCardCredits(sessionuuid, walletuuid, currencyuuid));
+                return _context94.abrupt("return", mvccurrencies.generateCurrencyCard(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -4037,16 +3960,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee94, this);
       }));
 
-      function getCurrencyCardCredits(_x269, _x270, _x271) {
-        return _getCurrencyCardCredits.apply(this, arguments);
+      function generateCurrencyCard(_x267, _x268, _x269) {
+        return _generateCurrencyCard.apply(this, arguments);
       }
 
-      return getCurrencyCardCredits;
+      return generateCurrencyCard;
     }()
   }, {
-    key: "getCurrencyTransactionInfo",
+    key: "getCurrencyPosition",
     value: function () {
-      var _getCurrencyTransactionInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee95(sessionuuid, walletuuid, currencyuuid, txhash) {
+      var _getCurrencyPosition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee95(sessionuuid, walletuuid, currencyuuid, carduuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee95$(_context95) {
           while (1) {
@@ -4054,7 +3977,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context95.abrupt("return", mvccurrencies.getCurrencyTransactionInfo(sessionuuid, walletuuid, currencyuuid, txhash));
+                return _context95.abrupt("return", mvccurrencies.getCurrencyPosition(sessionuuid, walletuuid, currencyuuid, carduuid));
 
               case 3:
               case "end":
@@ -4064,30 +3987,26 @@ var Module = /*#__PURE__*/function () {
         }, _callee95, this);
       }));
 
-      function getCurrencyTransactionInfo(_x272, _x273, _x274, _x275) {
-        return _getCurrencyTransactionInfo.apply(this, arguments);
+      function getCurrencyPosition(_x270, _x271, _x272, _x273) {
+        return _getCurrencyPosition.apply(this, arguments);
       }
 
-      return getCurrencyTransactionInfo;
+      return getCurrencyPosition;
     }()
   }, {
-    key: "canPayAmount",
+    key: "getCurrencyCardPosition",
     value: function () {
-      var _canPayAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee96(sessionuuid, walletuuid, carduuid, currencyuuid, amount, tx_fee) {
-        var feelevel,
-            global,
-            mvccurrencies,
-            _args96 = arguments;
+      var _getCurrencyCardPosition = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee96(sessionuuid, walletuuid, currencyuuid, carduuid) {
+        var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee96$(_context96) {
           while (1) {
             switch (_context96.prev = _context96.next) {
               case 0:
-                feelevel = _args96.length > 6 && _args96[6] !== undefined ? _args96[6] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context96.abrupt("return", mvccurrencies.canPayAmount(sessionuuid, walletuuid, carduuid, currencyuuid, amount, tx_fee, feelevel));
+                return _context96.abrupt("return", mvccurrencies.getCurrencyCardPosition(sessionuuid, walletuuid, currencyuuid, carduuid));
 
-              case 4:
+              case 3:
               case "end":
                 return _context96.stop();
             }
@@ -4095,30 +4014,26 @@ var Module = /*#__PURE__*/function () {
         }, _callee96, this);
       }));
 
-      function canPayAmount(_x276, _x277, _x278, _x279, _x280, _x281) {
-        return _canPayAmount.apply(this, arguments);
+      function getCurrencyCardPosition(_x274, _x275, _x276, _x277) {
+        return _getCurrencyCardPosition.apply(this, arguments);
       }
 
-      return canPayAmount;
+      return getCurrencyCardPosition;
     }()
   }, {
-    key: "payAmount",
+    key: "getCurrencyCardCredits",
     value: function () {
-      var _payAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee97(sessionuuid, walletuuid, carduuid, toaddress, currencyuuid, amount) {
-        var feelevel,
-            global,
-            mvccurrencies,
-            _args97 = arguments;
+      var _getCurrencyCardCredits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee97(sessionuuid, walletuuid, currencyuuid) {
+        var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee97$(_context97) {
           while (1) {
             switch (_context97.prev = _context97.next) {
               case 0:
-                feelevel = _args97.length > 6 && _args97[6] !== undefined ? _args97[6] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context97.abrupt("return", mvccurrencies.payAmount(sessionuuid, walletuuid, carduuid, toaddress, currencyuuid, amount, feelevel));
+                return _context97.abrupt("return", mvccurrencies.getCurrencyCardCredits(sessionuuid, walletuuid, currencyuuid));
 
-              case 4:
+              case 3:
               case "end":
                 return _context97.stop();
             }
@@ -4126,16 +4041,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee97, this);
       }));
 
-      function payAmount(_x282, _x283, _x284, _x285, _x286, _x287) {
-        return _payAmount.apply(this, arguments);
+      function getCurrencyCardCredits(_x278, _x279, _x280) {
+        return _getCurrencyCardCredits.apply(this, arguments);
       }
 
-      return payAmount;
+      return getCurrencyCardCredits;
     }()
   }, {
-    key: "payAndReport",
+    key: "getCurrencyTransactionInfo",
     value: function () {
-      var _payAndReport = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee98(sessionuuid, walletuuid, toaddress, currencyuuid, amount) {
+      var _getCurrencyTransactionInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee98(sessionuuid, walletuuid, currencyuuid, txhash) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee98$(_context98) {
           while (1) {
@@ -4143,7 +4058,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context98.abrupt("return", mvccurrencies.payAndReport(sessionuuid, walletuuid, toaddress, currencyuuid, amount));
+                return _context98.abrupt("return", mvccurrencies.getCurrencyTransactionInfo(sessionuuid, walletuuid, currencyuuid, txhash));
 
               case 3:
               case "end":
@@ -4153,7 +4068,96 @@ var Module = /*#__PURE__*/function () {
         }, _callee98, this);
       }));
 
-      function payAndReport(_x288, _x289, _x290, _x291, _x292) {
+      function getCurrencyTransactionInfo(_x281, _x282, _x283, _x284) {
+        return _getCurrencyTransactionInfo.apply(this, arguments);
+      }
+
+      return getCurrencyTransactionInfo;
+    }()
+  }, {
+    key: "canPayAmount",
+    value: function () {
+      var _canPayAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee99(sessionuuid, walletuuid, carduuid, currencyuuid, amount, tx_fee) {
+        var feelevel,
+            global,
+            mvccurrencies,
+            _args99 = arguments;
+        return _regeneratorRuntime().wrap(function _callee99$(_context99) {
+          while (1) {
+            switch (_context99.prev = _context99.next) {
+              case 0:
+                feelevel = _args99.length > 6 && _args99[6] !== undefined ? _args99[6] : null;
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context99.abrupt("return", mvccurrencies.canPayAmount(sessionuuid, walletuuid, carduuid, currencyuuid, amount, tx_fee, feelevel));
+
+              case 4:
+              case "end":
+                return _context99.stop();
+            }
+          }
+        }, _callee99, this);
+      }));
+
+      function canPayAmount(_x285, _x286, _x287, _x288, _x289, _x290) {
+        return _canPayAmount.apply(this, arguments);
+      }
+
+      return canPayAmount;
+    }()
+  }, {
+    key: "payAmount",
+    value: function () {
+      var _payAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee100(sessionuuid, walletuuid, carduuid, toaddress, currencyuuid, amount) {
+        var feelevel,
+            global,
+            mvccurrencies,
+            _args100 = arguments;
+        return _regeneratorRuntime().wrap(function _callee100$(_context100) {
+          while (1) {
+            switch (_context100.prev = _context100.next) {
+              case 0:
+                feelevel = _args100.length > 6 && _args100[6] !== undefined ? _args100[6] : null;
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context100.abrupt("return", mvccurrencies.payAmount(sessionuuid, walletuuid, carduuid, toaddress, currencyuuid, amount, feelevel));
+
+              case 4:
+              case "end":
+                return _context100.stop();
+            }
+          }
+        }, _callee100, this);
+      }));
+
+      function payAmount(_x291, _x292, _x293, _x294, _x295, _x296) {
+        return _payAmount.apply(this, arguments);
+      }
+
+      return payAmount;
+    }()
+  }, {
+    key: "payAndReport",
+    value: function () {
+      var _payAndReport = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee101(sessionuuid, walletuuid, toaddress, currencyuuid, amount) {
+        var global, mvccurrencies;
+        return _regeneratorRuntime().wrap(function _callee101$(_context101) {
+          while (1) {
+            switch (_context101.prev = _context101.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context101.abrupt("return", mvccurrencies.payAndReport(sessionuuid, walletuuid, toaddress, currencyuuid, amount));
+
+              case 3:
+              case "end":
+                return _context101.stop();
+            }
+          }
+        }, _callee101, this);
+      }));
+
+      function payAndReport(_x297, _x298, _x299, _x300, _x301) {
         return _payAndReport.apply(this, arguments);
       }
 
@@ -4162,89 +4166,7 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getTokenCardList",
     value: function () {
-      var _getTokenCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee99(sessionuuid, walletuuid, web3providerurl, tokenaddress) {
-        var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee99$(_context99) {
-          while (1) {
-            switch (_context99.prev = _context99.next) {
-              case 0:
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context99.abrupt("return", mvccurrencies.getTokenCardList(sessionuuid, walletuuid, web3providerurl, tokenaddress));
-
-              case 3:
-              case "end":
-                return _context99.stop();
-            }
-          }
-        }, _callee99, this);
-      }));
-
-      function getTokenCardList(_x293, _x294, _x295, _x296) {
-        return _getTokenCardList.apply(this, arguments);
-      }
-
-      return getTokenCardList;
-    }()
-  }, {
-    key: "getCurrencyCardList",
-    value: function () {
-      var _getCurrencyCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee100(sessionuuid, walletuuid, currencyuuid) {
-        var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee100$(_context100) {
-          while (1) {
-            switch (_context100.prev = _context100.next) {
-              case 0:
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context100.abrupt("return", mvccurrencies.getCurrencyCardList(sessionuuid, walletuuid, currencyuuid));
-
-              case 3:
-              case "end":
-                return _context100.stop();
-            }
-          }
-        }, _callee100, this);
-      }));
-
-      function getCurrencyCardList(_x297, _x298, _x299) {
-        return _getCurrencyCardList.apply(this, arguments);
-      }
-
-      return getCurrencyCardList;
-    }()
-  }, {
-    key: "getCurrencySchemeInfo",
-    value: function () {
-      var _getCurrencySchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee101(sessionuuid, currencyuuid) {
-        var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee101$(_context101) {
-          while (1) {
-            switch (_context101.prev = _context101.next) {
-              case 0:
-                console.log('Warning: obsolete, should use getCurencyScheme(sessionuuid, walletuuid, currencyuuid)');
-                global = this.global;
-                mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context101.abrupt("return", mvccurrencies.getCurrencySchemeInfo(sessionuuid, currencyuuid));
-
-              case 4:
-              case "end":
-                return _context101.stop();
-            }
-          }
-        }, _callee101, this);
-      }));
-
-      function getCurrencySchemeInfo(_x300, _x301) {
-        return _getCurrencySchemeInfo.apply(this, arguments);
-      }
-
-      return getCurrencySchemeInfo;
-    }()
-  }, {
-    key: "getPretradeSchemeInfo",
-    value: function () {
-      var _getPretradeSchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee102(sessionuuid, currencyuuid) {
+      var _getTokenCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee102(sessionuuid, walletuuid, web3providerurl, tokenaddress) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee102$(_context102) {
           while (1) {
@@ -4252,7 +4174,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context102.abrupt("return", mvccurrencies.getPretradeSchemeInfo(sessionuuid, currencyuuid));
+                return _context102.abrupt("return", mvccurrencies.getTokenCardList(sessionuuid, walletuuid, web3providerurl, tokenaddress));
 
               case 3:
               case "end":
@@ -4262,16 +4184,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee102, this);
       }));
 
-      function getPretradeSchemeInfo(_x302, _x303) {
-        return _getPretradeSchemeInfo.apply(this, arguments);
+      function getTokenCardList(_x302, _x303, _x304, _x305) {
+        return _getTokenCardList.apply(this, arguments);
       }
 
-      return getPretradeSchemeInfo;
+      return getTokenCardList;
     }()
   }, {
-    key: "getPretradeWeb3Url",
+    key: "getCurrencyCardList",
     value: function () {
-      var _getPretradeWeb3Url = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee103(sessionuuid, currencyuuid) {
+      var _getCurrencyCardList = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee103(sessionuuid, walletuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee103$(_context103) {
           while (1) {
@@ -4279,7 +4201,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context103.abrupt("return", mvccurrencies.getPretradeWeb3Url(sessionuuid, currencyuuid));
+                return _context103.abrupt("return", mvccurrencies.getCurrencyCardList(sessionuuid, walletuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -4289,26 +4211,27 @@ var Module = /*#__PURE__*/function () {
         }, _callee103, this);
       }));
 
-      function getPretradeWeb3Url(_x304, _x305) {
-        return _getPretradeWeb3Url.apply(this, arguments);
+      function getCurrencyCardList(_x306, _x307, _x308) {
+        return _getCurrencyCardList.apply(this, arguments);
       }
 
-      return getPretradeWeb3Url;
+      return getCurrencyCardList;
     }()
   }, {
-    key: "getPretradeCard",
+    key: "getCurrencySchemeInfo",
     value: function () {
-      var _getPretradeCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee104(sessionuuid, walletuuid, carduuid, currencyuuid) {
+      var _getCurrencySchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee104(sessionuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee104$(_context104) {
           while (1) {
             switch (_context104.prev = _context104.next) {
               case 0:
+                console.log('Warning: obsolete, should use getCurencyScheme(sessionuuid, walletuuid, currencyuuid)');
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context104.abrupt("return", mvccurrencies.getPretradeCard(sessionuuid, walletuuid, carduuid, currencyuuid));
+                return _context104.abrupt("return", mvccurrencies.getCurrencySchemeInfo(sessionuuid, currencyuuid));
 
-              case 3:
+              case 4:
               case "end":
                 return _context104.stop();
             }
@@ -4316,16 +4239,16 @@ var Module = /*#__PURE__*/function () {
         }, _callee104, this);
       }));
 
-      function getPretradeCard(_x306, _x307, _x308, _x309) {
-        return _getPretradeCard.apply(this, arguments);
+      function getCurrencySchemeInfo(_x309, _x310) {
+        return _getCurrencySchemeInfo.apply(this, arguments);
       }
 
-      return getPretradeCard;
+      return getCurrencySchemeInfo;
     }()
   }, {
-    key: "setPretradeCard",
+    key: "getPretradeSchemeInfo",
     value: function () {
-      var _setPretradeCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee105(sessionuuid, walletuuid, currencyuuid, carduuid) {
+      var _getPretradeSchemeInfo = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee105(sessionuuid, currencyuuid) {
         var global, mvccurrencies;
         return _regeneratorRuntime().wrap(function _callee105$(_context105) {
           while (1) {
@@ -4333,7 +4256,7 @@ var Module = /*#__PURE__*/function () {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context105.abrupt("return", mvccurrencies.setPretradeCard(sessionuuid, walletuuid, currencyuuid, carduuid));
+                return _context105.abrupt("return", mvccurrencies.getPretradeSchemeInfo(sessionuuid, currencyuuid));
 
               case 3:
               case "end":
@@ -4343,7 +4266,88 @@ var Module = /*#__PURE__*/function () {
         }, _callee105, this);
       }));
 
-      function setPretradeCard(_x310, _x311, _x312, _x313) {
+      function getPretradeSchemeInfo(_x311, _x312) {
+        return _getPretradeSchemeInfo.apply(this, arguments);
+      }
+
+      return getPretradeSchemeInfo;
+    }()
+  }, {
+    key: "getPretradeWeb3Url",
+    value: function () {
+      var _getPretradeWeb3Url = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee106(sessionuuid, currencyuuid) {
+        var global, mvccurrencies;
+        return _regeneratorRuntime().wrap(function _callee106$(_context106) {
+          while (1) {
+            switch (_context106.prev = _context106.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context106.abrupt("return", mvccurrencies.getPretradeWeb3Url(sessionuuid, currencyuuid));
+
+              case 3:
+              case "end":
+                return _context106.stop();
+            }
+          }
+        }, _callee106, this);
+      }));
+
+      function getPretradeWeb3Url(_x313, _x314) {
+        return _getPretradeWeb3Url.apply(this, arguments);
+      }
+
+      return getPretradeWeb3Url;
+    }()
+  }, {
+    key: "getPretradeCard",
+    value: function () {
+      var _getPretradeCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee107(sessionuuid, walletuuid, carduuid, currencyuuid) {
+        var global, mvccurrencies;
+        return _regeneratorRuntime().wrap(function _callee107$(_context107) {
+          while (1) {
+            switch (_context107.prev = _context107.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context107.abrupt("return", mvccurrencies.getPretradeCard(sessionuuid, walletuuid, carduuid, currencyuuid));
+
+              case 3:
+              case "end":
+                return _context107.stop();
+            }
+          }
+        }, _callee107, this);
+      }));
+
+      function getPretradeCard(_x315, _x316, _x317, _x318) {
+        return _getPretradeCard.apply(this, arguments);
+      }
+
+      return getPretradeCard;
+    }()
+  }, {
+    key: "setPretradeCard",
+    value: function () {
+      var _setPretradeCard = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee108(sessionuuid, walletuuid, currencyuuid, carduuid) {
+        var global, mvccurrencies;
+        return _regeneratorRuntime().wrap(function _callee108$(_context108) {
+          while (1) {
+            switch (_context108.prev = _context108.next) {
+              case 0:
+                global = this.global;
+                mvccurrencies = global.getModuleObject('mvc-currencies');
+                return _context108.abrupt("return", mvccurrencies.setPretradeCard(sessionuuid, walletuuid, currencyuuid, carduuid));
+
+              case 3:
+              case "end":
+                return _context108.stop();
+            }
+          }
+        }, _callee108, this);
+      }));
+
+      function setPretradeCard(_x319, _x320, _x321, _x322) {
         return _setPretradeCard.apply(this, arguments);
       }
 
@@ -4354,26 +4358,26 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_getMonitoredCardSession",
     value: function () {
-      var _getMonitoredCardSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee106(session, wallet, card) {
+      var _getMonitoredCardSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee109(session, wallet, card) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee106$(_context106) {
+        return _regeneratorRuntime().wrap(function _callee109$(_context109) {
           while (1) {
-            switch (_context106.prev = _context106.next) {
+            switch (_context109.prev = _context109.next) {
               case 0:
                 // used by registerTransaction and Claims
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context106.abrupt("return", mvccurrencies._getMonitoredCardSession(session, wallet, card));
+                return _context109.abrupt("return", mvccurrencies._getMonitoredCardSession(session, wallet, card));
 
               case 3:
               case "end":
-                return _context106.stop();
+                return _context109.stop();
             }
           }
-        }, _callee106, this);
+        }, _callee109, this);
       }));
 
-      function _getMonitoredCardSession(_x314, _x315, _x316) {
+      function _getMonitoredCardSession(_x323, _x324, _x325) {
         return _getMonitoredCardSession2.apply(this, arguments);
       }
 
@@ -4382,32 +4386,32 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getClaimPayingToAddress",
     value: function () {
-      var _getClaimPayingToAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee107(sessionuuid, walletuuid, claim) {
+      var _getClaimPayingToAddress = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee110(sessionuuid, walletuuid, claim) {
         var global, _apicontrollers, session, isvalid;
 
-        return _regeneratorRuntime().wrap(function _callee107$(_context107) {
+        return _regeneratorRuntime().wrap(function _callee110$(_context110) {
           while (1) {
-            switch (_context107.prev = _context107.next) {
+            switch (_context110.prev = _context110.next) {
               case 0:
                 if (!claim.payingto_overload) {
-                  _context107.next = 10;
+                  _context110.next = 10;
                   break;
                 }
 
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context107.next = 5;
+                _context110.next = 5;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 5:
-                session = _context107.sent;
+                session = _context110.sent;
 
                 if (session) {
-                  _context107.next = 8;
+                  _context110.next = 8;
                   break;
                 }
 
-                return _context107.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context110.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 8:
                 isvalid = _apicontrollers.isValidAddress(session, claim.payingto_overload);
@@ -4417,17 +4421,17 @@ var Module = /*#__PURE__*/function () {
                 }
 
               case 10:
-                return _context107.abrupt("return", claim.payingto ? claim.payingto : claim.owner);
+                return _context110.abrupt("return", claim.payingto ? claim.payingto : claim.owner);
 
               case 11:
               case "end":
-                return _context107.stop();
+                return _context110.stop();
             }
           }
-        }, _callee107, this);
+        }, _callee110, this);
       }));
 
-      function getClaimPayingToAddress(_x317, _x318, _x319) {
+      function getClaimPayingToAddress(_x326, _x327, _x328) {
         return _getClaimPayingToAddress.apply(this, arguments);
       }
 
@@ -4436,45 +4440,45 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "payClaim",
     value: function () {
-      var _payClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee108(sessionuuid, walletuuid, carduuid, claim) {
+      var _payClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee111(sessionuuid, walletuuid, carduuid, claim) {
         var toaddress, currencyuuid, amount, currencyamount, tokenamount_int, txhash;
-        return _regeneratorRuntime().wrap(function _callee108$(_context108) {
+        return _regeneratorRuntime().wrap(function _callee111$(_context111) {
           while (1) {
-            switch (_context108.prev = _context108.next) {
+            switch (_context111.prev = _context111.next) {
               case 0:
-                _context108.next = 2;
+                _context111.next = 2;
                 return this.getClaimPayingToAddress(sessionuuid, walletuuid, claim);
 
               case 2:
-                toaddress = _context108.sent;
+                toaddress = _context111.sent;
                 currencyuuid = claim.currencyuuid;
                 amount = claim.amount;
-                _context108.next = 7;
+                _context111.next = 7;
                 return this.getCurrencyAmount(sessionuuid, currencyuuid, amount);
 
               case 7:
-                currencyamount = _context108.sent;
-                _context108.next = 10;
+                currencyamount = _context111.sent;
+                _context111.next = 10;
                 return currencyamount.decimalamount.toInteger();
 
               case 10:
-                tokenamount_int = _context108.sent;
-                _context108.next = 13;
+                tokenamount_int = _context111.sent;
+                _context111.next = 13;
                 return this.payAmount(sessionuuid, walletuuid, carduuid, toaddress, currencyuuid, tokenamount_int);
 
               case 13:
-                txhash = _context108.sent;
-                return _context108.abrupt("return", txhash);
+                txhash = _context111.sent;
+                return _context111.abrupt("return", txhash);
 
               case 15:
               case "end":
-                return _context108.stop();
+                return _context111.stop();
             }
           }
-        }, _callee108, this);
+        }, _callee111, this);
       }));
 
-      function payClaim(_x320, _x321, _x322, _x323) {
+      function payClaim(_x329, _x330, _x331, _x332) {
         return _payClaim.apply(this, arguments);
       }
 
@@ -4486,25 +4490,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_createMonitoredEthereumTransaction",
     value: function () {
-      var _createMonitoredEthereumTransaction2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee109(wallet, card, session, fromaccount) {
+      var _createMonitoredEthereumTransaction2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee112(wallet, card, session, fromaccount) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee109$(_context109) {
+        return _regeneratorRuntime().wrap(function _callee112$(_context112) {
           while (1) {
-            switch (_context109.prev = _context109.next) {
+            switch (_context112.prev = _context112.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context109.abrupt("return", mvccurrencies._createMonitoredEthereumTransaction(wallet, card, session, fromaccount));
+                return _context112.abrupt("return", mvccurrencies._createMonitoredEthereumTransaction(wallet, card, session, fromaccount));
 
               case 3:
               case "end":
-                return _context109.stop();
+                return _context112.stop();
             }
           }
-        }, _callee109, this);
+        }, _callee112, this);
       }));
 
-      function _createMonitoredEthereumTransaction(_x324, _x325, _x326, _x327) {
+      function _createMonitoredEthereumTransaction(_x333, _x334, _x335, _x336) {
         return _createMonitoredEthereumTransaction2.apply(this, arguments);
       }
 
@@ -4534,88 +4538,88 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "registerTransaction",
     value: function () {
-      var _registerTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee110(sessionuuid, walletuuid, carduuid, dataobj, assignto, feelevel) {
+      var _registerTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee113(sessionuuid, walletuuid, carduuid, dataobj, assignto, feelevel) {
         var _this2 = this;
 
         var global, _apicontrollers, session, wallet, card, cardsession, cardsessionuuid, _tohex, datahexstring, fromaccount, toaddress, transaction, fee, from_card_scheme, txhash;
 
-        return _regeneratorRuntime().wrap(function _callee110$(_context110) {
+        return _regeneratorRuntime().wrap(function _callee113$(_context113) {
           while (1) {
-            switch (_context110.prev = _context110.next) {
+            switch (_context113.prev = _context113.next) {
               case 0:
                 if (sessionuuid) {
-                  _context110.next = 2;
+                  _context113.next = 2;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('session uuid is undefined'));
+                return _context113.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
                 if (walletuuid) {
-                  _context110.next = 4;
+                  _context113.next = 4;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('wallet uuid is undefined'));
+                return _context113.abrupt("return", Promise.reject('wallet uuid is undefined'));
 
               case 4:
                 if (carduuid) {
-                  _context110.next = 6;
+                  _context113.next = 6;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('card uuid is undefined'));
+                return _context113.abrupt("return", Promise.reject('card uuid is undefined'));
 
               case 6:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context110.next = 10;
+                _context113.next = 10;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 10:
-                session = _context110.sent;
+                session = _context113.sent;
 
                 if (session) {
-                  _context110.next = 13;
+                  _context113.next = 13;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context113.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 13:
-                _context110.next = 15;
+                _context113.next = 15;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid);
 
               case 15:
-                wallet = _context110.sent;
+                wallet = _context113.sent;
 
                 if (wallet) {
-                  _context110.next = 18;
+                  _context113.next = 18;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
+                return _context113.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
 
               case 18:
-                _context110.next = 20;
+                _context113.next = 20;
                 return wallet.getCardFromUUID(carduuid);
 
               case 20:
-                card = _context110.sent;
+                card = _context113.sent;
 
                 if (card) {
-                  _context110.next = 23;
+                  _context113.next = 23;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('could not find card ' + carduuid));
+                return _context113.abrupt("return", Promise.reject('could not find card ' + carduuid));
 
               case 23:
-                _context110.next = 25;
+                _context113.next = 25;
                 return this._getMonitoredCardSession(session, wallet, card);
 
               case 25:
-                cardsession = _context110.sent;
+                cardsession = _context113.sent;
                 cardsessionuuid = cardsession.getSessionUUID();
 
                 _tohex = function _tohex(data) {
@@ -4632,24 +4636,24 @@ var Module = /*#__PURE__*/function () {
                 fromaccount = card._getSessionAccountObject();
                 toaddress = assignto ? assignto : fromaccount.getAddress(); //var transaction = _apicontrollers.createEthereumTransaction(cardsession, fromaccount);
 
-                _context110.next = 33;
+                _context113.next = 33;
                 return this._createMonitoredEthereumTransaction(wallet, card, cardsession, fromaccount);
 
               case 33:
-                transaction = _context110.sent;
+                transaction = _context113.sent;
 
                 if (!feelevel) {
-                  _context110.next = 41;
+                  _context113.next = 41;
                   break;
                 }
 
                 from_card_scheme = card.getScheme();
-                _context110.next = 38;
+                _context113.next = 38;
                 return _apicontrollers.createSchemeFee(from_card_scheme, feelevel);
 
               case 38:
-                fee = _context110.sent;
-                _context110.next = 42;
+                fee = _context113.sent;
+                _context113.next = 42;
                 break;
 
               case 41:
@@ -4661,41 +4665,41 @@ var Module = /*#__PURE__*/function () {
                 transaction.setGas(fee.gaslimit);
                 transaction.setGasPrice(fee.gasPrice);
                 transaction.setData(datahexstring);
-                _context110.next = 49;
+                _context113.next = 49;
                 return _apicontrollers.sendEthereumTransaction(cardsession, transaction)["catch"](function (err) {
                   console.log('error in registerTransaction: ' + err);
                 });
 
               case 49:
-                txhash = _context110.sent;
+                txhash = _context113.sent;
 
                 if (txhash) {
-                  _context110.next = 52;
+                  _context113.next = 52;
                   break;
                 }
 
-                return _context110.abrupt("return", Promise.reject('could not register transaction'));
+                return _context113.abrupt("return", Promise.reject('could not register transaction'));
 
               case 52:
                 // save
                 dataobj.txhash = txhash; // add transaction hash to save it, blocknumber will be added later
                 // using sessionuuid to save locally (in 'shared') on the client side
 
-                _context110.next = 55;
+                _context113.next = 55;
                 return this._saveTransactionObject(sessionuuid, walletuuid, dataobj);
 
               case 55:
-                return _context110.abrupt("return", txhash);
+                return _context113.abrupt("return", txhash);
 
               case 56:
               case "end":
-                return _context110.stop();
+                return _context113.stop();
             }
           }
-        }, _callee110, this);
+        }, _callee113, this);
       }));
 
-      function registerTransaction(_x328, _x329, _x330, _x331, _x332, _x333) {
+      function registerTransaction(_x337, _x338, _x339, _x340, _x341, _x342) {
         return _registerTransaction.apply(this, arguments);
       }
 
@@ -4723,25 +4727,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_getMonitoredSchemeSession",
     value: function () {
-      var _getMonitoredSchemeSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee111(session, wallet, scheme) {
+      var _getMonitoredSchemeSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee114(session, wallet, scheme) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee111$(_context111) {
+        return _regeneratorRuntime().wrap(function _callee114$(_context114) {
           while (1) {
-            switch (_context111.prev = _context111.next) {
+            switch (_context114.prev = _context114.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context111.abrupt("return", mvccurrencies._getMonitoredSchemeSession(session, wallet, scheme));
+                return _context114.abrupt("return", mvccurrencies._getMonitoredSchemeSession(session, wallet, scheme));
 
               case 3:
               case "end":
-                return _context111.stop();
+                return _context114.stop();
             }
           }
-        }, _callee111, this);
+        }, _callee114, this);
       }));
 
-      function _getMonitoredSchemeSession(_x334, _x335, _x336) {
+      function _getMonitoredSchemeSession(_x343, _x344, _x345) {
         return _getMonitoredSchemeSession2.apply(this, arguments);
       }
 
@@ -4750,7 +4754,7 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_fetchTransaction",
     value: function () {
-      var _fetchTransaction2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee112(session, wallet, pretradescheme, txhash) {
+      var _fetchTransaction2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee115(session, wallet, pretradescheme, txhash) {
         var bPersist,
             global,
             _apicontrollers,
@@ -4761,35 +4765,35 @@ var Module = /*#__PURE__*/function () {
             sessionuuid,
             walletuuid,
             persistdata,
-            _args112 = arguments;
+            _args115 = arguments;
 
-        return _regeneratorRuntime().wrap(function _callee112$(_context112) {
+        return _regeneratorRuntime().wrap(function _callee115$(_context115) {
           while (1) {
-            switch (_context112.prev = _context112.next) {
+            switch (_context115.prev = _context115.next) {
               case 0:
-                bPersist = _args112.length > 4 && _args112[4] !== undefined ? _args112[4] : false;
+                bPersist = _args115.length > 4 && _args115[4] !== undefined ? _args115[4] : false;
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context112.next = 5;
+                _context115.next = 5;
                 return this._getMonitoredSchemeSession(session, wallet, pretradescheme);
 
               case 5:
-                fetchsession = _context112.sent;
+                fetchsession = _context115.sent;
                 fetchsessionuuid = fetchsession.getSessionUUID();
-                _context112.next = 9;
+                _context115.next = 9;
                 return _apicontrollers.readTransaction(fetchsession, txhash)["catch"](function (err) {
                   console.log('error in _fetchTransaction: ' + err);
                 });
 
               case 9:
-                tx = _context112.sent;
+                tx = _context115.sent;
 
                 if (tx) {
-                  _context112.next = 12;
+                  _context115.next = 12;
                   break;
                 }
 
-                return _context112.abrupt("return", Promise.reject('could not find transaction ' + txhash));
+                return _context115.abrupt("return", Promise.reject('could not find transaction ' + txhash));
 
               case 12:
                 dataobj = {};
@@ -4797,7 +4801,7 @@ var Module = /*#__PURE__*/function () {
                 this._fillTransactionDataObject(dataobj, tx);
 
                 if (!bPersist) {
-                  _context112.next = 21;
+                  _context115.next = 21;
                   break;
                 }
 
@@ -4806,21 +4810,21 @@ var Module = /*#__PURE__*/function () {
                 persistdata = Object.assign({}, dataobj);
                 persistdata.txhash = txhash; // using sessionuuid to save locally (in 'shared') on the client side
 
-                _context112.next = 21;
+                _context115.next = 21;
                 return this._saveTransactionObject(sessionuuid, walletuuid, persistdata);
 
               case 21:
-                return _context112.abrupt("return", dataobj);
+                return _context115.abrupt("return", dataobj);
 
               case 22:
               case "end":
-                return _context112.stop();
+                return _context115.stop();
             }
           }
-        }, _callee112, this);
+        }, _callee115, this);
       }));
 
-      function _fetchTransaction(_x337, _x338, _x339, _x340) {
+      function _fetchTransaction(_x346, _x347, _x348, _x349) {
         return _fetchTransaction2.apply(this, arguments);
       }
 
@@ -4829,80 +4833,80 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "fetchTransaction",
     value: function () {
-      var _fetchTransaction3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee113(sessionuuid, walletuuid, pretradeschemeuuid, txhash) {
+      var _fetchTransaction3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee116(sessionuuid, walletuuid, pretradeschemeuuid, txhash) {
         var global, _apicontrollers, session, wallet, pretradescheme;
 
-        return _regeneratorRuntime().wrap(function _callee113$(_context113) {
+        return _regeneratorRuntime().wrap(function _callee116$(_context116) {
           while (1) {
-            switch (_context113.prev = _context113.next) {
+            switch (_context116.prev = _context116.next) {
               case 0:
                 if (sessionuuid) {
-                  _context113.next = 2;
+                  _context116.next = 2;
                   break;
                 }
 
-                return _context113.abrupt("return", Promise.reject('session uuid is undefined'));
+                return _context116.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
                 if (pretradeschemeuuid) {
-                  _context113.next = 4;
+                  _context116.next = 4;
                   break;
                 }
 
-                return _context113.abrupt("return", Promise.reject('scheme uuid is undefined'));
+                return _context116.abrupt("return", Promise.reject('scheme uuid is undefined'));
 
               case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context113.next = 8;
+                _context116.next = 8;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 8:
-                session = _context113.sent;
+                session = _context116.sent;
 
                 if (session) {
-                  _context113.next = 11;
+                  _context116.next = 11;
                   break;
                 }
 
-                return _context113.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context116.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 11:
-                _context113.next = 13;
+                _context116.next = 13;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
 
               case 13:
-                wallet = _context113.sent;
-                _context113.next = 16;
+                wallet = _context116.sent;
+                _context116.next = 16;
                 return _apicontrollers.getSchemeFromUUID(session, pretradeschemeuuid)["catch"](function (err) {});
 
               case 16:
-                pretradescheme = _context113.sent;
+                pretradescheme = _context116.sent;
 
                 if (!pretradescheme.isRemote()) {
-                  _context113.next = 20;
+                  _context116.next = 20;
                   break;
                 }
 
                 if (!(wallet && wallet.isLocked())) {
-                  _context113.next = 20;
+                  _context116.next = 20;
                   break;
                 }
 
-                return _context113.abrupt("return", Promise.reject('ERR_WALLET_LOCKED'));
+                return _context116.abrupt("return", Promise.reject('ERR_WALLET_LOCKED'));
 
               case 20:
-                return _context113.abrupt("return", this._fetchTransaction(session, wallet, pretradescheme, txhash, true));
+                return _context116.abrupt("return", this._fetchTransaction(session, wallet, pretradescheme, txhash, true));
 
               case 21:
               case "end":
-                return _context113.stop();
+                return _context116.stop();
             }
           }
-        }, _callee113, this);
+        }, _callee116, this);
       }));
 
-      function fetchTransaction(_x341, _x342, _x343, _x344) {
+      function fetchTransaction(_x350, _x351, _x352, _x353) {
         return _fetchTransaction3.apply(this, arguments);
       }
 
@@ -4911,28 +4915,28 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "fetchCurrencyTransaction",
     value: function () {
-      var _fetchCurrencyTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee114(sessionuuid, walletuuid, currencyuuid, txhash) {
+      var _fetchCurrencyTransaction = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee117(sessionuuid, walletuuid, currencyuuid, txhash) {
         var pretradescheme_info;
-        return _regeneratorRuntime().wrap(function _callee114$(_context114) {
+        return _regeneratorRuntime().wrap(function _callee117$(_context117) {
           while (1) {
-            switch (_context114.prev = _context114.next) {
+            switch (_context117.prev = _context117.next) {
               case 0:
-                _context114.next = 2;
+                _context117.next = 2;
                 return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
 
               case 2:
-                pretradescheme_info = _context114.sent;
-                return _context114.abrupt("return", this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, txhash));
+                pretradescheme_info = _context117.sent;
+                return _context117.abrupt("return", this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, txhash));
 
               case 4:
               case "end":
-                return _context114.stop();
+                return _context117.stop();
             }
           }
-        }, _callee114, this);
+        }, _callee117, this);
       }));
 
-      function fetchCurrencyTransaction(_x345, _x346, _x347, _x348) {
+      function fetchCurrencyTransaction(_x354, _x355, _x356, _x357) {
         return _fetchCurrencyTransaction.apply(this, arguments);
       }
 
@@ -4941,12 +4945,12 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_getAddressPretradeTransactions",
     value: function () {
-      var _getAddressPretradeTransactions2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee115(session, wallet, currency, address) {
+      var _getAddressPretradeTransactions2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee118(session, wallet, currency, address) {
         var global, _apicontrollers, mytokensmodule, pretradescheme, childsession, currencyuuid, mytokensaccessinstance, restconnection, transactions, ethereumnodeaccessmodule, ethereumnodeaccessinstance, i, tx;
 
-        return _regeneratorRuntime().wrap(function _callee115$(_context115) {
+        return _regeneratorRuntime().wrap(function _callee118$(_context118) {
           while (1) {
-            switch (_context115.prev = _context115.next) {
+            switch (_context118.prev = _context118.next) {
               case 0:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
@@ -4954,29 +4958,29 @@ var Module = /*#__PURE__*/function () {
                 //let web3providerurl = currency.pretrade_web3_provider_url;
                 //var childsession = await this._getChildSessionOnWeb3Url(session, web3providerurl);
 
-                _context115.next = 5;
+                _context118.next = 5;
                 return this._getPretradeScheme(session, currency);
 
               case 5:
-                pretradescheme = _context115.sent;
-                _context115.next = 8;
+                pretradescheme = _context118.sent;
+                _context118.next = 8;
                 return this._getMonitoredSchemeSession(session, wallet, pretradescheme);
 
               case 8:
-                childsession = _context115.sent;
+                childsession = _context118.sent;
                 currencyuuid = currency.uuid;
                 mytokensaccessinstance = childsession.getSessionVariable('mytokensexplorer-' + currencyuuid);
 
                 if (mytokensaccessinstance) {
-                  _context115.next = 19;
+                  _context118.next = 19;
                   break;
                 }
 
-                _context115.next = 14;
+                _context118.next = 14;
                 return _apicontrollers.getEthereumNodeAccessInstance(childsession);
 
               case 14:
-                childsession.ethereum_node_access_instance = _context115.sent;
+                childsession.ethereum_node_access_instance = _context118.sent;
                 // keep!!!
                 // create a specific mytokens instance pointing to pretrade_explorer_url to retrieve transactions
                 mytokensaccessinstance = mytokensmodule.getMyTokensServerAccessInstance(childsession);
@@ -4985,11 +4989,11 @@ var Module = /*#__PURE__*/function () {
                 childsession.setSessionVariable('mytokensexplorer-' + currencyuuid, mytokensaccessinstance);
 
               case 19:
-                _context115.next = 21;
+                _context118.next = 21;
                 return mytokensaccessinstance.account_transactions(address);
 
               case 21:
-                transactions = _context115.sent;
+                transactions = _context118.sent;
                 // fake ethchainreader
                 ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
                 ethereumnodeaccessinstance = ethereumnodeaccessmodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
@@ -5008,17 +5012,17 @@ var Module = /*#__PURE__*/function () {
                   tx.block.timestamp = tx.timeStamp;
                 }
 
-                return _context115.abrupt("return", transactions);
+                return _context118.abrupt("return", transactions);
 
               case 26:
               case "end":
-                return _context115.stop();
+                return _context118.stop();
             }
           }
-        }, _callee115, this);
+        }, _callee118, this);
       }));
 
-      function _getAddressPretradeTransactions(_x349, _x350, _x351, _x352) {
+      function _getAddressPretradeTransactions(_x358, _x359, _x360, _x361) {
         return _getAddressPretradeTransactions2.apply(this, arguments);
       }
 
@@ -5027,312 +5031,8 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "canFetchTransactions",
     value: function () {
-      var _canFetchTransactions = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee116(sessionuuid, walletuuid, currencyuuid) {
+      var _canFetchTransactions = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee119(sessionuuid, walletuuid, currencyuuid) {
         var global, _apicontrollers, session, wallet, currency, pretradescheme, fetchsession;
-
-        return _regeneratorRuntime().wrap(function _callee116$(_context116) {
-          while (1) {
-            switch (_context116.prev = _context116.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context116.next = 2;
-                  break;
-                }
-
-                return _context116.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context116.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context116.sent;
-
-                if (session) {
-                  _context116.next = 9;
-                  break;
-                }
-
-                return _context116.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context116.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context116.sent;
-                _context116.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context116.sent;
-
-                if (currency) {
-                  _context116.next = 17;
-                  break;
-                }
-
-                return _context116.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                _context116.next = 19;
-                return this._getPretradeScheme(session, currency);
-
-              case 19:
-                pretradescheme = _context116.sent;
-                _context116.next = 22;
-                return this._getMonitoredSchemeSession(session, wallet, pretradescheme)["catch"](function (err) {});
-
-              case 22:
-                fetchsession = _context116.sent;
-
-                if (fetchsession) {
-                  _context116.next = 25;
-                  break;
-                }
-
-                return _context116.abrupt("return", false);
-
-              case 25:
-                if (!currency.pretrade_explorer_url) {
-                  _context116.next = 29;
-                  break;
-                }
-
-                return _context116.abrupt("return", true);
-
-              case 29:
-                return _context116.abrupt("return", false);
-
-              case 30:
-              case "end":
-                return _context116.stop();
-            }
-          }
-        }, _callee116, this);
-      }));
-
-      function canFetchTransactions(_x353, _x354, _x355) {
-        return _canFetchTransactions.apply(this, arguments);
-      }
-
-      return canFetchTransactions;
-    }()
-  }, {
-    key: "fetchTransactions",
-    value: function () {
-      var _fetchTransactions = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee117(sessionuuid, walletuuid, currencyuuid, address) {
-        var global, _apicontrollers, session, wallet, currency, transactions, txlist, i, tx, dataobject;
-
-        return _regeneratorRuntime().wrap(function _callee117$(_context117) {
-          while (1) {
-            switch (_context117.prev = _context117.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context117.next = 2;
-                  break;
-                }
-
-                return _context117.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context117.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context117.sent;
-
-                if (session) {
-                  _context117.next = 9;
-                  break;
-                }
-
-                return _context117.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                _context117.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
-
-              case 11:
-                wallet = _context117.sent;
-                _context117.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
-
-              case 14:
-                currency = _context117.sent;
-
-                if (currency) {
-                  _context117.next = 17;
-                  break;
-                }
-
-                return _context117.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context117.next = 19;
-                  break;
-                }
-
-                return _context117.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
-
-              case 19:
-                _context117.next = 21;
-                return this._getAddressPretradeTransactions(session, wallet, currency, address);
-
-              case 21:
-                transactions = _context117.sent;
-                // we filter quotes
-                txlist = {};
-                txlist.bounties = [];
-                txlist.claims = [];
-                txlist.quotes = [];
-                txlist.orders = [];
-                txlist.invoices = [];
-                txlist.paymentnotices = [];
-                i = 0;
-
-              case 30:
-                if (!(i < (transactions ? transactions.length : 0))) {
-                  _context117.next = 53;
-                  break;
-                }
-
-                tx = transactions[i];
-                dataobject = {};
-
-                this._fillTransactionDataObject(dataobject, tx);
-
-                _context117.t0 = dataobject.type == 'quote';
-                _context117.next = _context117.t0 === 'bounty' ? 37 : _context117.t0 === 'claim' ? 39 : _context117.t0 === 'quote' ? 41 : _context117.t0 === 'order' ? 43 : _context117.t0 === 'invoice' ? 45 : _context117.t0 === 'paymentnotice' ? 47 : 49;
-                break;
-
-              case 37:
-                txlist.bounties.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 39:
-                txlist.claims.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 41:
-                txlist.quotes.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 43:
-                txlist.orders.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 45:
-                txlist.invoices.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 47:
-                txlist.paymentnotices.push(dataobject);
-                return _context117.abrupt("break", 50);
-
-              case 49:
-                return _context117.abrupt("break", 50);
-
-              case 50:
-                i++;
-                _context117.next = 30;
-                break;
-
-              case 53:
-                return _context117.abrupt("return", txlist);
-
-              case 54:
-              case "end":
-                return _context117.stop();
-            }
-          }
-        }, _callee117, this);
-      }));
-
-      function fetchTransactions(_x356, _x357, _x358, _x359) {
-        return _fetchTransactions.apply(this, arguments);
-      }
-
-      return fetchTransactions;
-    }() //
-    // Bounties
-    //
-
-  }, {
-    key: "readBounties",
-    value: function () {
-      var _readBounties = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee118(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, bounty_list;
-
-        return _regeneratorRuntime().wrap(function _callee118$(_context118) {
-          while (1) {
-            switch (_context118.prev = _context118.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context118.next = 2;
-                  break;
-                }
-
-                return _context118.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context118.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 6:
-                session = _context118.sent;
-
-                if (session) {
-                  _context118.next = 9;
-                  break;
-                }
-
-                return _context118.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'bounties']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'bounties']; // shared keys, also we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let bounty_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context118.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                bounty_list = _context118.sent;
-                if (!bounty_list) bounty_list = [];
-                return _context118.abrupt("return", bounty_list);
-
-              case 15:
-              case "end":
-                return _context118.stop();
-            }
-          }
-        }, _callee118, this);
-      }));
-
-      function readBounties(_x360, _x361) {
-        return _readBounties.apply(this, arguments);
-      }
-
-      return readBounties;
-    }()
-  }, {
-    key: "fetchBounties",
-    value: function () {
-      var _fetchBounties = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee119(sessionuuid, walletuuid, currencyuuid, vendor_address) {
-        var global, _apicontrollers, session, wallet, currency, transactions, bountylist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee119$(_context119) {
           while (1) {
@@ -5381,19 +5081,323 @@ var Module = /*#__PURE__*/function () {
                 return _context119.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
 
               case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context119.next = 19;
+                _context119.next = 19;
+                return this._getPretradeScheme(session, currency);
+
+              case 19:
+                pretradescheme = _context119.sent;
+                _context119.next = 22;
+                return this._getMonitoredSchemeSession(session, wallet, pretradescheme)["catch"](function (err) {});
+
+              case 22:
+                fetchsession = _context119.sent;
+
+                if (fetchsession) {
+                  _context119.next = 25;
                   break;
                 }
 
-                return _context119.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+                return _context119.abrupt("return", false);
+
+              case 25:
+                if (!currency.pretrade_explorer_url) {
+                  _context119.next = 29;
+                  break;
+                }
+
+                return _context119.abrupt("return", true);
+
+              case 29:
+                return _context119.abrupt("return", false);
+
+              case 30:
+              case "end":
+                return _context119.stop();
+            }
+          }
+        }, _callee119, this);
+      }));
+
+      function canFetchTransactions(_x362, _x363, _x364) {
+        return _canFetchTransactions.apply(this, arguments);
+      }
+
+      return canFetchTransactions;
+    }()
+  }, {
+    key: "fetchTransactions",
+    value: function () {
+      var _fetchTransactions = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee120(sessionuuid, walletuuid, currencyuuid, address) {
+        var global, _apicontrollers, session, wallet, currency, transactions, txlist, i, tx, dataobject;
+
+        return _regeneratorRuntime().wrap(function _callee120$(_context120) {
+          while (1) {
+            switch (_context120.prev = _context120.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context120.next = 2;
+                  break;
+                }
+
+                return _context120.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context120.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context120.sent;
+
+                if (session) {
+                  _context120.next = 9;
+                  break;
+                }
+
+                return _context120.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                _context120.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+
+              case 11:
+                wallet = _context120.sent;
+                _context120.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+
+              case 14:
+                currency = _context120.sent;
+
+                if (currency) {
+                  _context120.next = 17;
+                  break;
+                }
+
+                return _context120.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context120.next = 19;
+                  break;
+                }
+
+                return _context120.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
 
               case 19:
-                _context119.next = 21;
+                _context120.next = 21;
+                return this._getAddressPretradeTransactions(session, wallet, currency, address);
+
+              case 21:
+                transactions = _context120.sent;
+                // we filter quotes
+                txlist = {};
+                txlist.bounties = [];
+                txlist.claims = [];
+                txlist.quotes = [];
+                txlist.orders = [];
+                txlist.invoices = [];
+                txlist.paymentnotices = [];
+                i = 0;
+
+              case 30:
+                if (!(i < (transactions ? transactions.length : 0))) {
+                  _context120.next = 53;
+                  break;
+                }
+
+                tx = transactions[i];
+                dataobject = {};
+
+                this._fillTransactionDataObject(dataobject, tx);
+
+                _context120.t0 = dataobject.type == 'quote';
+                _context120.next = _context120.t0 === 'bounty' ? 37 : _context120.t0 === 'claim' ? 39 : _context120.t0 === 'quote' ? 41 : _context120.t0 === 'order' ? 43 : _context120.t0 === 'invoice' ? 45 : _context120.t0 === 'paymentnotice' ? 47 : 49;
+                break;
+
+              case 37:
+                txlist.bounties.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 39:
+                txlist.claims.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 41:
+                txlist.quotes.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 43:
+                txlist.orders.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 45:
+                txlist.invoices.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 47:
+                txlist.paymentnotices.push(dataobject);
+                return _context120.abrupt("break", 50);
+
+              case 49:
+                return _context120.abrupt("break", 50);
+
+              case 50:
+                i++;
+                _context120.next = 30;
+                break;
+
+              case 53:
+                return _context120.abrupt("return", txlist);
+
+              case 54:
+              case "end":
+                return _context120.stop();
+            }
+          }
+        }, _callee120, this);
+      }));
+
+      function fetchTransactions(_x365, _x366, _x367, _x368) {
+        return _fetchTransactions.apply(this, arguments);
+      }
+
+      return fetchTransactions;
+    }() //
+    // Bounties
+    //
+
+  }, {
+    key: "readBounties",
+    value: function () {
+      var _readBounties = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee121(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, bounty_list;
+
+        return _regeneratorRuntime().wrap(function _callee121$(_context121) {
+          while (1) {
+            switch (_context121.prev = _context121.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context121.next = 2;
+                  break;
+                }
+
+                return _context121.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context121.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context121.sent;
+
+                if (session) {
+                  _context121.next = 9;
+                  break;
+                }
+
+                return _context121.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'bounties']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'bounties']; // shared keys, also we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let bounty_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+
+
+                _context121.next = 12;
+                return this._readClientSideJson(session, keys);
+
+              case 12:
+                bounty_list = _context121.sent;
+                if (!bounty_list) bounty_list = [];
+                return _context121.abrupt("return", bounty_list);
+
+              case 15:
+              case "end":
+                return _context121.stop();
+            }
+          }
+        }, _callee121, this);
+      }));
+
+      function readBounties(_x369, _x370) {
+        return _readBounties.apply(this, arguments);
+      }
+
+      return readBounties;
+    }()
+  }, {
+    key: "fetchBounties",
+    value: function () {
+      var _fetchBounties = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee122(sessionuuid, walletuuid, currencyuuid, vendor_address) {
+        var global, _apicontrollers, session, wallet, currency, transactions, bountylist, i, tx, dataobject;
+
+        return _regeneratorRuntime().wrap(function _callee122$(_context122) {
+          while (1) {
+            switch (_context122.prev = _context122.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context122.next = 2;
+                  break;
+                }
+
+                return _context122.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context122.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context122.sent;
+
+                if (session) {
+                  _context122.next = 9;
+                  break;
+                }
+
+                return _context122.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                _context122.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+
+              case 11:
+                wallet = _context122.sent;
+                _context122.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+
+              case 14:
+                currency = _context122.sent;
+
+                if (currency) {
+                  _context122.next = 17;
+                  break;
+                }
+
+                return _context122.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context122.next = 19;
+                  break;
+                }
+
+                return _context122.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context122.next = 21;
                 return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
 
               case 21:
-                transactions = _context119.sent;
+                transactions = _context122.sent;
                 // we filter bounties
                 bountylist = [];
 
@@ -5409,17 +5413,17 @@ var Module = /*#__PURE__*/function () {
                   }
                 }
 
-                return _context119.abrupt("return", bountylist);
+                return _context122.abrupt("return", bountylist);
 
               case 25:
               case "end":
-                return _context119.stop();
+                return _context122.stop();
             }
           }
-        }, _callee119, this);
+        }, _callee122, this);
       }));
 
-      function fetchBounties(_x362, _x363, _x364, _x365) {
+      function fetchBounties(_x371, _x372, _x373, _x374) {
         return _fetchBounties.apply(this, arguments);
       }
 
@@ -5428,36 +5432,36 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "fetchBounty",
     value: function () {
-      var _fetchBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee120(sessionuuid, walletuuid, currencyuuid, txhash) {
+      var _fetchBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee123(sessionuuid, walletuuid, currencyuuid, txhash) {
         var missing_credentials, orgbounty, bounty, submission_options;
-        return _regeneratorRuntime().wrap(function _callee120$(_context120) {
+        return _regeneratorRuntime().wrap(function _callee123$(_context123) {
           while (1) {
-            switch (_context120.prev = _context120.next) {
+            switch (_context123.prev = _context123.next) {
               case 0:
                 missing_credentials = false;
-                _context120.next = 3;
+                _context123.next = 3;
                 return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, txhash)["catch"](function (err) {
                   console.log('error in fetchBounty: ' + err);
                   if (err == 'ERR_MISSING_CREDENTIALS') missing_credentials = true;
                 });
 
               case 3:
-                orgbounty = _context120.sent;
+                orgbounty = _context123.sent;
 
                 if (!(missing_credentials === true)) {
-                  _context120.next = 6;
+                  _context123.next = 6;
                   break;
                 }
 
-                return _context120.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+                return _context123.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
 
               case 6:
                 if (orgbounty) {
-                  _context120.next = 8;
+                  _context123.next = 8;
                   break;
                 }
 
-                return _context120.abrupt("return", Promise.reject('ERR_BOUNTY_NOT_FOUND'));
+                return _context123.abrupt("return", Promise.reject('ERR_BOUNTY_NOT_FOUND'));
 
               case 8:
                 // we post-process the bounty record
@@ -5476,17 +5480,17 @@ var Module = /*#__PURE__*/function () {
                   console.log('error: bounty on chain has wrong version number ' + orgbounty.ver);
                 }
 
-                return _context120.abrupt("return", bounty);
+                return _context123.abrupt("return", bounty);
 
               case 12:
               case "end":
-                return _context120.stop();
+                return _context123.stop();
             }
           }
-        }, _callee120, this);
+        }, _callee123, this);
       }));
 
-      function fetchBounty(_x366, _x367, _x368, _x369) {
+      function fetchBounty(_x375, _x376, _x377, _x378) {
         return _fetchBounty.apply(this, arguments);
       }
 
@@ -5495,12 +5499,12 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "registerBounty",
     value: function () {
-      var _registerBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee121(sessionuuid, walletuuid, carduuid, bounty) {
+      var _registerBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee124(sessionuuid, walletuuid, carduuid, bounty) {
         var _bounty, assignto, txhash;
 
-        return _regeneratorRuntime().wrap(function _callee121$(_context121) {
+        return _regeneratorRuntime().wrap(function _callee124$(_context124) {
           while (1) {
-            switch (_context121.prev = _context121.next) {
+            switch (_context124.prev = _context124.next) {
               case 0:
                 // we pre-process the bounty before pushing it to the chain
                 _bounty = {}; // copy the record
@@ -5517,22 +5521,22 @@ var Module = /*#__PURE__*/function () {
                 if (bounty.one_submission) _bounty.submission_options += 2; // in ver="2" we assign to bounty card to minimize transaction list to be retrieved
 
                 assignto = bounty.bounty_card_address;
-                _context121.next = 11;
+                _context124.next = 11;
                 return this.registerTransaction(sessionuuid, walletuuid, carduuid, _bounty, assignto);
 
               case 11:
-                txhash = _context121.sent;
-                return _context121.abrupt("return", txhash);
+                txhash = _context124.sent;
+                return _context124.abrupt("return", txhash);
 
               case 13:
               case "end":
-                return _context121.stop();
+                return _context124.stop();
             }
           }
-        }, _callee121, this);
+        }, _callee124, this);
       }));
 
-      function registerBounty(_x370, _x371, _x372, _x373) {
+      function registerBounty(_x379, _x380, _x381, _x382) {
         return _registerBounty.apply(this, arguments);
       }
 
@@ -5541,61 +5545,61 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "saveBounty",
     value: function () {
-      var _saveBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee122(sessionuuid, walletuuid, bounty) {
+      var _saveBounty = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee125(sessionuuid, walletuuid, bounty) {
         var global, _apicontrollers, bounty_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, title, amount, currency, keys, localjson;
 
-        return _regeneratorRuntime().wrap(function _callee122$(_context122) {
+        return _regeneratorRuntime().wrap(function _callee125$(_context125) {
           while (1) {
-            switch (_context122.prev = _context122.next) {
+            switch (_context125.prev = _context125.next) {
               case 0:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context122.next = 4;
+                _context125.next = 4;
                 return this.readBounties(sessionuuid, walletuuid);
 
               case 4:
-                bounty_list = _context122.sent;
+                bounty_list = _context125.sent;
                 // look not in list
                 bInList = false;
                 i = 0;
 
               case 7:
                 if (!(i < bounty_list.length)) {
-                  _context122.next = 14;
+                  _context125.next = 14;
                   break;
                 }
 
                 if (!(bounty_list[i].txhash == bounty.txhash)) {
-                  _context122.next = 11;
+                  _context125.next = 11;
                   break;
                 }
 
                 bInList = true;
-                return _context122.abrupt("break", 14);
+                return _context125.abrupt("break", 14);
 
               case 11:
                 i++;
-                _context122.next = 7;
+                _context125.next = 7;
                 break;
 
               case 14:
                 if (bInList) {
-                  _context122.next = 28;
+                  _context125.next = 28;
                   break;
                 }
 
-                _context122.next = 17;
+                _context125.next = 17;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 17:
-                session = _context122.sent;
+                session = _context125.sent;
 
                 if (session) {
-                  _context122.next = 20;
+                  _context125.next = 20;
                   break;
                 }
 
-                return _context122.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context125.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 20:
                 // bounty parameters to be saved
@@ -5621,20 +5625,20 @@ var Module = /*#__PURE__*/function () {
                 localjson.savetime = Date.now();
                 bounty_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, bounty_list);
 
-                return _context122.abrupt("return", this._saveClientSideJson(session, keys, bounty_list));
+                return _context125.abrupt("return", this._saveClientSideJson(session, keys, bounty_list));
 
               case 28:
-                return _context122.abrupt("return", bounty_list);
+                return _context125.abrupt("return", bounty_list);
 
               case 29:
               case "end":
-                return _context122.stop();
+                return _context125.stop();
             }
           }
-        }, _callee122, this);
+        }, _callee125, this);
       }));
 
-      function saveBounty(_x374, _x375, _x376) {
+      function saveBounty(_x383, _x384, _x385) {
         return _saveBounty.apply(this, arguments);
       }
 
@@ -5653,83 +5657,83 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "fetchClaims",
     value: function () {
-      var _fetchClaims = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee123(sessionuuid, walletuuid, currencyuuid, bountyhash) {
+      var _fetchClaims = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee126(sessionuuid, walletuuid, currencyuuid, bountyhash) {
         var global, _apicontrollers, session, wallet, currency, bounty, assign_address, transactions, claimmap, i, tx, dataobject, latest, first, claimlist, arr, entry;
 
-        return _regeneratorRuntime().wrap(function _callee123$(_context123) {
+        return _regeneratorRuntime().wrap(function _callee126$(_context126) {
           while (1) {
-            switch (_context123.prev = _context123.next) {
+            switch (_context126.prev = _context126.next) {
               case 0:
                 if (sessionuuid) {
-                  _context123.next = 2;
+                  _context126.next = 2;
                   break;
                 }
 
-                return _context123.abrupt("return", Promise.reject('session uuid is undefined'));
+                return _context126.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context123.next = 6;
+                _context126.next = 6;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 6:
-                session = _context123.sent;
+                session = _context126.sent;
 
                 if (session) {
-                  _context123.next = 9;
+                  _context126.next = 9;
                   break;
                 }
 
-                return _context123.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context126.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 9:
-                _context123.next = 11;
+                _context126.next = 11;
                 return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
 
               case 11:
-                wallet = _context123.sent;
-                _context123.next = 14;
+                wallet = _context126.sent;
+                _context126.next = 14;
                 return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
 
               case 14:
-                currency = _context123.sent;
+                currency = _context126.sent;
 
                 if (currency) {
-                  _context123.next = 17;
+                  _context126.next = 17;
                   break;
                 }
 
-                return _context123.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+                return _context126.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
 
               case 17:
                 if (currency.pretrade_explorer_url) {
-                  _context123.next = 19;
+                  _context126.next = 19;
                   break;
                 }
 
-                return _context123.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+                return _context126.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
 
               case 19:
-                _context123.next = 21;
+                _context126.next = 21;
                 return this.fetchBounty(sessionuuid, walletuuid, currencyuuid, bountyhash);
 
               case 21:
-                bounty = _context123.sent;
+                bounty = _context126.sent;
                 assign_address = this._getBountyAssignAddress(session, bounty); // use explorer to fetch transactions for address
 
-                _context123.next = 25;
+                _context126.next = 25;
                 return this._getAddressPretradeTransactions(session, wallet, currency, assign_address);
 
               case 25:
-                transactions = _context123.sent;
+                transactions = _context126.sent;
                 // we filter claims
                 claimmap = {};
                 i = 0;
 
               case 28:
                 if (!(i < (transactions ? transactions.length : 0))) {
-                  _context123.next = 41;
+                  _context126.next = 41;
                   break;
                 }
 
@@ -5739,18 +5743,18 @@ var Module = /*#__PURE__*/function () {
                 this._fillTransactionDataObject(dataobject, tx);
 
                 if (!(dataobject.type == 'claim' && dataobject.bounty == bountyhash)) {
-                  _context123.next = 38;
+                  _context126.next = 38;
                   break;
                 }
 
                 if (dataobject.uuid) {
-                  _context123.next = 37;
+                  _context126.next = 37;
                   break;
                 }
 
                 // add an uuid now
                 dataobject.uuid = session.guid();
-                _context123.next = 37;
+                _context126.next = 37;
                 return this.saveClaim(sessionuuid, null, dataobject);
 
               case 37:
@@ -5782,7 +5786,7 @@ var Module = /*#__PURE__*/function () {
 
               case 38:
                 i++;
-                _context123.next = 28;
+                _context126.next = 28;
                 break;
 
               case 41:
@@ -5798,17 +5802,17 @@ var Module = /*#__PURE__*/function () {
                   claimlist.push(entry);
                 }
 
-                return _context123.abrupt("return", claimlist);
+                return _context126.abrupt("return", claimlist);
 
               case 45:
               case "end":
-                return _context123.stop();
+                return _context126.stop();
             }
           }
-        }, _callee123, this);
+        }, _callee126, this);
       }));
 
-      function fetchClaims(_x377, _x378, _x379, _x380) {
+      function fetchClaims(_x386, _x387, _x388, _x389) {
         return _fetchClaims.apply(this, arguments);
       }
 
@@ -5817,89 +5821,89 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "fetchClaim",
     value: function () {
-      var _fetchClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee124(sessionuuid, walletuuid, currencyuuid, txhash) {
+      var _fetchClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee127(sessionuuid, walletuuid, currencyuuid, txhash) {
         var missing_credentials, orgclaim, claim, claims, i, clm;
-        return _regeneratorRuntime().wrap(function _callee124$(_context124) {
+        return _regeneratorRuntime().wrap(function _callee127$(_context127) {
           while (1) {
-            switch (_context124.prev = _context124.next) {
+            switch (_context127.prev = _context127.next) {
               case 0:
                 missing_credentials = false;
-                _context124.next = 3;
+                _context127.next = 3;
                 return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, txhash)["catch"](function (err) {
                   console.log('error in fetchClaim: ' + err);
                   if (err == 'ERR_MISSING_CREDENTIALS') missing_credentials = true;
                 });
 
               case 3:
-                orgclaim = _context124.sent;
+                orgclaim = _context127.sent;
 
                 if (!(missing_credentials === true)) {
-                  _context124.next = 6;
+                  _context127.next = 6;
                   break;
                 }
 
-                return _context124.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+                return _context127.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
 
               case 6:
                 if (orgclaim) {
-                  _context124.next = 8;
+                  _context127.next = 8;
                   break;
                 }
 
-                return _context124.abrupt("return", Promise.reject('ERR_CLAIM_NOT_FOUND'));
+                return _context127.abrupt("return", Promise.reject('ERR_CLAIM_NOT_FOUND'));
 
               case 8:
                 if (orgclaim.uuid) {
-                  _context124.next = 10;
+                  _context127.next = 10;
                   break;
                 }
 
-                return _context124.abrupt("return", Promise.reject('claim was not registered with a proper uuid ' + txhash));
+                return _context127.abrupt("return", Promise.reject('claim was not registered with a proper uuid ' + txhash));
 
               case 10:
                 // we scan the claims to see if the original claim has been updated
                 // with new record
                 claim = orgclaim;
-                _context124.next = 13;
+                _context127.next = 13;
                 return this.fetchClaims(sessionuuid, walletuuid, currencyuuid, claim.bounty);
 
               case 13:
-                claims = _context124.sent;
+                claims = _context127.sent;
                 i = 0;
 
               case 15:
                 if (!(i < (claims ? claims.length : 0))) {
-                  _context124.next = 23;
+                  _context127.next = 23;
                   break;
                 }
 
                 clm = claims[i];
 
                 if (!(clm.uuid === orgclaim.uuid)) {
-                  _context124.next = 20;
+                  _context127.next = 20;
                   break;
                 }
 
                 claim = claims[i];
-                return _context124.abrupt("break", 23);
+                return _context127.abrupt("break", 23);
 
               case 20:
                 i++;
-                _context124.next = 15;
+                _context127.next = 15;
                 break;
 
               case 23:
-                return _context124.abrupt("return", claim);
+                return _context127.abrupt("return", claim);
 
               case 24:
               case "end":
-                return _context124.stop();
+                return _context127.stop();
             }
           }
-        }, _callee124, this);
+        }, _callee127, this);
       }));
 
-      function fetchClaim(_x381, _x382, _x383, _x384) {
+      function fetchClaim(_x390, _x391, _x392, _x393) {
         return _fetchClaim.apply(this, arguments);
       }
 
@@ -5908,28 +5912,28 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "canRegisterClaim",
     value: function () {
-      var _canRegisterClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee125(sessionuuid, walletuuid, carduuid, claim) {
+      var _canRegisterClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee128(sessionuuid, walletuuid, carduuid, claim) {
         var bounty, claims, owner_map, payingto_map, i, clm;
-        return _regeneratorRuntime().wrap(function _callee125$(_context125) {
+        return _regeneratorRuntime().wrap(function _callee128$(_context128) {
           while (1) {
-            switch (_context125.prev = _context125.next) {
+            switch (_context128.prev = _context128.next) {
               case 0:
-                _context125.next = 2;
+                _context128.next = 2;
                 return this.fetchBounty(sessionuuid, walletuuid, claim.currencyuuid, claim.bounty);
 
               case 2:
-                bounty = _context125.sent;
+                bounty = _context128.sent;
 
                 if (!(bounty.one_submission === true)) {
-                  _context125.next = 14;
+                  _context128.next = 14;
                   break;
                 }
 
-                _context125.next = 6;
+                _context128.next = 6;
                 return this.fetchClaims(sessionuuid, bounty.currencyuuid, bounty.txhash);
 
               case 6:
-                claims = _context125.sent;
+                claims = _context128.sent;
                 owner_map = {};
                 payingto_map = {};
 
@@ -5940,32 +5944,32 @@ var Module = /*#__PURE__*/function () {
                 }
 
                 if (!owner_map[claim.owner]) {
-                  _context125.next = 12;
+                  _context128.next = 12;
                   break;
                 }
 
-                return _context125.abrupt("return", false);
+                return _context128.abrupt("return", false);
 
               case 12:
                 if (!(claim.payingto && payingto_map[claim.payingto])) {
-                  _context125.next = 14;
+                  _context128.next = 14;
                   break;
                 }
 
-                return _context125.abrupt("return", false);
+                return _context128.abrupt("return", false);
 
               case 14:
-                return _context125.abrupt("return", true);
+                return _context128.abrupt("return", true);
 
               case 15:
               case "end":
-                return _context125.stop();
+                return _context128.stop();
             }
           }
-        }, _callee125, this);
+        }, _callee128, this);
       }));
 
-      function canRegisterClaim(_x385, _x386, _x387, _x388) {
+      function canRegisterClaim(_x394, _x395, _x396, _x397) {
         return _canRegisterClaim.apply(this, arguments);
       }
 
@@ -5974,259 +5978,8 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "registerClaim",
     value: function () {
-      var _registerClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee126(sessionuuid, walletuuid, carduuid, claim) {
+      var _registerClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee129(sessionuuid, walletuuid, carduuid, claim) {
         var global, _apicontrollers, session, wallet, card, cardsession, claimuuid, bounty, assign_address, txhash;
-
-        return _regeneratorRuntime().wrap(function _callee126$(_context126) {
-          while (1) {
-            switch (_context126.prev = _context126.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context126.next = 2;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context126.next = 4;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                if (carduuid) {
-                  _context126.next = 6;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('card uuid is undefined'));
-
-              case 6:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context126.next = 10;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 10:
-                session = _context126.sent;
-
-                if (session) {
-                  _context126.next = 13;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 13:
-                _context126.next = 15;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 15:
-                wallet = _context126.sent;
-
-                if (wallet) {
-                  _context126.next = 18;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 18:
-                _context126.next = 20;
-                return wallet.getCardFromUUID(carduuid);
-
-              case 20:
-                card = _context126.sent;
-
-                if (card) {
-                  _context126.next = 23;
-                  break;
-                }
-
-                return _context126.abrupt("return", Promise.reject('could not find card ' + carduuid));
-
-              case 23:
-                _context126.next = 25;
-                return this._getMonitoredCardSession(session, wallet, card);
-
-              case 25:
-                cardsession = _context126.sent;
-                // we add an uuid to the claim that will live in multiple txhash
-                claimuuid = cardsession.guid();
-                claim.uuid = claimuuid;
-                _context126.next = 30;
-                return this.fetchBounty(sessionuuid, walletuuid, claim.currencyuuid, claim.bounty);
-
-              case 30:
-                bounty = _context126.sent;
-                assign_address = this._getBountyAssignAddress(session, bounty);
-                _context126.next = 34;
-                return this.registerTransaction(sessionuuid, walletuuid, carduuid, claim, assign_address);
-
-              case 34:
-                txhash = _context126.sent;
-                return _context126.abrupt("return", txhash);
-
-              case 36:
-              case "end":
-                return _context126.stop();
-            }
-          }
-        }, _callee126, this);
-      }));
-
-      function registerClaim(_x389, _x390, _x391, _x392) {
-        return _registerClaim.apply(this, arguments);
-      }
-
-      return registerClaim;
-    }()
-  }, {
-    key: "updateClaim",
-    value: function () {
-      var _updateClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee127(sessionuuid, walletuuid, carduuid, claim) {
-        var global, _apicontrollers, session, wallet, bounty, assign_address, txhash;
-
-        return _regeneratorRuntime().wrap(function _callee127$(_context127) {
-          while (1) {
-            switch (_context127.prev = _context127.next) {
-              case 0:
-                if (sessionuuid) {
-                  _context127.next = 2;
-                  break;
-                }
-
-                return _context127.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
-                if (walletuuid) {
-                  _context127.next = 4;
-                  break;
-                }
-
-                return _context127.abrupt("return", Promise.reject('wallet uuid is undefined'));
-
-              case 4:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context127.next = 8;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 8:
-                session = _context127.sent;
-
-                if (session) {
-                  _context127.next = 11;
-                  break;
-                }
-
-                return _context127.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 11:
-                _context127.next = 13;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid);
-
-              case 13:
-                wallet = _context127.sent;
-
-                if (wallet) {
-                  _context127.next = 16;
-                  break;
-                }
-
-                return _context127.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
-
-              case 16:
-                _context127.next = 18;
-                return this.fetchBounty(sessionuuid, walletuuid, claim.currencyuuid, claim.bounty);
-
-              case 18:
-                bounty = _context127.sent;
-                assign_address = this._getBountyAssignAddress(session, bounty);
-
-                if (claim.uuid) {
-                  _context127.next = 22;
-                  break;
-                }
-
-                return _context127.abrupt("return", Promise.reject('claim has no uuid ' + claim.txhash));
-
-              case 22:
-                _context127.next = 24;
-                return this.registerTransaction(sessionuuid, walletuuid, carduuid, claim, assign_address);
-
-              case 24:
-                txhash = _context127.sent;
-
-                if (!txhash) {
-                  _context127.next = 28;
-                  break;
-                }
-
-                _context127.next = 28;
-                return this.saveClaim(sessionuuid, walletuuid, claim);
-
-              case 28:
-                return _context127.abrupt("return", txhash);
-
-              case 29:
-              case "end":
-                return _context127.stop();
-            }
-          }
-        }, _callee127, this);
-      }));
-
-      function updateClaim(_x393, _x394, _x395, _x396) {
-        return _updateClaim.apply(this, arguments);
-      }
-
-      return updateClaim;
-    }() // storage
-
-  }, {
-    key: "_readClaims",
-    value: function () {
-      var _readClaims2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee128(session, keys) {
-        var global, _apicontrollers, claim_list;
-
-        return _regeneratorRuntime().wrap(function _callee128$(_context128) {
-          while (1) {
-            switch (_context128.prev = _context128.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI(); //var claim_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-                _context128.next = 4;
-                return this._readClientSideJson(session, keys);
-
-              case 4:
-                claim_list = _context128.sent;
-                if (!claim_list) claim_list = [];
-                return _context128.abrupt("return", claim_list);
-
-              case 7:
-              case "end":
-                return _context128.stop();
-            }
-          }
-        }, _callee128, this);
-      }));
-
-      function _readClaims(_x397, _x398) {
-        return _readClaims2.apply(this, arguments);
-      }
-
-      return _readClaims;
-    }()
-  }, {
-    key: "readClaims",
-    value: function () {
-      var _readClaims3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee129(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, claim_list, unhandled_claims, i, claim;
 
         return _regeneratorRuntime().wrap(function _callee129$(_context129) {
           while (1) {
@@ -6240,75 +5993,88 @@ var Module = /*#__PURE__*/function () {
                 return _context129.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context129.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
+                if (walletuuid) {
+                  _context129.next = 4;
+                  break;
+                }
+
+                return _context129.abrupt("return", Promise.reject('wallet uuid is undefined'));
+
+              case 4:
+                if (carduuid) {
+                  _context129.next = 6;
+                  break;
+                }
+
+                return _context129.abrupt("return", Promise.reject('card uuid is undefined'));
 
               case 6:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context129.next = 10;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 10:
                 session = _context129.sent;
 
                 if (session) {
-                  _context129.next = 9;
+                  _context129.next = 13;
                   break;
                 }
 
                 return _context129.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'claims']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'claims']; // shared keys, otherwise we could look in wallet
-                  // with mvcmodule.getFromWallet
-                }
+              case 13:
+                _context129.next = 15;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid);
 
-                _context129.next = 12;
-                return this._readClaims(session, keys);
+              case 15:
+                wallet = _context129.sent;
 
-              case 12:
-                claim_list = _context129.sent;
-                // we go through the list to see if some 'unhandled yet' claims
-                // need to be checked
-                unhandled_claims = [];
-
-                for (i = 0; i < claim_list.length; i++) {
-                  if (claim_list[i].status === 0) unhandled_claims.push(claim_list[i]);
-                } // then fetch for each claim (could be speeded up if necessary)
-
-
-                i = 0;
-
-              case 16:
-                if (!(i < unhandled_claims.length)) {
-                  _context129.next = 26;
+                if (wallet) {
+                  _context129.next = 18;
                   break;
                 }
 
-                _context129.next = 19;
-                return this.fetchClaim(sessionuuid, walletuuid, unhandled_claims[i].currencyuuid, unhandled_claims[i].txhash)["catch"](function (err) {});
+                return _context129.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
 
-              case 19:
-                claim = _context129.sent;
+              case 18:
+                _context129.next = 20;
+                return wallet.getCardFromUUID(carduuid);
 
-                if (!(claim && claim.status !== 0)) {
+              case 20:
+                card = _context129.sent;
+
+                if (card) {
                   _context129.next = 23;
                   break;
                 }
 
-                _context129.next = 23;
-                return this.saveClaim(sessionuuid, walletuuid, claim);
+                return _context129.abrupt("return", Promise.reject('could not find card ' + carduuid));
 
               case 23:
-                i++;
-                _context129.next = 16;
-                break;
+                _context129.next = 25;
+                return this._getMonitoredCardSession(session, wallet, card);
 
-              case 26:
-                return _context129.abrupt("return", claim_list);
+              case 25:
+                cardsession = _context129.sent;
+                // we add an uuid to the claim that will live in multiple txhash
+                claimuuid = cardsession.guid();
+                claim.uuid = claimuuid;
+                _context129.next = 30;
+                return this.fetchBounty(sessionuuid, walletuuid, claim.currencyuuid, claim.bounty);
 
-              case 27:
+              case 30:
+                bounty = _context129.sent;
+                assign_address = this._getBountyAssignAddress(session, bounty);
+                _context129.next = 34;
+                return this.registerTransaction(sessionuuid, walletuuid, carduuid, claim, assign_address);
+
+              case 34:
+                txhash = _context129.sent;
+                return _context129.abrupt("return", txhash);
+
+              case 36:
               case "end":
                 return _context129.stop();
             }
@@ -6316,17 +6082,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee129, this);
       }));
 
-      function readClaims(_x399, _x400) {
-        return _readClaims3.apply(this, arguments);
+      function registerClaim(_x398, _x399, _x400, _x401) {
+        return _registerClaim.apply(this, arguments);
       }
 
-      return readClaims;
+      return registerClaim;
     }()
   }, {
-    key: "saveClaim",
+    key: "updateClaim",
     value: function () {
-      var _saveClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee130(sessionuuid, walletuuid, claim) {
-        var global, _apicontrollers, session, keys, claim_list, bInList, claim_index, i, uuid, txhash, blocknumber, currencyuuid, owner, bounty, amount, currency, private_submission, answer, status, pretradescheme_info, bountyobject, title, localjson, _title, savetime;
+      var _updateClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee130(sessionuuid, walletuuid, carduuid, claim) {
+        var global, _apicontrollers, session, wallet, bounty, assign_address, txhash;
 
         return _regeneratorRuntime().wrap(function _callee130$(_context130) {
           while (1) {
@@ -6340,120 +6106,77 @@ var Module = /*#__PURE__*/function () {
                 return _context130.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 2:
+                if (walletuuid) {
+                  _context130.next = 4;
+                  break;
+                }
+
+                return _context130.abrupt("return", Promise.reject('wallet uuid is undefined'));
+
+              case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context130.next = 6;
+                _context130.next = 8;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 6:
+              case 8:
                 session = _context130.sent;
 
                 if (session) {
-                  _context130.next = 9;
+                  _context130.next = 11;
                   break;
                 }
 
                 return _context130.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'claims']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'claims']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet
-                }
+              case 11:
+                _context130.next = 13;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid);
 
-                _context130.next = 12;
-                return this._readClaims(session, keys);
+              case 13:
+                wallet = _context130.sent;
 
-              case 12:
-                claim_list = _context130.sent;
-                bInList = false;
-                i = 0;
-
-              case 15:
-                if (!(i < claim_list.length)) {
-                  _context130.next = 27;
+                if (wallet) {
+                  _context130.next = 16;
                   break;
                 }
 
-                if (!(claim.txhash && claim_list[i].txhash == claim.txhash)) {
-                  _context130.next = 20;
+                return _context130.abrupt("return", Promise.reject('could not find wallet ' + walletuuid));
+
+              case 16:
+                _context130.next = 18;
+                return this.fetchBounty(sessionuuid, walletuuid, claim.currencyuuid, claim.bounty);
+
+              case 18:
+                bounty = _context130.sent;
+                assign_address = this._getBountyAssignAddress(session, bounty);
+
+                if (claim.uuid) {
+                  _context130.next = 22;
                   break;
                 }
 
-                bInList = true;
-                claim_index = i;
-                return _context130.abrupt("break", 27);
+                return _context130.abrupt("return", Promise.reject('claim has no uuid ' + claim.txhash));
 
-              case 20:
-                if (!(claim.uuid && claim_list[i].uuid == claim.uuid)) {
-                  _context130.next = 24;
-                  break;
-                }
-
-                bInList = true;
-                claim_index = i;
-                return _context130.abrupt("break", 27);
+              case 22:
+                _context130.next = 24;
+                return this.registerTransaction(sessionuuid, walletuuid, carduuid, claim, assign_address);
 
               case 24:
-                i++;
-                _context130.next = 15;
-                break;
+                txhash = _context130.sent;
 
-              case 27:
-                if (bInList) {
-                  _context130.next = 41;
+                if (!txhash) {
+                  _context130.next = 28;
                   break;
                 }
 
-                // add new element to the list
-                // claim parameters
-                uuid = claim.uuid, txhash = claim.txhash, blocknumber = claim.blocknumber, currencyuuid = claim.currencyuuid, owner = claim.owner, bounty = claim.bounty, amount = claim.amount, currency = claim.currency, private_submission = claim.private_submission, answer = claim.answer, status = claim.status; // read bounty to get title
+                _context130.next = 28;
+                return this.saveClaim(sessionuuid, walletuuid, claim);
 
-                _context130.next = 31;
-                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
+              case 28:
+                return _context130.abrupt("return", txhash);
 
-              case 31:
-                pretradescheme_info = _context130.sent;
-                _context130.next = 34;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, bounty)["catch"](function (err) {});
-
-              case 34:
-                bountyobject = _context130.sent;
-                title = bountyobject ? bountyobject.title : null;
-                localjson = {
-                  uuid: uuid,
-                  txhash: txhash,
-                  blocknumber: blocknumber,
-                  currencyuuid: currencyuuid,
-                  owner: owner,
-                  bounty: bounty,
-                  title: title,
-                  amount: amount,
-                  currency: currency,
-                  private_submission: private_submission,
-                  answer: answer,
-                  status: status
-                };
-                localjson.savetime = Date.now();
-                claim_list.push(localjson);
-                _context130.next = 46;
-                break;
-
-              case 41:
-                // we update claim at correct index (transfering additional parameters)
-                _title = claim_list[claim_index].title;
-                savetime = claim_list[claim_index].savetime;
-                claim_list[claim_index] = claim;
-                claim_list[claim_index].title = _title;
-                claim_list[claim_index].savetime = savetime;
-
-              case 46:
-                return _context130.abrupt("return", this._saveClientSideJson(session, keys, claim_list));
-
-              case 47:
+              case 29:
               case "end":
                 return _context130.stop();
             }
@@ -6461,67 +6184,35 @@ var Module = /*#__PURE__*/function () {
         }, _callee130, this);
       }));
 
-      function saveClaim(_x401, _x402, _x403) {
-        return _saveClaim.apply(this, arguments);
+      function updateClaim(_x402, _x403, _x404, _x405) {
+        return _updateClaim.apply(this, arguments);
       }
 
-      return saveClaim;
-    }() //
-    // Quotes
-    //
+      return updateClaim;
+    }() // storage
 
   }, {
-    key: "readQuotes",
+    key: "_readClaims",
     value: function () {
-      var _readQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee131(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, quote_list;
+      var _readClaims2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee131(session, keys) {
+        var global, _apicontrollers, claim_list;
 
         return _regeneratorRuntime().wrap(function _callee131$(_context131) {
           while (1) {
             switch (_context131.prev = _context131.next) {
               case 0:
-                if (sessionuuid) {
-                  _context131.next = 2;
-                  break;
-                }
-
-                return _context131.abrupt("return", Promise.reject('session uuid is undefined'));
-
-              case 2:
                 global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context131.next = 6;
-                return _apicontrollers.getSessionObject(sessionuuid);
+                _apicontrollers = this._getClientAPI(); //var claim_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
-              case 6:
-                session = _context131.sent;
-
-                if (session) {
-                  _context131.next = 9;
-                  break;
-                }
-
-                return _context131.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'quotes']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'quotes']; // shared keys, also we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let quote_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
-
-
-                _context131.next = 12;
+                _context131.next = 4;
                 return this._readClientSideJson(session, keys);
 
-              case 12:
-                quote_list = _context131.sent;
-                if (!quote_list) quote_list = [];
-                return _context131.abrupt("return", quote_list);
+              case 4:
+                claim_list = _context131.sent;
+                if (!claim_list) claim_list = [];
+                return _context131.abrupt("return", claim_list);
 
-              case 15:
+              case 7:
               case "end":
                 return _context131.stop();
             }
@@ -6529,17 +6220,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee131, this);
       }));
 
-      function readQuotes(_x404, _x405) {
-        return _readQuotes.apply(this, arguments);
+      function _readClaims(_x406, _x407) {
+        return _readClaims2.apply(this, arguments);
       }
 
-      return readQuotes;
+      return _readClaims;
     }()
   }, {
-    key: "fetchQuotes",
+    key: "readClaims",
     value: function () {
-      var _fetchQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee132(sessionuuid, walletuuid, currencyuuid, vendor_address) {
-        var global, _apicontrollers, session, wallet, currency, transactions, quotelist, i, tx, dataobject;
+      var _readClaims3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee132(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, claim_list, unhandled_claims, i, claim;
 
         return _regeneratorRuntime().wrap(function _callee132$(_context132) {
           while (1) {
@@ -6569,56 +6260,59 @@ var Module = /*#__PURE__*/function () {
                 return _context132.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 9:
-                _context132.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+                if (!walletuuid) {
+                  keys = ['myquote', 'claims']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'claims']; // shared keys, otherwise we could look in wallet
+                  // with mvcmodule.getFromWallet
+                }
 
-              case 11:
-                wallet = _context132.sent;
-                _context132.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+                _context132.next = 12;
+                return this._readClaims(session, keys);
 
-              case 14:
-                currency = _context132.sent;
+              case 12:
+                claim_list = _context132.sent;
+                // we go through the list to see if some 'unhandled yet' claims
+                // need to be checked
+                unhandled_claims = [];
 
-                if (currency) {
-                  _context132.next = 17;
+                for (i = 0; i < claim_list.length; i++) {
+                  if (claim_list[i].status === 0) unhandled_claims.push(claim_list[i]);
+                } // then fetch for each claim (could be speeded up if necessary)
+
+
+                i = 0;
+
+              case 16:
+                if (!(i < unhandled_claims.length)) {
+                  _context132.next = 26;
                   break;
                 }
 
-                return _context132.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
-
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context132.next = 19;
-                  break;
-                }
-
-                return _context132.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+                _context132.next = 19;
+                return this.fetchClaim(sessionuuid, walletuuid, unhandled_claims[i].currencyuuid, unhandled_claims[i].txhash)["catch"](function (err) {});
 
               case 19:
-                _context132.next = 21;
-                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+                claim = _context132.sent;
 
-              case 21:
-                transactions = _context132.sent;
-                // we filter quotes
-                quotelist = [];
-
-                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
-                  tx = transactions[i];
-                  dataobject = {};
-
-                  this._fillTransactionDataObject(dataobject, tx);
-
-                  if (dataobject.type == 'quote' && dataobject.owner == vendor_address) {
-                    //await this.saveQuote(sessionuuid, null, dataobject);
-                    quotelist.push(dataobject);
-                  }
+                if (!(claim && claim.status !== 0)) {
+                  _context132.next = 23;
+                  break;
                 }
 
-                return _context132.abrupt("return", quotelist);
+                _context132.next = 23;
+                return this.saveClaim(sessionuuid, walletuuid, claim);
 
-              case 25:
+              case 23:
+                i++;
+                _context132.next = 16;
+                break;
+
+              case 26:
+                return _context132.abrupt("return", claim_list);
+
+              case 27:
               case "end":
                 return _context132.stop();
             }
@@ -6626,101 +6320,144 @@ var Module = /*#__PURE__*/function () {
         }, _callee132, this);
       }));
 
-      function fetchQuotes(_x406, _x407, _x408, _x409) {
-        return _fetchQuotes.apply(this, arguments);
+      function readClaims(_x408, _x409) {
+        return _readClaims3.apply(this, arguments);
       }
 
-      return fetchQuotes;
+      return readClaims;
     }()
   }, {
-    key: "saveQuote",
+    key: "saveClaim",
     value: function () {
-      var _saveQuote = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee133(sessionuuid, walletuuid, quote) {
-        var global, _apicontrollers, quote_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, title, amount, currency, keys, localjson;
+      var _saveClaim = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee133(sessionuuid, walletuuid, claim) {
+        var global, _apicontrollers, session, keys, claim_list, bInList, claim_index, i, uuid, txhash, blocknumber, currencyuuid, owner, bounty, amount, currency, private_submission, answer, status, pretradescheme_info, bountyobject, title, localjson, _title, savetime;
 
         return _regeneratorRuntime().wrap(function _callee133$(_context133) {
           while (1) {
             switch (_context133.prev = _context133.next) {
               case 0:
+                if (sessionuuid) {
+                  _context133.next = 2;
+                  break;
+                }
+
+                return _context133.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context133.next = 4;
-                return this.readQuotes(sessionuuid, walletuuid);
-
-              case 4:
-                quote_list = _context133.sent;
-                // look not in list
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < quote_list.length)) {
-                  _context133.next = 14;
-                  break;
-                }
-
-                if (!(quote_list[i].txhash == quote.txhash)) {
-                  _context133.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context133.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context133.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context133.next = 28;
-                  break;
-                }
-
-                _context133.next = 17;
+                _context133.next = 6;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 17:
+              case 6:
                 session = _context133.sent;
 
                 if (session) {
-                  _context133.next = 20;
+                  _context133.next = 9;
                   break;
                 }
 
                 return _context133.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 20:
-                // quote parameters to be saved
-                txhash = quote.txhash, blocknumber = quote.blocknumber, currencyuuid = quote.currencyuuid, owner = quote.owner, title = quote.title, amount = quote.amount, currency = quote.currency;
-
+              case 9:
                 if (!walletuuid) {
-                  keys = ['myquote', 'quotes']; // shared keys
+                  keys = ['myquote', 'claims']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'quotes']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet			
+                  keys = ['myquote', 'claims']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet
                 }
 
+                _context133.next = 12;
+                return this._readClaims(session, keys);
+
+              case 12:
+                claim_list = _context133.sent;
+                bInList = false;
+                i = 0;
+
+              case 15:
+                if (!(i < claim_list.length)) {
+                  _context133.next = 27;
+                  break;
+                }
+
+                if (!(claim.txhash && claim_list[i].txhash == claim.txhash)) {
+                  _context133.next = 20;
+                  break;
+                }
+
+                bInList = true;
+                claim_index = i;
+                return _context133.abrupt("break", 27);
+
+              case 20:
+                if (!(claim.uuid && claim_list[i].uuid == claim.uuid)) {
+                  _context133.next = 24;
+                  break;
+                }
+
+                bInList = true;
+                claim_index = i;
+                return _context133.abrupt("break", 27);
+
+              case 24:
+                i++;
+                _context133.next = 15;
+                break;
+
+              case 27:
+                if (bInList) {
+                  _context133.next = 41;
+                  break;
+                }
+
+                // add new element to the list
+                // claim parameters
+                uuid = claim.uuid, txhash = claim.txhash, blocknumber = claim.blocknumber, currencyuuid = claim.currencyuuid, owner = claim.owner, bounty = claim.bounty, amount = claim.amount, currency = claim.currency, private_submission = claim.private_submission, answer = claim.answer, status = claim.status; // read bounty to get title
+
+                _context133.next = 31;
+                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
+
+              case 31:
+                pretradescheme_info = _context133.sent;
+                _context133.next = 34;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, bounty)["catch"](function (err) {});
+
+              case 34:
+                bountyobject = _context133.sent;
+                title = bountyobject ? bountyobject.title : null;
                 localjson = {
+                  uuid: uuid,
                   txhash: txhash,
                   blocknumber: blocknumber,
                   currencyuuid: currencyuuid,
                   owner: owner,
+                  bounty: bounty,
                   title: title,
                   amount: amount,
-                  currency: currency
+                  currency: currency,
+                  private_submission: private_submission,
+                  answer: answer,
+                  status: status
                 };
                 localjson.savetime = Date.now();
-                quote_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, quote_list);
+                claim_list.push(localjson);
+                _context133.next = 46;
+                break;
 
-                return _context133.abrupt("return", this._saveClientSideJson(session, keys, quote_list));
+              case 41:
+                // we update claim at correct index (transfering additional parameters)
+                _title = claim_list[claim_index].title;
+                savetime = claim_list[claim_index].savetime;
+                claim_list[claim_index] = claim;
+                claim_list[claim_index].title = _title;
+                claim_list[claim_index].savetime = savetime;
 
-              case 28:
-                return _context133.abrupt("return", quote_list);
+              case 46:
+                return _context133.abrupt("return", this._saveClientSideJson(session, keys, claim_list));
 
-              case 29:
+              case 47:
               case "end":
                 return _context133.stop();
             }
@@ -6728,17 +6465,20 @@ var Module = /*#__PURE__*/function () {
         }, _callee133, this);
       }));
 
-      function saveQuote(_x410, _x411, _x412) {
-        return _saveQuote.apply(this, arguments);
+      function saveClaim(_x410, _x411, _x412) {
+        return _saveClaim.apply(this, arguments);
       }
 
-      return saveQuote;
-    }()
+      return saveClaim;
+    }() //
+    // Quotes
+    //
+
   }, {
-    key: "readOrders",
+    key: "readQuotes",
     value: function () {
-      var _readOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee134(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, order_list;
+      var _readQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee134(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, quote_list;
 
         return _regeneratorRuntime().wrap(function _callee134$(_context134) {
           while (1) {
@@ -6769,21 +6509,21 @@ var Module = /*#__PURE__*/function () {
 
               case 9:
                 if (!walletuuid) {
-                  keys = ['myquote', 'orders']; // shared keys
+                  keys = ['myquote', 'quotes']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'orders']; // shared keys, otherwise we could look in wallet
+                  keys = ['myquote', 'quotes']; // shared keys, also we could look in wallet
                   // with mvcmodule.getFromWallet
-                } //let order_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+                } //let quote_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
 
                 _context134.next = 12;
                 return this._readClientSideJson(session, keys);
 
               case 12:
-                order_list = _context134.sent;
-                if (!order_list) order_list = [];
-                return _context134.abrupt("return", order_list);
+                quote_list = _context134.sent;
+                if (!quote_list) quote_list = [];
+                return _context134.abrupt("return", quote_list);
 
               case 15:
               case "end":
@@ -6793,17 +6533,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee134, this);
       }));
 
-      function readOrders(_x413, _x414) {
-        return _readOrders.apply(this, arguments);
+      function readQuotes(_x413, _x414) {
+        return _readQuotes.apply(this, arguments);
       }
 
-      return readOrders;
+      return readQuotes;
     }()
   }, {
-    key: "fetchOrders",
+    key: "fetchQuotes",
     value: function () {
-      var _fetchOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee135(sessionuuid, walletuuid, currencyuuid, quotehash) {
-        var global, _apicontrollers, session, wallet, currency, quote, vendor_address, transactions, orderlist, i, tx, dataobject;
+      var _fetchQuotes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee135(sessionuuid, walletuuid, currencyuuid, vendor_address) {
+        var global, _apicontrollers, session, wallet, currency, transactions, quotelist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee135$(_context135) {
           while (1) {
@@ -6861,19 +6601,12 @@ var Module = /*#__PURE__*/function () {
 
               case 19:
                 _context135.next = 21;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
-
-              case 21:
-                quote = _context135.sent;
-                vendor_address = quote.owner; // use explorer to fetch transactions for vendor's address
-
-                _context135.next = 25;
                 return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
 
-              case 25:
+              case 21:
                 transactions = _context135.sent;
-                // we filter orders
-                orderlist = [];
+                // we filter quotes
+                quotelist = [];
 
                 for (i = 0; i < (transactions ? transactions.length : 0); i++) {
                   tx = transactions[i];
@@ -6881,15 +6614,15 @@ var Module = /*#__PURE__*/function () {
 
                   this._fillTransactionDataObject(dataobject, tx);
 
-                  if (dataobject.type == 'order' && dataobject.quote == quotehash) {
-                    //await this.saveOrder(sessionuuid, null, dataobject);
-                    orderlist.push(dataobject);
+                  if (dataobject.type == 'quote' && dataobject.owner == vendor_address) {
+                    //await this.saveQuote(sessionuuid, null, dataobject);
+                    quotelist.push(dataobject);
                   }
                 }
 
-                return _context135.abrupt("return", orderlist);
+                return _context135.abrupt("return", quotelist);
 
-              case 29:
+              case 25:
               case "end":
                 return _context135.stop();
             }
@@ -6897,251 +6630,81 @@ var Module = /*#__PURE__*/function () {
         }, _callee135, this);
       }));
 
-      function fetchOrders(_x415, _x416, _x417, _x418) {
-        return _fetchOrders.apply(this, arguments);
+      function fetchQuotes(_x415, _x416, _x417, _x418) {
+        return _fetchQuotes.apply(this, arguments);
       }
 
-      return fetchOrders;
+      return fetchQuotes;
     }()
   }, {
-    key: "scanNextBlockForOrders",
+    key: "saveQuote",
     value: function () {
-      var _scanNextBlockForOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee136(sessionuuid, walletuuid, currencyuuid, quotehash, blockshift) {
-        var global, _apicontrollers, session, keys, scan, quote, new_orders, pretradeweb3rurl, childsession, current_blocknumber, start_block_number, last_block_number, ordernum, ethereumnodeaccessmodule, ethereumnodeaccessinstance, blocknumber, block, transactions, i, tx, dataobject;
+      var _saveQuote = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee136(sessionuuid, walletuuid, quote) {
+        var global, _apicontrollers, quote_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, title, amount, currency, keys, localjson;
 
         return _regeneratorRuntime().wrap(function _callee136$(_context136) {
           while (1) {
             switch (_context136.prev = _context136.next) {
               case 0:
-                if (sessionuuid) {
-                  _context136.next = 2;
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context136.next = 4;
+                return this.readQuotes(sessionuuid, walletuuid);
+
+              case 4:
+                quote_list = _context136.sent;
+                // look not in list
+                bInList = false;
+                i = 0;
+
+              case 7:
+                if (!(i < quote_list.length)) {
+                  _context136.next = 14;
                   break;
                 }
 
-                return _context136.abrupt("return", Promise.reject('session uuid is undefined'));
+                if (!(quote_list[i].txhash == quote.txhash)) {
+                  _context136.next = 11;
+                  break;
+                }
 
-              case 2:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context136.next = 6;
+                bInList = true;
+                return _context136.abrupt("break", 14);
+
+              case 11:
+                i++;
+                _context136.next = 7;
+                break;
+
+              case 14:
+                if (bInList) {
+                  _context136.next = 28;
+                  break;
+                }
+
+                _context136.next = 17;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
-              case 6:
+              case 17:
                 session = _context136.sent;
 
                 if (session) {
-                  _context136.next = 9;
+                  _context136.next = 20;
                   break;
                 }
 
                 return _context136.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
-              case 9:
-                keys = ['myquote', 'scan', 'orders', quotehash]; //let scan = await _apicontrollers.getLocalJsonLeaf(session, keys);
-
-                _context136.next = 12;
-                return this._readClientSideJson(session, keys);
-
-              case 12:
-                scan = _context136.sent;
-                if (!scan) scan = {};
-                _context136.next = 16;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
-
-              case 16:
-                quote = _context136.sent;
-                new_orders = []; // get a childsession on currency pretrade web3provider
-
-                _context136.next = 20;
-                return this.getPretradeWeb3Url(sessionuuid, currencyuuid);
-
               case 20:
-                pretradeweb3rurl = _context136.sent;
-                _context136.next = 23;
-                return this._getChildSessionOnWeb3Url(session, pretradeweb3rurl);
-
-              case 23:
-                childsession = _context136.sent;
-                _context136.next = 26;
-                return _apicontrollers.readCurrentBlockNumber(childsession);
-
-              case 26:
-                current_blocknumber = _context136.sent;
-                start_block_number = (scan.last_block_number ? scan.last_block_number : quote.blocknumber) + 1;
-                last_block_number = start_block_number + blockshift < current_blocknumber ? start_block_number + blockshift : current_blocknumber;
-                ordernum = scan.ordernum ? scan.ordernum : 0; // read transactions for each block
-
-                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
-                ethereumnodeaccessinstance = ethereumnodeaccessmodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
-                // var ethereumnodeaccessinstance = _apicontrollers.getEthereumNodeAccessInstance(childsession);
-
-                blocknumber = start_block_number;
-
-              case 33:
-                if (!(blocknumber < last_block_number + 1)) {
-                  _context136.next = 59;
-                  break;
-                }
-
-                _context136.next = 36;
-                return new Promise(function (resolve, reject) {
-                  ethereumnodeaccessinstance.web3_getBlock(blocknumber, true, function (err, res) {
-                    if (err) reject(err);else resolve(res);
-                  });
-                })["catch"](function (err) {
-                  console.log('error in scanNextBlockForOrders: ' + err);
-                });
-
-              case 36:
-                block = _context136.sent;
-                transactions = block.transactions;
-                i = 0;
-
-              case 39:
-                if (!(i < (transactions ? transactions.length : 0))) {
-                  _context136.next = 56;
-                  break;
-                }
-
-                tx = transactions[i]; // fake ethchainreader
-
-                tx.input_decoded_utf8 = ethereumnodeaccessmodule.web3ToUTF8(childsession, tx.input);
-                tx.block = {};
-                tx.block.blocknumber = tx.blockNumber;
-                tx.block.timestamp = tx.timeStamp;
-                dataobject = {};
-
-                this._fillTransactionDataObject(dataobject, tx);
-
-                console.log('found one transaction at ' + blocknumber);
-
-                if (!(dataobject.type == 'order')) {
-                  _context136.next = 53;
-                  break;
-                }
-
-                _context136.next = 51;
-                return this.saveOrder(sessionuuid, null, dataobject);
-
-              case 51:
-                new_orders.push(dataobject);
-                ordernum++;
-
-              case 53:
-                i++;
-                _context136.next = 39;
-                break;
-
-              case 56:
-                blocknumber++;
-                _context136.next = 33;
-                break;
-
-              case 59:
-                // save where we are
-                scan.last_block_number = last_block_number;
-                scan.ordernum = ordernum; //await _apicontrollers.saveLocalJson(session, keys, scan);
-
-                _context136.next = 63;
-                return this._saveClientSideJson(session, keys, scan);
-
-              case 63:
-                return _context136.abrupt("return", new_orders);
-
-              case 64:
-              case "end":
-                return _context136.stop();
-            }
-          }
-        }, _callee136, this);
-      }));
-
-      function scanNextBlockForOrders(_x419, _x420, _x421, _x422, _x423) {
-        return _scanNextBlockForOrders.apply(this, arguments);
-      }
-
-      return scanNextBlockForOrders;
-    }()
-  }, {
-    key: "saveOrder",
-    value: function () {
-      var _saveOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee137(sessionuuid, walletuuid, order) {
-        var global, _apicontrollers, order_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, quote, amount, currency, hadfunds, pretradescheme_info, quoteobject, title, keys, localjson;
-
-        return _regeneratorRuntime().wrap(function _callee137$(_context137) {
-          while (1) {
-            switch (_context137.prev = _context137.next) {
-              case 0:
-                global = this.global;
-                _apicontrollers = this._getClientAPI();
-                _context137.next = 4;
-                return this.readOrders(sessionuuid, walletuuid);
-
-              case 4:
-                order_list = _context137.sent;
-                bInList = false;
-                i = 0;
-
-              case 7:
-                if (!(i < order_list.length)) {
-                  _context137.next = 14;
-                  break;
-                }
-
-                if (!(order_list[i].txhash == order.txhash)) {
-                  _context137.next = 11;
-                  break;
-                }
-
-                bInList = true;
-                return _context137.abrupt("break", 14);
-
-              case 11:
-                i++;
-                _context137.next = 7;
-                break;
-
-              case 14:
-                if (bInList) {
-                  _context137.next = 35;
-                  break;
-                }
-
-                _context137.next = 17;
-                return _apicontrollers.getSessionObject(sessionuuid);
-
-              case 17:
-                session = _context137.sent;
-
-                if (session) {
-                  _context137.next = 20;
-                  break;
-                }
-
-                return _context137.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
-
-              case 20:
-                // order parameters
-                txhash = order.txhash, blocknumber = order.blocknumber, currencyuuid = order.currencyuuid, owner = order.owner, quote = order.quote, amount = order.amount, currency = order.currency, hadfunds = order.hadfunds; // read quote to get title
-
-                _context137.next = 23;
-                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
-
-              case 23:
-                pretradescheme_info = _context137.sent;
-                _context137.next = 26;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, quote)["catch"](function (err) {});
-
-              case 26:
-                quoteobject = _context137.sent;
-                title = quoteobject ? quoteobject.title : null;
+                // quote parameters to be saved
+                txhash = quote.txhash, blocknumber = quote.blocknumber, currencyuuid = quote.currencyuuid, owner = quote.owner, title = quote.title, amount = quote.amount, currency = quote.currency;
 
                 if (!walletuuid) {
-                  keys = ['myquote', 'orders']; // shared keys
+                  keys = ['myquote', 'quotes']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'orders']; // shared keys, also we could put in wallet
-                  // with mvcmodule.putInWallet
+                  keys = ['myquote', 'quotes']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet			
                 }
 
                 localjson = {
@@ -7149,21 +6712,84 @@ var Module = /*#__PURE__*/function () {
                   blocknumber: blocknumber,
                   currencyuuid: currencyuuid,
                   owner: owner,
-                  quote: quote,
                   title: title,
                   amount: amount,
-                  currency: currency,
-                  hadfunds: hadfunds
+                  currency: currency
                 };
                 localjson.savetime = Date.now();
-                order_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, order_list);
+                quote_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, quote_list);
 
-                return _context137.abrupt("return", this._saveClientSideJson(session, keys, order_list));
+                return _context136.abrupt("return", this._saveClientSideJson(session, keys, quote_list));
 
-              case 35:
+              case 28:
+                return _context136.abrupt("return", quote_list);
+
+              case 29:
+              case "end":
+                return _context136.stop();
+            }
+          }
+        }, _callee136, this);
+      }));
+
+      function saveQuote(_x419, _x420, _x421) {
+        return _saveQuote.apply(this, arguments);
+      }
+
+      return saveQuote;
+    }()
+  }, {
+    key: "readOrders",
+    value: function () {
+      var _readOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee137(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, order_list;
+
+        return _regeneratorRuntime().wrap(function _callee137$(_context137) {
+          while (1) {
+            switch (_context137.prev = _context137.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context137.next = 2;
+                  break;
+                }
+
+                return _context137.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context137.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context137.sent;
+
+                if (session) {
+                  _context137.next = 9;
+                  break;
+                }
+
+                return _context137.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'orders']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'orders']; // shared keys, otherwise we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let order_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+
+
+                _context137.next = 12;
+                return this._readClientSideJson(session, keys);
+
+              case 12:
+                order_list = _context137.sent;
+                if (!order_list) order_list = [];
                 return _context137.abrupt("return", order_list);
 
-              case 36:
+              case 15:
               case "end":
                 return _context137.stop();
             }
@@ -7171,17 +6797,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee137, this);
       }));
 
-      function saveOrder(_x424, _x425, _x426) {
-        return _saveOrder.apply(this, arguments);
+      function readOrders(_x422, _x423) {
+        return _readOrders.apply(this, arguments);
       }
 
-      return saveOrder;
+      return readOrders;
     }()
   }, {
-    key: "readInvoices",
+    key: "fetchOrders",
     value: function () {
-      var _readInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee138(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, invoice_list;
+      var _fetchOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee138(sessionuuid, walletuuid, currencyuuid, quotehash) {
+        var global, _apicontrollers, session, wallet, currency, quote, vendor_address, transactions, orderlist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee138$(_context138) {
           while (1) {
@@ -7211,24 +6837,63 @@ var Module = /*#__PURE__*/function () {
                 return _context138.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 9:
-                if (!walletuuid) {
-                  keys = ['myquote', 'invoices']; // shared keys
-                } else {
-                  console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'invoices']; // shared keys, otherwise we could look in wallet
-                  // with mvcmodule.getFromWallet
-                } //let invoice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+                _context138.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
 
+              case 11:
+                wallet = _context138.sent;
+                _context138.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
 
-                _context138.next = 12;
-                return this._readClientSideJson(session, keys);
+              case 14:
+                currency = _context138.sent;
 
-              case 12:
-                invoice_list = _context138.sent;
-                if (!invoice_list) invoice_list = [];
-                return _context138.abrupt("return", invoice_list);
+                if (currency) {
+                  _context138.next = 17;
+                  break;
+                }
 
-              case 15:
+                return _context138.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context138.next = 19;
+                  break;
+                }
+
+                return _context138.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context138.next = 21;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
+
+              case 21:
+                quote = _context138.sent;
+                vendor_address = quote.owner; // use explorer to fetch transactions for vendor's address
+
+                _context138.next = 25;
+                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+
+              case 25:
+                transactions = _context138.sent;
+                // we filter orders
+                orderlist = [];
+
+                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
+                  tx = transactions[i];
+                  dataobject = {};
+
+                  this._fillTransactionDataObject(dataobject, tx);
+
+                  if (dataobject.type == 'order' && dataobject.quote == quotehash) {
+                    //await this.saveOrder(sessionuuid, null, dataobject);
+                    orderlist.push(dataobject);
+                  }
+                }
+
+                return _context138.abrupt("return", orderlist);
+
+              case 29:
               case "end":
                 return _context138.stop();
             }
@@ -7236,17 +6901,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee138, this);
       }));
 
-      function readInvoices(_x427, _x428) {
-        return _readInvoices.apply(this, arguments);
+      function fetchOrders(_x424, _x425, _x426, _x427) {
+        return _fetchOrders.apply(this, arguments);
       }
 
-      return readInvoices;
+      return fetchOrders;
     }()
   }, {
-    key: "fetchInvoices",
+    key: "scanNextBlockForOrders",
     value: function () {
-      var _fetchInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee139(sessionuuid, walletuuid, currencyuuid, orderhash) {
-        var global, _apicontrollers, session, wallet, currency, order, buyer_address, transactions, invoicelist, i, tx, dataobject;
+      var _scanNextBlockForOrders = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee139(sessionuuid, walletuuid, currencyuuid, quotehash, blockshift) {
+        var global, _apicontrollers, session, keys, scan, quote, new_orders, pretradeweb3rurl, childsession, current_blocknumber, start_block_number, last_block_number, ordernum, ethereumnodeaccessmodule, ethereumnodeaccessinstance, blocknumber, block, transactions, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee139$(_context139) {
           while (1) {
@@ -7276,63 +6941,118 @@ var Module = /*#__PURE__*/function () {
                 return _context139.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 9:
-                _context139.next = 11;
-                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+                keys = ['myquote', 'scan', 'orders', quotehash]; //let scan = await _apicontrollers.getLocalJsonLeaf(session, keys);
 
-              case 11:
-                wallet = _context139.sent;
-                _context139.next = 14;
-                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+                _context139.next = 12;
+                return this._readClientSideJson(session, keys);
 
-              case 14:
-                currency = _context139.sent;
+              case 12:
+                scan = _context139.sent;
+                if (!scan) scan = {};
+                _context139.next = 16;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, quotehash);
 
-                if (currency) {
-                  _context139.next = 17;
+              case 16:
+                quote = _context139.sent;
+                new_orders = []; // get a childsession on currency pretrade web3provider
+
+                _context139.next = 20;
+                return this.getPretradeWeb3Url(sessionuuid, currencyuuid);
+
+              case 20:
+                pretradeweb3rurl = _context139.sent;
+                _context139.next = 23;
+                return this._getChildSessionOnWeb3Url(session, pretradeweb3rurl);
+
+              case 23:
+                childsession = _context139.sent;
+                _context139.next = 26;
+                return _apicontrollers.readCurrentBlockNumber(childsession);
+
+              case 26:
+                current_blocknumber = _context139.sent;
+                start_block_number = (scan.last_block_number ? scan.last_block_number : quote.blocknumber) + 1;
+                last_block_number = start_block_number + blockshift < current_blocknumber ? start_block_number + blockshift : current_blocknumber;
+                ordernum = scan.ordernum ? scan.ordernum : 0; // read transactions for each block
+
+                ethereumnodeaccessmodule = global.getModuleObject('ethereum-node-access');
+                ethereumnodeaccessinstance = ethereumnodeaccessmodule.getEthereumNodeAccessInstance(childsession); // TODO: could be better to use
+                // var ethereumnodeaccessinstance = _apicontrollers.getEthereumNodeAccessInstance(childsession);
+
+                blocknumber = start_block_number;
+
+              case 33:
+                if (!(blocknumber < last_block_number + 1)) {
+                  _context139.next = 59;
                   break;
                 }
 
-                return _context139.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+                _context139.next = 36;
+                return new Promise(function (resolve, reject) {
+                  ethereumnodeaccessinstance.web3_getBlock(blocknumber, true, function (err, res) {
+                    if (err) reject(err);else resolve(res);
+                  });
+                })["catch"](function (err) {
+                  console.log('error in scanNextBlockForOrders: ' + err);
+                });
 
-              case 17:
-                if (currency.pretrade_explorer_url) {
-                  _context139.next = 19;
+              case 36:
+                block = _context139.sent;
+                transactions = block.transactions;
+                i = 0;
+
+              case 39:
+                if (!(i < (transactions ? transactions.length : 0))) {
+                  _context139.next = 56;
                   break;
                 }
 
-                return _context139.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+                tx = transactions[i]; // fake ethchainreader
 
-              case 19:
-                _context139.next = 21;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, orderhash);
+                tx.input_decoded_utf8 = ethereumnodeaccessmodule.web3ToUTF8(childsession, tx.input);
+                tx.block = {};
+                tx.block.blocknumber = tx.blockNumber;
+                tx.block.timestamp = tx.timeStamp;
+                dataobject = {};
 
-              case 21:
-                order = _context139.sent;
-                buyer_address = order.owner; // use explorer to fetch transactions for buyer's address
+                this._fillTransactionDataObject(dataobject, tx);
 
-                _context139.next = 25;
-                return this._getAddressPretradeTransactions(session, wallet, currency, buyer_address);
+                console.log('found one transaction at ' + blocknumber);
 
-              case 25:
-                transactions = _context139.sent;
-                // we filter invoices
-                invoicelist = [];
-
-                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
-                  tx = transactions[i];
-                  dataobject = {};
-
-                  this._fillTransactionDataObject(dataobject, tx);
-
-                  if (dataobject.type == 'invoice' && dataobject.order == orderhash) {
-                    //await this.saveInvoice(sessionuuid, null, dataobject);
-                    invoicelist.push(dataobject);
-                  }
+                if (!(dataobject.type == 'order')) {
+                  _context139.next = 53;
+                  break;
                 }
 
-                return _context139.abrupt("return", invoicelist);
+                _context139.next = 51;
+                return this.saveOrder(sessionuuid, null, dataobject);
 
-              case 29:
+              case 51:
+                new_orders.push(dataobject);
+                ordernum++;
+
+              case 53:
+                i++;
+                _context139.next = 39;
+                break;
+
+              case 56:
+                blocknumber++;
+                _context139.next = 33;
+                break;
+
+              case 59:
+                // save where we are
+                scan.last_block_number = last_block_number;
+                scan.ordernum = ordernum; //await _apicontrollers.saveLocalJson(session, keys, scan);
+
+                _context139.next = 63;
+                return this._saveClientSideJson(session, keys, scan);
+
+              case 63:
+                return _context139.abrupt("return", new_orders);
+
+              case 64:
               case "end":
                 return _context139.stop();
             }
@@ -7340,17 +7060,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee139, this);
       }));
 
-      function fetchInvoices(_x429, _x430, _x431, _x432) {
-        return _fetchInvoices.apply(this, arguments);
+      function scanNextBlockForOrders(_x428, _x429, _x430, _x431, _x432) {
+        return _scanNextBlockForOrders.apply(this, arguments);
       }
 
-      return fetchInvoices;
+      return scanNextBlockForOrders;
     }()
   }, {
-    key: "saveInvoice",
+    key: "saveOrder",
     value: function () {
-      var _saveInvoice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee140(sessionuuid, walletuuid, invoice) {
-        var global, _apicontrollers, invoice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, order, amount, currency, pretradescheme_info, orderobject, quoteobject, title, keys, localjson;
+      var _saveOrder = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee140(sessionuuid, walletuuid, order) {
+        var global, _apicontrollers, order_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, quote, amount, currency, hadfunds, pretradescheme_info, quoteobject, title, keys, localjson;
 
         return _regeneratorRuntime().wrap(function _callee140$(_context140) {
           while (1) {
@@ -7359,20 +7079,20 @@ var Module = /*#__PURE__*/function () {
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
                 _context140.next = 4;
-                return this.readInvoices(sessionuuid, walletuuid);
+                return this.readOrders(sessionuuid, walletuuid);
 
               case 4:
-                invoice_list = _context140.sent;
+                order_list = _context140.sent;
                 bInList = false;
                 i = 0;
 
               case 7:
-                if (!(i < invoice_list.length)) {
+                if (!(i < order_list.length)) {
                   _context140.next = 14;
                   break;
                 }
 
-                if (!(invoice_list[i].txhash == invoice.txhash)) {
+                if (!(order_list[i].txhash == order.txhash)) {
                   _context140.next = 11;
                   break;
                 }
@@ -7387,7 +7107,7 @@ var Module = /*#__PURE__*/function () {
 
               case 14:
                 if (bInList) {
-                  _context140.next = 38;
+                  _context140.next = 35;
                   break;
                 }
 
@@ -7405,8 +7125,8 @@ var Module = /*#__PURE__*/function () {
                 return _context140.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 20:
-                // invoice parameters
-                txhash = invoice.txhash, blocknumber = invoice.blocknumber, currencyuuid = invoice.currencyuuid, owner = invoice.owner, order = invoice.order, amount = invoice.amount, currency = invoice.currency; // read order and quote to get title
+                // order parameters
+                txhash = order.txhash, blocknumber = order.blocknumber, currencyuuid = order.currencyuuid, owner = order.owner, quote = order.quote, amount = order.amount, currency = order.currency, hadfunds = order.hadfunds; // read quote to get title
 
                 _context140.next = 23;
                 return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
@@ -7414,22 +7134,17 @@ var Module = /*#__PURE__*/function () {
               case 23:
                 pretradescheme_info = _context140.sent;
                 _context140.next = 26;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, order)["catch"](function (err) {});
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, quote)["catch"](function (err) {});
 
               case 26:
-                orderobject = _context140.sent;
-                _context140.next = 29;
-                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
-
-              case 29:
                 quoteobject = _context140.sent;
                 title = quoteobject ? quoteobject.title : null;
 
                 if (!walletuuid) {
-                  keys = ['myquote', 'invoices']; // shared keys
+                  keys = ['myquote', 'orders']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'invoices']; // shared keys, also we could put in wallet
+                  keys = ['myquote', 'orders']; // shared keys, also we could put in wallet
                   // with mvcmodule.putInWallet
                 }
 
@@ -7438,20 +7153,21 @@ var Module = /*#__PURE__*/function () {
                   blocknumber: blocknumber,
                   currencyuuid: currencyuuid,
                   owner: owner,
-                  order: order,
+                  quote: quote,
                   title: title,
                   amount: amount,
-                  currency: currency
+                  currency: currency,
+                  hadfunds: hadfunds
                 };
                 localjson.savetime = Date.now();
-                invoice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, invoice_list);
+                order_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, order_list);
 
-                return _context140.abrupt("return", this._saveClientSideJson(session, keys, invoice_list));
+                return _context140.abrupt("return", this._saveClientSideJson(session, keys, order_list));
 
-              case 38:
-                return _context140.abrupt("return", invoice_list);
+              case 35:
+                return _context140.abrupt("return", order_list);
 
-              case 39:
+              case 36:
               case "end":
                 return _context140.stop();
             }
@@ -7459,17 +7175,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee140, this);
       }));
 
-      function saveInvoice(_x433, _x434, _x435) {
-        return _saveInvoice.apply(this, arguments);
+      function saveOrder(_x433, _x434, _x435) {
+        return _saveOrder.apply(this, arguments);
       }
 
-      return saveInvoice;
+      return saveOrder;
     }()
   }, {
-    key: "readPaymentNotices",
+    key: "readInvoices",
     value: function () {
-      var _readPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee141(sessionuuid, walletuuid) {
-        var global, _apicontrollers, session, keys, paymentnotice_list;
+      var _readInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee141(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, invoice_list;
 
         return _regeneratorRuntime().wrap(function _callee141$(_context141) {
           while (1) {
@@ -7500,21 +7216,21 @@ var Module = /*#__PURE__*/function () {
 
               case 9:
                 if (!walletuuid) {
-                  keys = ['myquote', 'paymentnotices']; // shared keys
+                  keys = ['myquote', 'invoices']; // shared keys
                 } else {
                   console.log('WARNING: walletuuid specific case not implemented!!!');
-                  keys = ['myquote', 'paymentnotices']; // shared keys, otherwise we could look in wallet
+                  keys = ['myquote', 'invoices']; // shared keys, otherwise we could look in wallet
                   // with mvcmodule.getFromWallet
-                } //let paymentnotice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+                } //let invoice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
 
 
                 _context141.next = 12;
                 return this._readClientSideJson(session, keys);
 
               case 12:
-                paymentnotice_list = _context141.sent;
-                if (!paymentnotice_list) paymentnotice_list = [];
-                return _context141.abrupt("return", paymentnotice_list);
+                invoice_list = _context141.sent;
+                if (!invoice_list) invoice_list = [];
+                return _context141.abrupt("return", invoice_list);
 
               case 15:
               case "end":
@@ -7524,17 +7240,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee141, this);
       }));
 
-      function readPaymentNotices(_x436, _x437) {
-        return _readPaymentNotices.apply(this, arguments);
+      function readInvoices(_x436, _x437) {
+        return _readInvoices.apply(this, arguments);
       }
 
-      return readPaymentNotices;
+      return readInvoices;
     }()
   }, {
-    key: "fetchPaymentNotices",
+    key: "fetchInvoices",
     value: function () {
-      var _fetchPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee142(sessionuuid, walletuuid, currencyuuid, invoicehash) {
-        var global, _apicontrollers, session, wallet, currency, invoice, vendor_address, transactions, paymentnoticelist, i, tx, dataobject;
+      var _fetchInvoices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee142(sessionuuid, walletuuid, currencyuuid, orderhash) {
+        var global, _apicontrollers, session, wallet, currency, order, buyer_address, transactions, invoicelist, i, tx, dataobject;
 
         return _regeneratorRuntime().wrap(function _callee142$(_context142) {
           while (1) {
@@ -7592,19 +7308,19 @@ var Module = /*#__PURE__*/function () {
 
               case 19:
                 _context142.next = 21;
-                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, invoicehash);
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, orderhash);
 
               case 21:
-                invoice = _context142.sent;
-                vendor_address = invoice.owner; // use explorer to fetch transactions for vendor's address
+                order = _context142.sent;
+                buyer_address = order.owner; // use explorer to fetch transactions for buyer's address
 
                 _context142.next = 25;
-                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+                return this._getAddressPretradeTransactions(session, wallet, currency, buyer_address);
 
               case 25:
                 transactions = _context142.sent;
-                // we filter payment notices
-                paymentnoticelist = [];
+                // we filter invoices
+                invoicelist = [];
 
                 for (i = 0; i < (transactions ? transactions.length : 0); i++) {
                   tx = transactions[i];
@@ -7612,13 +7328,13 @@ var Module = /*#__PURE__*/function () {
 
                   this._fillTransactionDataObject(dataobject, tx);
 
-                  if (dataobject.type == 'paymentnotice' && dataobject.invoice == invoicehash) {
-                    //await this.savePaymentNotice(sessionuuid, null, dataobject);
-                    paymentnoticelist.push(dataobject);
+                  if (dataobject.type == 'invoice' && dataobject.order == orderhash) {
+                    //await this.saveInvoice(sessionuuid, null, dataobject);
+                    invoicelist.push(dataobject);
                   }
                 }
 
-                return _context142.abrupt("return", paymentnoticelist);
+                return _context142.abrupt("return", invoicelist);
 
               case 29:
               case "end":
@@ -7628,17 +7344,17 @@ var Module = /*#__PURE__*/function () {
         }, _callee142, this);
       }));
 
-      function fetchPaymentNotices(_x438, _x439, _x440, _x441) {
-        return _fetchPaymentNotices.apply(this, arguments);
+      function fetchInvoices(_x438, _x439, _x440, _x441) {
+        return _fetchInvoices.apply(this, arguments);
       }
 
-      return fetchPaymentNotices;
+      return fetchInvoices;
     }()
   }, {
-    key: "savePaymentNotice",
+    key: "saveInvoice",
     value: function () {
-      var _savePaymentNotice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee143(sessionuuid, walletuuid, paymentnotice) {
-        var global, _apicontrollers, paymentnotice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, invoice, amount, currency, pretradescheme_info, invoiceobject, orderobject, quoteobject, title, keys, localjson;
+      var _saveInvoice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee143(sessionuuid, walletuuid, invoice) {
+        var global, _apicontrollers, invoice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, order, amount, currency, pretradescheme_info, orderobject, quoteobject, title, keys, localjson;
 
         return _regeneratorRuntime().wrap(function _callee143$(_context143) {
           while (1) {
@@ -7647,20 +7363,20 @@ var Module = /*#__PURE__*/function () {
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
                 _context143.next = 4;
-                return this.readPaymentNotices(sessionuuid, walletuuid);
+                return this.readInvoices(sessionuuid, walletuuid);
 
               case 4:
-                paymentnotice_list = _context143.sent;
+                invoice_list = _context143.sent;
                 bInList = false;
                 i = 0;
 
               case 7:
-                if (!(i < paymentnotice_list.length)) {
+                if (!(i < invoice_list.length)) {
                   _context143.next = 14;
                   break;
                 }
 
-                if (!(paymentnotice_list[i].txhash == paymentnotice.txhash)) {
+                if (!(invoice_list[i].txhash == invoice.txhash)) {
                   _context143.next = 11;
                   break;
                 }
@@ -7675,7 +7391,7 @@ var Module = /*#__PURE__*/function () {
 
               case 14:
                 if (bInList) {
-                  _context143.next = 41;
+                  _context143.next = 38;
                   break;
                 }
 
@@ -7693,8 +7409,8 @@ var Module = /*#__PURE__*/function () {
                 return _context143.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 20:
-                // paymentnotice parameters
-                txhash = paymentnotice.txhash, blocknumber = paymentnotice.blocknumber, currencyuuid = paymentnotice.currencyuuid, owner = paymentnotice.owner, invoice = paymentnotice.invoice, amount = paymentnotice.amount, currency = paymentnotice.currency; // read invoice, order and quote to get title
+                // invoice parameters
+                txhash = invoice.txhash, blocknumber = invoice.blocknumber, currencyuuid = invoice.currencyuuid, owner = invoice.owner, order = invoice.order, amount = invoice.amount, currency = invoice.currency; // read order and quote to get title
 
                 _context143.next = 23;
                 return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
@@ -7702,20 +7418,308 @@ var Module = /*#__PURE__*/function () {
               case 23:
                 pretradescheme_info = _context143.sent;
                 _context143.next = 26;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, order)["catch"](function (err) {});
+
+              case 26:
+                orderobject = _context143.sent;
+                _context143.next = 29;
+                return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
+
+              case 29:
+                quoteobject = _context143.sent;
+                title = quoteobject ? quoteobject.title : null;
+
+                if (!walletuuid) {
+                  keys = ['myquote', 'invoices']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'invoices']; // shared keys, also we could put in wallet
+                  // with mvcmodule.putInWallet
+                }
+
+                localjson = {
+                  txhash: txhash,
+                  blocknumber: blocknumber,
+                  currencyuuid: currencyuuid,
+                  owner: owner,
+                  order: order,
+                  title: title,
+                  amount: amount,
+                  currency: currency
+                };
+                localjson.savetime = Date.now();
+                invoice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, invoice_list);
+
+                return _context143.abrupt("return", this._saveClientSideJson(session, keys, invoice_list));
+
+              case 38:
+                return _context143.abrupt("return", invoice_list);
+
+              case 39:
+              case "end":
+                return _context143.stop();
+            }
+          }
+        }, _callee143, this);
+      }));
+
+      function saveInvoice(_x442, _x443, _x444) {
+        return _saveInvoice.apply(this, arguments);
+      }
+
+      return saveInvoice;
+    }()
+  }, {
+    key: "readPaymentNotices",
+    value: function () {
+      var _readPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee144(sessionuuid, walletuuid) {
+        var global, _apicontrollers, session, keys, paymentnotice_list;
+
+        return _regeneratorRuntime().wrap(function _callee144$(_context144) {
+          while (1) {
+            switch (_context144.prev = _context144.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context144.next = 2;
+                  break;
+                }
+
+                return _context144.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context144.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context144.sent;
+
+                if (session) {
+                  _context144.next = 9;
+                  break;
+                }
+
+                return _context144.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                if (!walletuuid) {
+                  keys = ['myquote', 'paymentnotices']; // shared keys
+                } else {
+                  console.log('WARNING: walletuuid specific case not implemented!!!');
+                  keys = ['myquote', 'paymentnotices']; // shared keys, otherwise we could look in wallet
+                  // with mvcmodule.getFromWallet
+                } //let paymentnotice_list = await _apicontrollers.getLocalJsonLeaf(session, keys, true);
+
+
+                _context144.next = 12;
+                return this._readClientSideJson(session, keys);
+
+              case 12:
+                paymentnotice_list = _context144.sent;
+                if (!paymentnotice_list) paymentnotice_list = [];
+                return _context144.abrupt("return", paymentnotice_list);
+
+              case 15:
+              case "end":
+                return _context144.stop();
+            }
+          }
+        }, _callee144, this);
+      }));
+
+      function readPaymentNotices(_x445, _x446) {
+        return _readPaymentNotices.apply(this, arguments);
+      }
+
+      return readPaymentNotices;
+    }()
+  }, {
+    key: "fetchPaymentNotices",
+    value: function () {
+      var _fetchPaymentNotices = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee145(sessionuuid, walletuuid, currencyuuid, invoicehash) {
+        var global, _apicontrollers, session, wallet, currency, invoice, vendor_address, transactions, paymentnoticelist, i, tx, dataobject;
+
+        return _regeneratorRuntime().wrap(function _callee145$(_context145) {
+          while (1) {
+            switch (_context145.prev = _context145.next) {
+              case 0:
+                if (sessionuuid) {
+                  _context145.next = 2;
+                  break;
+                }
+
+                return _context145.abrupt("return", Promise.reject('session uuid is undefined'));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context145.next = 6;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 6:
+                session = _context145.sent;
+
+                if (session) {
+                  _context145.next = 9;
+                  break;
+                }
+
+                return _context145.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 9:
+                _context145.next = 11;
+                return _apicontrollers.getWalletFromUUID(session, walletuuid)["catch"](function (err) {});
+
+              case 11:
+                wallet = _context145.sent;
+                _context145.next = 14;
+                return this.getCurrencyFromUUID(sessionuuid, currencyuuid);
+
+              case 14:
+                currency = _context145.sent;
+
+                if (currency) {
+                  _context145.next = 17;
+                  break;
+                }
+
+                return _context145.abrupt("return", Promise.reject('could not find currency ' + currencyuuid));
+
+              case 17:
+                if (currency.pretrade_explorer_url) {
+                  _context145.next = 19;
+                  break;
+                }
+
+                return _context145.abrupt("return", Promise.reject('no explorer for currency ' + currencyuuid));
+
+              case 19:
+                _context145.next = 21;
+                return this.fetchCurrencyTransaction(sessionuuid, walletuuid, currencyuuid, invoicehash);
+
+              case 21:
+                invoice = _context145.sent;
+                vendor_address = invoice.owner; // use explorer to fetch transactions for vendor's address
+
+                _context145.next = 25;
+                return this._getAddressPretradeTransactions(session, wallet, currency, vendor_address);
+
+              case 25:
+                transactions = _context145.sent;
+                // we filter payment notices
+                paymentnoticelist = [];
+
+                for (i = 0; i < (transactions ? transactions.length : 0); i++) {
+                  tx = transactions[i];
+                  dataobject = {};
+
+                  this._fillTransactionDataObject(dataobject, tx);
+
+                  if (dataobject.type == 'paymentnotice' && dataobject.invoice == invoicehash) {
+                    //await this.savePaymentNotice(sessionuuid, null, dataobject);
+                    paymentnoticelist.push(dataobject);
+                  }
+                }
+
+                return _context145.abrupt("return", paymentnoticelist);
+
+              case 29:
+              case "end":
+                return _context145.stop();
+            }
+          }
+        }, _callee145, this);
+      }));
+
+      function fetchPaymentNotices(_x447, _x448, _x449, _x450) {
+        return _fetchPaymentNotices.apply(this, arguments);
+      }
+
+      return fetchPaymentNotices;
+    }()
+  }, {
+    key: "savePaymentNotice",
+    value: function () {
+      var _savePaymentNotice = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee146(sessionuuid, walletuuid, paymentnotice) {
+        var global, _apicontrollers, paymentnotice_list, bInList, i, session, txhash, blocknumber, currencyuuid, owner, invoice, amount, currency, pretradescheme_info, invoiceobject, orderobject, quoteobject, title, keys, localjson;
+
+        return _regeneratorRuntime().wrap(function _callee146$(_context146) {
+          while (1) {
+            switch (_context146.prev = _context146.next) {
+              case 0:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+                _context146.next = 4;
+                return this.readPaymentNotices(sessionuuid, walletuuid);
+
+              case 4:
+                paymentnotice_list = _context146.sent;
+                bInList = false;
+                i = 0;
+
+              case 7:
+                if (!(i < paymentnotice_list.length)) {
+                  _context146.next = 14;
+                  break;
+                }
+
+                if (!(paymentnotice_list[i].txhash == paymentnotice.txhash)) {
+                  _context146.next = 11;
+                  break;
+                }
+
+                bInList = true;
+                return _context146.abrupt("break", 14);
+
+              case 11:
+                i++;
+                _context146.next = 7;
+                break;
+
+              case 14:
+                if (bInList) {
+                  _context146.next = 41;
+                  break;
+                }
+
+                _context146.next = 17;
+                return _apicontrollers.getSessionObject(sessionuuid);
+
+              case 17:
+                session = _context146.sent;
+
+                if (session) {
+                  _context146.next = 20;
+                  break;
+                }
+
+                return _context146.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+
+              case 20:
+                // paymentnotice parameters
+                txhash = paymentnotice.txhash, blocknumber = paymentnotice.blocknumber, currencyuuid = paymentnotice.currencyuuid, owner = paymentnotice.owner, invoice = paymentnotice.invoice, amount = paymentnotice.amount, currency = paymentnotice.currency; // read invoice, order and quote to get title
+
+                _context146.next = 23;
+                return this.getPretradeSchemeInfo(sessionuuid, currencyuuid);
+
+              case 23:
+                pretradescheme_info = _context146.sent;
+                _context146.next = 26;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, invoice)["catch"](function (err) {});
 
               case 26:
-                invoiceobject = _context143.sent;
-                _context143.next = 29;
+                invoiceobject = _context146.sent;
+                _context146.next = 29;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, invoiceobject.order)["catch"](function (err) {});
 
               case 29:
-                orderobject = _context143.sent;
-                _context143.next = 32;
+                orderobject = _context146.sent;
+                _context146.next = 32;
                 return this.fetchTransaction(sessionuuid, walletuuid, pretradescheme_info.uuid, orderobject.quote)["catch"](function (err) {});
 
               case 32:
-                quoteobject = _context143.sent;
+                quoteobject = _context146.sent;
                 title = quoteobject ? quoteobject.title : null;
 
                 if (!walletuuid) {
@@ -7739,20 +7743,20 @@ var Module = /*#__PURE__*/function () {
                 localjson.savetime = Date.now();
                 paymentnotice_list.push(localjson); //return _apicontrollers.saveLocalJson(session, keys, paymentnotice_list);
 
-                return _context143.abrupt("return", this._saveClientSideJson(session, keys, paymentnotice_list));
+                return _context146.abrupt("return", this._saveClientSideJson(session, keys, paymentnotice_list));
 
               case 41:
-                return _context143.abrupt("return", paymentnotice_list);
+                return _context146.abrupt("return", paymentnotice_list);
 
               case 42:
               case "end":
-                return _context143.stop();
+                return _context146.stop();
             }
           }
-        }, _callee143, this);
+        }, _callee146, this);
       }));
 
-      function savePaymentNotice(_x442, _x443, _x444) {
+      function savePaymentNotice(_x451, _x452, _x453) {
         return _savePaymentNotice.apply(this, arguments);
       }
 
@@ -7761,53 +7765,53 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "_saveTransactionObject",
     value: function () {
-      var _saveTransactionObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee144(sessionuuid, walletuuid, tx) {
-        return _regeneratorRuntime().wrap(function _callee144$(_context144) {
+      var _saveTransactionObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee147(sessionuuid, walletuuid, tx) {
+        return _regeneratorRuntime().wrap(function _callee147$(_context147) {
           while (1) {
-            switch (_context144.prev = _context144.next) {
+            switch (_context147.prev = _context147.next) {
               case 0:
                 if (tx) {
-                  _context144.next = 2;
+                  _context147.next = 2;
                   break;
                 }
 
-                return _context144.abrupt("return");
+                return _context147.abrupt("return");
 
               case 2:
-                _context144.t0 = tx.type;
-                _context144.next = _context144.t0 === 'bounty' ? 5 : _context144.t0 === 'claim' ? 6 : _context144.t0 === 'quote' ? 7 : _context144.t0 === 'order' ? 8 : _context144.t0 === 'invoice' ? 9 : _context144.t0 === 'paymentnotice' ? 10 : 11;
+                _context147.t0 = tx.type;
+                _context147.next = _context147.t0 === 'bounty' ? 5 : _context147.t0 === 'claim' ? 6 : _context147.t0 === 'quote' ? 7 : _context147.t0 === 'order' ? 8 : _context147.t0 === 'invoice' ? 9 : _context147.t0 === 'paymentnotice' ? 10 : 11;
                 break;
 
               case 5:
-                return _context144.abrupt("return", this.saveBounty(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.saveBounty(sessionuuid, walletuuid, tx));
 
               case 6:
-                return _context144.abrupt("return", this.saveClaim(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.saveClaim(sessionuuid, walletuuid, tx));
 
               case 7:
-                return _context144.abrupt("return", this.saveQuote(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.saveQuote(sessionuuid, walletuuid, tx));
 
               case 8:
-                return _context144.abrupt("return", this.saveOrder(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.saveOrder(sessionuuid, walletuuid, tx));
 
               case 9:
-                return _context144.abrupt("return", this.saveInvoice(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.saveInvoice(sessionuuid, walletuuid, tx));
 
               case 10:
-                return _context144.abrupt("return", this.savePaymentNotice(sessionuuid, walletuuid, tx));
+                return _context147.abrupt("return", this.savePaymentNotice(sessionuuid, walletuuid, tx));
 
               case 11:
-                return _context144.abrupt("break", 12);
+                return _context147.abrupt("break", 12);
 
               case 12:
               case "end":
-                return _context144.stop();
+                return _context147.stop();
             }
           }
-        }, _callee144, this);
+        }, _callee147, this);
       }));
 
-      function _saveTransactionObject(_x445, _x446, _x447) {
+      function _saveTransactionObject(_x454, _x455, _x456) {
         return _saveTransactionObject2.apply(this, arguments);
       }
 
@@ -7819,25 +7823,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getPriceForCreditUnits",
     value: function () {
-      var _getPriceForCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee145(sessionuuid, currencyuuid, creditunits) {
+      var _getPriceForCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee148(sessionuuid, currencyuuid, creditunits) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee145$(_context145) {
+        return _regeneratorRuntime().wrap(function _callee148$(_context148) {
           while (1) {
-            switch (_context145.prev = _context145.next) {
+            switch (_context148.prev = _context148.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context145.abrupt("return", mvccurrencies.getPriceForCreditUnits(sessionuuid, currencyuuid, creditunits));
+                return _context148.abrupt("return", mvccurrencies.getPriceForCreditUnits(sessionuuid, currencyuuid, creditunits));
 
               case 3:
               case "end":
-                return _context145.stop();
+                return _context148.stop();
             }
           }
-        }, _callee145, this);
+        }, _callee148, this);
       }));
 
-      function getPriceForCreditUnits(_x448, _x449, _x450) {
+      function getPriceForCreditUnits(_x457, _x458, _x459) {
         return _getPriceForCreditUnits.apply(this, arguments);
       }
 
@@ -7846,29 +7850,29 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "buyCreditUnits",
     value: function () {
-      var _buyCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee146(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits) {
+      var _buyCreditUnits = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee149(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits) {
         var feelevel,
             global,
             mvccurrencies,
-            _args146 = arguments;
-        return _regeneratorRuntime().wrap(function _callee146$(_context146) {
+            _args149 = arguments;
+        return _regeneratorRuntime().wrap(function _callee149$(_context149) {
           while (1) {
-            switch (_context146.prev = _context146.next) {
+            switch (_context149.prev = _context149.next) {
               case 0:
-                feelevel = _args146.length > 5 && _args146[5] !== undefined ? _args146[5] : null;
+                feelevel = _args149.length > 5 && _args149[5] !== undefined ? _args149[5] : null;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context146.abrupt("return", mvccurrencies.buyCreditUnits(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits, feelevel));
+                return _context149.abrupt("return", mvccurrencies.buyCreditUnits(sessionuuid, walletuuid, carduuid, currencyuuid, creditunits, feelevel));
 
               case 4:
               case "end":
-                return _context146.stop();
+                return _context149.stop();
             }
           }
-        }, _callee146, this);
+        }, _callee149, this);
       }));
 
-      function buyCreditUnits(_x451, _x452, _x453, _x454, _x455) {
+      function buyCreditUnits(_x460, _x461, _x462, _x463, _x464) {
         return _buyCreditUnits.apply(this, arguments);
       }
 
@@ -7887,73 +7891,73 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "formatTokenAmountAsync",
     value: function () {
-      var _formatTokenAmountAsync = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee147(sessionuuid, amount, token, options) {
+      var _formatTokenAmountAsync = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee150(sessionuuid, amount, token, options) {
         var global, _apicontrollers, session, decimals, symbol, tokenamountdec, tokenamountstring, currencyamountstring;
 
-        return _regeneratorRuntime().wrap(function _callee147$(_context147) {
+        return _regeneratorRuntime().wrap(function _callee150$(_context150) {
           while (1) {
-            switch (_context147.prev = _context147.next) {
+            switch (_context150.prev = _context150.next) {
               case 0:
                 if (amount) {
-                  _context147.next = 2;
+                  _context150.next = 2;
                   break;
                 }
 
-                return _context147.abrupt("return");
+                return _context150.abrupt("return");
 
               case 2:
                 if (sessionuuid) {
-                  _context147.next = 4;
+                  _context150.next = 4;
                   break;
                 }
 
-                return _context147.abrupt("return", Promise.reject('session uuid is undefined'));
+                return _context150.abrupt("return", Promise.reject('session uuid is undefined'));
 
               case 4:
                 global = this.global;
                 _apicontrollers = this._getClientAPI();
-                _context147.next = 8;
+                _context150.next = 8;
                 return _apicontrollers.getSessionObject(sessionuuid);
 
               case 8:
-                session = _context147.sent;
+                session = _context150.sent;
 
                 if (session) {
-                  _context147.next = 11;
+                  _context150.next = 11;
                   break;
                 }
 
-                return _context147.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
+                return _context150.abrupt("return", Promise.reject('could not find session ' + sessionuuid));
 
               case 11:
                 decimals = token.decimals;
                 symbol = token.symbol;
-                _context147.next = 15;
+                _context150.next = 15;
                 return this._createDecimalAmountFromTokenAmount(session, amount, decimals);
 
               case 15:
-                tokenamountdec = _context147.sent;
-                _context147.next = 18;
+                tokenamountdec = _context150.sent;
+                _context150.next = 18;
                 return tokenamountdec.toString();
 
               case 18:
-                tokenamountstring = _context147.sent;
-                _context147.next = 21;
+                tokenamountstring = _context150.sent;
+                _context150.next = 21;
                 return this._formatMonetaryAmountString(session, tokenamountstring, symbol, decimals, options);
 
               case 21:
-                currencyamountstring = _context147.sent;
-                return _context147.abrupt("return", currencyamountstring);
+                currencyamountstring = _context150.sent;
+                return _context150.abrupt("return", currencyamountstring);
 
               case 23:
               case "end":
-                return _context147.stop();
+                return _context150.stop();
             }
           }
-        }, _callee147, this);
+        }, _callee150, this);
       }));
 
-      function formatTokenAmountAsync(_x456, _x457, _x458, _x459) {
+      function formatTokenAmountAsync(_x465, _x466, _x467, _x468) {
         return _formatTokenAmountAsync.apply(this, arguments);
       }
 
@@ -7962,29 +7966,29 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getDecimalAmount",
     value: function () {
-      var _getDecimalAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee148(sessionuuid, amount) {
+      var _getDecimalAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee151(sessionuuid, amount) {
         var decimals,
             global,
             mvccurrencies,
-            _args148 = arguments;
-        return _regeneratorRuntime().wrap(function _callee148$(_context148) {
+            _args151 = arguments;
+        return _regeneratorRuntime().wrap(function _callee151$(_context151) {
           while (1) {
-            switch (_context148.prev = _context148.next) {
+            switch (_context151.prev = _context151.next) {
               case 0:
-                decimals = _args148.length > 2 && _args148[2] !== undefined ? _args148[2] : 18;
+                decimals = _args151.length > 2 && _args151[2] !== undefined ? _args151[2] : 18;
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context148.abrupt("return", mvccurrencies.getDecimalAmount(sessionuuid, amount, decimals));
+                return _context151.abrupt("return", mvccurrencies.getDecimalAmount(sessionuuid, amount, decimals));
 
               case 4:
               case "end":
-                return _context148.stop();
+                return _context151.stop();
             }
           }
-        }, _callee148, this);
+        }, _callee151, this);
       }));
 
-      function getDecimalAmount(_x460, _x461) {
+      function getDecimalAmount(_x469, _x470) {
         return _getDecimalAmount.apply(this, arguments);
       }
 
@@ -7993,25 +7997,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "getCurrencyAmount",
     value: function () {
-      var _getCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee149(sessionuuid, currencyuuid, amount) {
+      var _getCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee152(sessionuuid, currencyuuid, amount) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee149$(_context149) {
+        return _regeneratorRuntime().wrap(function _callee152$(_context152) {
           while (1) {
-            switch (_context149.prev = _context149.next) {
+            switch (_context152.prev = _context152.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context149.abrupt("return", mvccurrencies.getCurrencyAmount(sessionuuid, currencyuuid, amount));
+                return _context152.abrupt("return", mvccurrencies.getCurrencyAmount(sessionuuid, currencyuuid, amount));
 
               case 3:
               case "end":
-                return _context149.stop();
+                return _context152.stop();
             }
           }
-        }, _callee149, this);
+        }, _callee152, this);
       }));
 
-      function getCurrencyAmount(_x462, _x463, _x464) {
+      function getCurrencyAmount(_x471, _x472, _x473) {
         return _getCurrencyAmount.apply(this, arguments);
       }
 
@@ -8020,25 +8024,25 @@ var Module = /*#__PURE__*/function () {
   }, {
     key: "formatCurrencyAmount",
     value: function () {
-      var _formatCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee150(sessionuuid, currencyuuid, currencyamount, options) {
+      var _formatCurrencyAmount = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee153(sessionuuid, currencyuuid, currencyamount, options) {
         var global, mvccurrencies;
-        return _regeneratorRuntime().wrap(function _callee150$(_context150) {
+        return _regeneratorRuntime().wrap(function _callee153$(_context153) {
           while (1) {
-            switch (_context150.prev = _context150.next) {
+            switch (_context153.prev = _context153.next) {
               case 0:
                 global = this.global;
                 mvccurrencies = global.getModuleObject('mvc-currencies');
-                return _context150.abrupt("return", mvccurrencies.formatCurrencyAmount(sessionuuid, currencyuuid, currencyamount, options));
+                return _context153.abrupt("return", mvccurrencies.formatCurrencyAmount(sessionuuid, currencyuuid, currencyamount, options));
 
               case 3:
               case "end":
-                return _context150.stop();
+                return _context153.stop();
             }
           }
-        }, _callee150, this);
+        }, _callee153, this);
       }));
 
-      function formatCurrencyAmount(_x465, _x466, _x467, _x468) {
+      function formatCurrencyAmount(_x474, _x475, _x476, _x477) {
         return _formatCurrencyAmount.apply(this, arguments);
       }
 

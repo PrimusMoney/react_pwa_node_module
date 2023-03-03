@@ -19,6 +19,7 @@ var Module = /*#__PURE__*/function () {
     _classCallCheck(this, Module);
 
     this.name = 'ethnode-currencies';
+    this.current_version = "standard";
     this.global = null; // put by global on registration
 
     this.isready = false;
@@ -442,7 +443,7 @@ var Module = /*#__PURE__*/function () {
                 global = this.global;
                 currenciesmodule = global.getModuleObject('currencies');
                 _context5.next = 4;
-                return currenciesmodule._createDummyWalletSession(walletsession);
+                return currenciesmodule._createDummyProxySession(walletsession);
 
               case 4:
                 fetchsession = _context5.sent;
@@ -613,12 +614,12 @@ var Module = /*#__PURE__*/function () {
 
               case 6:
                 if (!scheme.isRemote()) {
-                  _context8.next = 33;
+                  _context8.next = 34;
                   break;
                 }
 
                 if (!wallet) {
-                  _context8.next = 30;
+                  _context8.next = 31;
                   break;
                 }
 
@@ -626,7 +627,7 @@ var Module = /*#__PURE__*/function () {
                 schemeuuid = scheme.getSchemeUUID();
 
                 if (!this._canWalletHandleScheme(wallet, scheme)) {
-                  _context8.next = 27;
+                  _context8.next = 28;
                   break;
                 }
 
@@ -636,7 +637,7 @@ var Module = /*#__PURE__*/function () {
                 fetchsession = currencysessionmap[currency.uuid];
 
                 if (fetchsession) {
-                  _context8.next = 25;
+                  _context8.next = 26;
                   break;
                 }
 
@@ -646,59 +647,60 @@ var Module = /*#__PURE__*/function () {
               case 17:
                 fetchsession = _context8.sent;
                 fetchsession.DUMMY_SESSION_CURRENCY = currency;
+                fetchsession.DUMMY_SESSION_WALLET = wallet;
                 currencysessionmap[currency.uuid] = fetchsession;
-                _context8.next = 22;
+                _context8.next = 23;
                 return this.getCurrencyEthNodeServer(session, currency);
 
-              case 22:
+              case 23:
                 ethnodeserver = _context8.sent;
-                _context8.next = 25;
+                _context8.next = 26;
                 return this._setMonitoredEthereumNodeAccess(fetchsession, ethnodeserver);
 
-              case 25:
-                _context8.next = 28;
+              case 26:
+                _context8.next = 29;
                 break;
-
-              case 27:
-                return _context8.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
 
               case 28:
-                _context8.next = 31;
-                break;
-
-              case 30:
                 return _context8.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
 
-              case 31:
-                _context8.next = 43;
+              case 29:
+                _context8.next = 32;
                 break;
 
-              case 33:
+              case 31:
+                return _context8.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+
+              case 32:
+                _context8.next = 44;
+                break;
+
+              case 34:
                 if (!wallet) {
-                  _context8.next = 40;
+                  _context8.next = 41;
                   break;
                 }
 
                 walletsession = wallet._getSession();
-                _context8.next = 37;
+                _context8.next = 38;
                 return this._getChildSessionOnCurrency(walletsession, currency);
 
-              case 37:
+              case 38:
                 fetchsession = _context8.sent;
-                _context8.next = 43;
+                _context8.next = 44;
                 break;
 
-              case 40:
-                _context8.next = 42;
+              case 41:
+                _context8.next = 43;
                 return this._getChildSessionOnCurrency(session, currency);
 
-              case 42:
+              case 43:
                 fetchsession = _context8.sent;
 
-              case 43:
+              case 44:
                 return _context8.abrupt("return", fetchsession);
 
-              case 44:
+              case 45:
               case "end":
                 return _context8.stop();
             }
@@ -711,6 +713,299 @@ var Module = /*#__PURE__*/function () {
       }
 
       return _getMonitoredCurrencySession;
+    }()
+  }, {
+    key: "_canCardHandleScheme",
+    value: function _canCardHandleScheme(card, scheme) {
+      if (!card || !scheme) return false;
+
+      if (scheme.isRemote()) {
+        var cardschemeuuid = card.getSchemeUUID(); // TODO: we could look if authserver are the same
+
+        if (cardschemeuuid && cardschemeuuid === scheme.getSchemeUUID()) return true;else return false;
+      } else {
+        return true;
+      }
+    }
+  }, {
+    key: "_createDummyCardSession",
+    value: function () {
+      var _createDummyCardSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(cardsession) {
+        var global, currenciesmodule, dummysession, ethnodemodule, erc20module;
+        return _regeneratorRuntime().wrap(function _callee9$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                global = this.global;
+                currenciesmodule = global.getModuleObject('currencies');
+                _context9.next = 4;
+                return currenciesmodule._createDummyProxySession(cardsession);
+
+              case 4:
+                dummysession = _context9.sent;
+                // specific to ethnode
+                ethnodemodule = global.getModuleObject('ethnode');
+                erc20module = global.getModuleObject('erc20');
+                dummysession.contracts = ethnodemodule.getContractsObject(dummysession); // register TokenERC20 in the contracts object
+
+                dummysession.contracts.registerContractClass('TokenERC20', erc20module.ERC20Token);
+                dummysession.web3providermap = cardsession.web3providermap;
+                return _context9.abrupt("return", dummysession);
+
+              case 11:
+              case "end":
+                return _context9.stop();
+            }
+          }
+        }, _callee9, this);
+      }));
+
+      function _createDummyCardSession(_x17) {
+        return _createDummyCardSession2.apply(this, arguments);
+      }
+
+      return _createDummyCardSession;
+    }()
+  }, {
+    key: "_getCardCurrencySessionMap",
+    value: function _getCardCurrencySessionMap(session, card, currency) {
+      var currencysessionmap;
+
+      if (card) {
+        // we specify different currency maps by carduuid
+        // in case different cards share the same session (e.g. wallet's session)
+        // and so to avoid collisions
+        var cardsessionmap = session.getSessionVariable('cardsessionmap');
+
+        if (!cardsessionmap) {
+          cardsessionmap = Object.create(null);
+          session.setSessionVariable('cardsessionmap', cardsessionmap);
+        }
+
+        var carduuid = card.getCardUUID();
+        var cardcurrencysessionmap = cardsessionmap[carduuid];
+
+        if (!cardcurrencysessionmap) {
+          cardcurrencysessionmap = Object.create(null);
+          cardsessionmap[carduuid] = cardcurrencysessionmap;
+        }
+
+        currencysessionmap = cardcurrencysessionmap;
+      } else {
+        currencysessionmap = this._getCurrencySessionMap(session, currency);
+      }
+
+      return currencysessionmap;
+    }
+  }, {
+    key: "_getChildSessionOnCardCurrency",
+    value: function () {
+      var _getChildSessionOnCardCurrency2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(parentsession, card, currency) {
+        var global, _apicontrollers, currencysessionmap, currencyuuid, childsession, scheme, ethnodeserver, networkconfig;
+
+        return _regeneratorRuntime().wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                if (card) {
+                  _context10.next = 2;
+                  break;
+                }
+
+                return _context10.abrupt("return", this._getChildSessionOnCurrency(parentsession, currency));
+
+              case 2:
+                global = this.global;
+                _apicontrollers = this._getClientAPI();
+
+                if (parentsession) {
+                  _context10.next = 6;
+                  break;
+                }
+
+                return _context10.abrupt("return", Promise.reject('could not create child of null session'));
+
+              case 6:
+                currencysessionmap = this._getCardCurrencySessionMap(parentsession, card, currency); // we could look if a pre-existing session with corresponding web3providerurl could be re-used
+
+                currencyuuid = currency.uuid;
+
+                if (!currencysessionmap[currencyuuid]) {
+                  _context10.next = 10;
+                  break;
+                }
+
+                return _context10.abrupt("return", currencysessionmap[currencyuuid]);
+
+              case 10:
+                _context10.next = 12;
+                return _apicontrollers.createChildSessionObject(parentsession);
+
+              case 12:
+                childsession = _context10.sent;
+                childsession.MYCURRENCY = this.current_version;
+                if (!parentsession.MYCURRENCY_ROOT) parentsession.MYCURRENCY_ROOT = this.current_version ? this.current_version : 'xxx';
+                _context10.next = 17;
+                return this._getCurrencyScheme(parentsession, currency);
+
+              case 17:
+                scheme = _context10.sent;
+                if (scheme.isRemote()) childsession.overload_ethereum_node_access = true;else childsession.overload_ethereum_node_access = false; // set ethnode context
+
+                _context10.next = 21;
+                return this.getCurrencyEthNodeServer(parentsession, currency);
+
+              case 21:
+                ethnodeserver = _context10.sent;
+                _context10.next = 24;
+                return this._setMonitoredEthereumNodeAccess(childsession, ethnodeserver);
+
+              case 24:
+                // call setSessionNetworkConfig that will invoke setSessionNetworkConfig_hook
+                networkconfig = scheme.getNetworkConfig();
+                _context10.next = 27;
+                return _apicontrollers.setSessionNetworkConfig(childsession, networkconfig);
+
+              case 27:
+                currencysessionmap[currencyuuid] = childsession;
+                return _context10.abrupt("return", childsession);
+
+              case 29:
+              case "end":
+                return _context10.stop();
+            }
+          }
+        }, _callee10, this);
+      }));
+
+      function _getChildSessionOnCardCurrency(_x18, _x19, _x20) {
+        return _getChildSessionOnCardCurrency2.apply(this, arguments);
+      }
+
+      return _getChildSessionOnCardCurrency;
+    }()
+  }, {
+    key: "_getMonitoredCardSessionForCurrency",
+    value: function () {
+      var _getMonitoredCardSessionForCurrency2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(session, wallet, card, currency) {
+        var fetchsession, global, scheme, _cardsession, currencysessionmap, ethnodeserver, cardsession;
+
+        return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+          while (1) {
+            switch (_context11.prev = _context11.next) {
+              case 0:
+                global = this.global;
+                _context11.next = 3;
+                return this._getCurrencyScheme(session, currency);
+
+              case 3:
+                scheme = _context11.sent;
+
+                if (scheme) {
+                  _context11.next = 6;
+                  break;
+                }
+
+                return _context11.abrupt("return", Promise.reject('scheme is not defined'));
+
+              case 6:
+                if (!scheme.isRemote()) {
+                  _context11.next = 32;
+                  break;
+                }
+
+                if (!card) {
+                  _context11.next = 29;
+                  break;
+                }
+
+                if (!this._canCardHandleScheme(card, scheme)) {
+                  _context11.next = 26;
+                  break;
+                }
+
+                // use wallet session
+                _cardsession = card._getSession();
+                currencysessionmap = this._getCardCurrencySessionMap(_cardsession, card, currency);
+                fetchsession = currencysessionmap[currency.uuid];
+
+                if (fetchsession) {
+                  _context11.next = 24;
+                  break;
+                }
+
+                _context11.next = 15;
+                return this._createDummyCardSession(_cardsession);
+
+              case 15:
+                fetchsession = _context11.sent;
+                fetchsession.DUMMY_SESSION_CURRENCY = currency;
+                fetchsession.DUMMY_SESSION_CARD = card;
+                currencysessionmap[currency.uuid] = fetchsession;
+                _context11.next = 21;
+                return this.getCurrencyEthNodeServer(session, currency);
+
+              case 21:
+                ethnodeserver = _context11.sent;
+                _context11.next = 24;
+                return this._setMonitoredEthereumNodeAccess(fetchsession, ethnodeserver);
+
+              case 24:
+                _context11.next = 27;
+                break;
+
+              case 26:
+                return _context11.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+
+              case 27:
+                _context11.next = 30;
+                break;
+
+              case 29:
+                return _context11.abrupt("return", Promise.reject('ERR_MISSING_CREDENTIALS'));
+
+              case 30:
+                _context11.next = 42;
+                break;
+
+              case 32:
+                if (!card) {
+                  _context11.next = 39;
+                  break;
+                }
+
+                cardsession = card._getSession();
+                _context11.next = 36;
+                return this._getChildSessionOnCardCurrency(cardsession, card, currency);
+
+              case 36:
+                fetchsession = _context11.sent;
+                _context11.next = 42;
+                break;
+
+              case 39:
+                _context11.next = 41;
+                return this._getChildSessionOnCurrency(session, currency);
+
+              case 41:
+                fetchsession = _context11.sent;
+
+              case 42:
+                return _context11.abrupt("return", fetchsession);
+
+              case 43:
+              case "end":
+                return _context11.stop();
+            }
+          }
+        }, _callee11, this);
+      }));
+
+      function _getMonitoredCardSessionForCurrency(_x21, _x22, _x23, _x24) {
+        return _getMonitoredCardSessionForCurrency2.apply(this, arguments);
+      }
+
+      return _getMonitoredCardSessionForCurrency;
     }()
   }]);
 

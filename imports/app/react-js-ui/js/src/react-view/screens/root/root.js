@@ -1821,11 +1821,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
               case 0:
                 console.log('Root.checkNavigationState called'); // use navigation promises to be re-entrant
 
-                fetchNavigationStatePromise = this.app.getNavigationStatePromise('Root', this.uuid);
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise(this.constructor.name, this.uuid);
 
                 if (!fetchNavigationStatePromise) {
                   fetchNavigationStatePromise = this.fetchNavigationState();
-                  this.app.addNavigationStatePromise('Root', this.uuid, fetchNavigationStatePromise);
+                  this.app.addNavigationStatePromise(this.constructor.name, this.uuid, fetchNavigationStatePromise);
                 } // retrieve data
 
 

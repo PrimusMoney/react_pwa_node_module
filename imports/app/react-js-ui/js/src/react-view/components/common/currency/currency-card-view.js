@@ -21,7 +21,7 @@ var _freeSolidSvgIcons = require("@fortawesome/free-solid-svg-icons");
 
 var _reactFontawesome = require("@fortawesome/react-fontawesome");
 
-var _reactActivity = require("react-activity");
+var _BeatLoader = _interopRequireDefault(require("react-spinners/BeatLoader"));
 
 var _textCopyIcon = _interopRequireDefault(require("../utils/text-copy-icon.js"));
 
@@ -156,7 +156,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 _privkey = _context.sent;
                 _currencycards[j].cansign = _privkey ? true : false;
                 _context.next = 20;
-                return mvcmyquote.getCurrencyPosition(rootsessionuuid, walletuuid, currency.uuid, _currencycards[j].uuid);
+                return mvcmyquote.getCurrencyCardPosition(rootsessionuuid, walletuuid, currency.uuid, _currencycards[j].uuid);
 
               case 20:
                 pos = _context.sent;
@@ -179,7 +179,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
 
               case 28:
                 _context.next = 30;
-                return mvcmyquote.getCreditBalance(rootsessionuuid, walletuuid, _currencycards[j].uuid);
+                return mvcmyquote.getCurrencyCardCreditBalance(rootsessionuuid, walletuuid, _currencycards[j].uuid);
 
               case 30:
                 credits = _context.sent;
@@ -865,7 +865,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
               case 187:
                 _scheme = _context4.sent;
                 _context4.next = 190;
-                return mvcmyquote.getCreditBalance(rootsessionuuid, walletuuid, _carduuid);
+                return mvcmyquote.getCurrencyCardCreditBalance(rootsessionuuid, walletuuid, _carduuid);
 
               case 190:
                 credits = _context4.sent;
@@ -876,7 +876,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
               case 194:
                 credits.threshold = _context4.sent;
                 _context4.next = 197;
-                return mvcmyquote.getCurrencyPosition(rootsessionuuid, walletuuid, _currencyuuid2, _carduuid);
+                return mvcmyquote.getCurrencyCardPosition(rootsessionuuid, walletuuid, _currencyuuid2, _carduuid);
 
               case 197:
                 position = _context4.sent;
@@ -1063,8 +1063,9 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 _context4.prev = 268;
                 _context4.t3 = _context4["catch"](11);
                 console.log('exception in CurrencyCardView.fetchNavigationState: ' + _context4.t3);
+                console.log(_context4.t3.stack);
 
-              case 271:
+              case 272:
               case "end":
                 return _context4.stop();
             }
@@ -1089,11 +1090,11 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
               case 0:
                 console.log('CurrencyCardView.checkNavigationState called'); // use navigation promises to be re-entrant
 
-                fetchNavigationStatePromise = this.app.getNavigationStatePromise('CurrencyCardView', this.uuid);
+                fetchNavigationStatePromise = this.app.getNavigationStatePromise(this.constructor.name, this.uuid);
 
                 if (!fetchNavigationStatePromise || bForce) {
                   fetchNavigationStatePromise = this.fetchNavigationState();
-                  this.app.addNavigationStatePromise('CurrencyCardView', this.uuid, fetchNavigationStatePromise);
+                  this.app.addNavigationStatePromise(this.constructor.name, this.uuid, fetchNavigationStatePromise);
                 }
 
                 this.checking = true;
@@ -2450,7 +2451,7 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
       if (processing === true) {
         return /*#__PURE__*/_react["default"].createElement("div", {
           className: "Splash"
-        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.processinginfo), /*#__PURE__*/_react["default"].createElement(_reactActivity.Dots, null));
+        }, /*#__PURE__*/_react["default"].createElement("div", null, this.state.processinginfo), /*#__PURE__*/_react["default"].createElement(_BeatLoader["default"], null));
       }
 
       var _this$state12 = this.state,

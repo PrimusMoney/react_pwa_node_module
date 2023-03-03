@@ -31,6 +31,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 
 function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
 
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -74,8 +78,9 @@ var App = /*#__PURE__*/function (_React$Component) {
     _this.app_id = 'app-' + app_id;
     console.log('App constructor called for: ' + _this.app_id);
     _this.exec_env = App.EXEC_ENV;
-    _this.current_version = '0.25.03.2023.02.22';
+    _this.current_version = '0.25.06.2023.03.03';
     App.theapp = _assertThisInitialized(_this);
+    App.theapp_id = _this.app_id;
     _this.basename = App.BASE_NAME ? App.BASE_NAME : "my-pwa";
     _this.updatetime = 'January 30, 2023';
     _this.App = App;
@@ -110,13 +115,21 @@ var App = /*#__PURE__*/function (_React$Component) {
                 _globalscope = window;
                 console.log('App.onLoaded called for: ' + this.app_id); // mvc module
                 // @primusmoney/react_client_wallet
+                //var React_Client_Wallet = require('@primusmoney/react_client_wallet');
 
-                React_Client_Wallet = require('@primusmoney/react_client_wallet');
+                _context.next = 4;
+                return Promise.resolve().then(function () {
+                  return _interopRequireWildcard(require('@primusmoney/react_client_wallet'));
+                });
+
+              case 4:
+                React_Client_Wallet = _context.sent["default"];
+                // segment code
                 react_client_wallet = React_Client_Wallet.getObject();
-                _context.next = 6;
+                _context.next = 8;
                 return react_client_wallet.init();
 
-              case 6:
+              case 8:
                 react_client_wallet_init = _context.sent;
                 // mvc module (used by some ModuleObject for communicating with app)
                 mvcmodule = react_client_wallet.getMvcAPI();
@@ -145,59 +158,59 @@ var App = /*#__PURE__*/function (_React$Component) {
                 // GET subdomain (if any)
 
 
-                _context.next = 18;
+                _context.next = 20;
                 return this.getSubDomain();
 
-              case 18:
+              case 20:
                 subdomain = _context.sent;
                 boot_time = Date.now();
 
                 if (!subdomain) {
-                  _context.next = 27;
+                  _context.next = 29;
                   break;
                 }
 
-                _context.next = 23;
+                _context.next = 25;
                 return clientmodule.loadConfig('./' + subdomain + '/boot-webapp', boot_time);
 
-              case 23:
+              case 25:
                 boot_webapp = _context.sent;
 
                 if (!boot_webapp) {
-                  _context.next = 27;
+                  _context.next = 29;
                   break;
                 }
 
-                _context.next = 27;
+                _context.next = 29;
                 return clientmodule.setNameSpace(subdomain);
 
-              case 27:
+              case 29:
                 if (boot_webapp) {
-                  _context.next = 31;
+                  _context.next = 33;
                   break;
                 }
 
-                _context.next = 30;
+                _context.next = 32;
                 return clientmodule.loadConfig('boot-webapp', boot_time);
 
-              case 30:
+              case 32:
                 boot_webapp = _context.sent;
 
-              case 31:
+              case 33:
                 if (!(boot_webapp && boot_webapp.updatetime)) {
-                  _context.next = 35;
+                  _context.next = 37;
                   break;
                 }
 
                 updatetime = new Date(boot_webapp.updatetime).getTime();
-                _context.next = 35;
+                _context.next = 37;
                 return clientmodule.setUpdatetime(updatetime);
 
-              case 35:
-                _context.next = 37;
+              case 37:
+                _context.next = 39;
                 return clientmodule.init();
 
-              case 37:
+              case 39:
                 this.mvcmodule.setClientModuleObject(clientmodule); // create mvc myquote
 
                 require('./src/model/myquote/module-load.js');
@@ -211,33 +224,33 @@ var App = /*#__PURE__*/function (_React$Component) {
                 } // set cleanurl as root uri for contracts in mvcmyquote
 
 
-                _context.next = 44;
+                _context.next = 46;
                 return this.getCleanUrl();
 
-              case 44:
+              case 46:
                 cleanurl = _context.sent;
-                _context.next = 47;
+                _context.next = 49;
                 return this.mvcmyquote.setContractPathRootUri(cleanurl);
 
-              case 47:
+              case 49:
                 if (boot_webapp) {
-                  _context.next = 51;
+                  _context.next = 53;
                   break;
                 }
 
-                _context.next = 50;
+                _context.next = 52;
                 return this.mvcmyquote.loadConfig('boot-webapp');
 
-              case 50:
+              case 52:
                 boot_webapp = _context.sent;
 
-              case 51:
+              case 53:
                 this.boot_webapp = boot_webapp ? boot_webapp : {}; // load Root routes depending on what sub-apps are enabled
 
-                _context.next = 54;
+                _context.next = 56;
                 return _root2["default"].loadRoutes(this);
 
-              case 54:
+              case 56:
                 if (this.exec_env == 'dev') {
                   console.log('App.onLoaded execution environment is DEV'); // put app in simplestore for debugging purposes
 
@@ -265,81 +278,81 @@ var App = /*#__PURE__*/function (_React$Component) {
                   version: this.current_version,
                   time: Date.now()
                 };
-                _context.next = 60;
+                _context.next = 62;
                 return this.mvcmyquote.readSettings(['firstboot'], default_first_boot);
 
-              case 60:
+              case 62:
                 this.settings['firstboot'] = _context.sent;
 
                 if (!(this.settings['firstboot'].initprod !== true)) {
-                  _context.next = 74;
+                  _context.next = 76;
                   break;
                 }
 
-                _context.prev = 62;
-                _context.next = 65;
+                _context.prev = 64;
+                _context.next = 67;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 65:
-                _context.next = 67;
+              case 67:
+                _context.next = 69;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 67:
-                _context.next = 72;
+              case 69:
+                _context.next = 74;
                 break;
 
-              case 69:
-                _context.prev = 69;
-                _context.t0 = _context["catch"](62);
+              case 71:
+                _context.prev = 71;
+                _context.t0 = _context["catch"](64);
                 console.log('exception while setting up prod environment: ' + _context.t0);
 
-              case 72:
-                _context.next = 121;
+              case 74:
+                _context.next = 123;
                 break;
 
-              case 74:
+              case 76:
                 // check if not too old
                 newprodenvtime = new Date(this.updatetime).getTime();
 
                 if (!(this.settings['firstboot'].time < newprodenvtime)) {
-                  _context.next = 90;
+                  _context.next = 92;
                   break;
                 }
 
-                _context.prev = 76;
-                _context.next = 79;
+                _context.prev = 78;
+                _context.next = 81;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 79:
+              case 81:
                 this_boot.last_update = newprodenvtime;
                 this_boot.initial_time = this.settings['firstboot'].initial_time ? this.settings['firstboot'].initial_time : this.settings['firstboot'].time;
-                _context.next = 83;
+                _context.next = 85;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 83:
-                _context.next = 88;
+              case 85:
+                _context.next = 90;
                 break;
 
-              case 85:
-                _context.prev = 85;
-                _context.t1 = _context["catch"](76);
+              case 87:
+                _context.prev = 87;
+                _context.t1 = _context["catch"](78);
                 console.log('exception while setting up prod environment: ' + _context.t1);
 
-              case 88:
-                _context.next = 121;
+              case 90:
+                _context.next = 123;
                 break;
 
-              case 90:
+              case 92:
                 if (!boot_webapp) {
-                  _context.next = 121;
+                  _context.next = 123;
                   break;
                 }
 
@@ -354,68 +367,68 @@ var App = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(webapp_firstboot.initprod !== true)) {
-                  _context.next = 107;
+                  _context.next = 109;
                   break;
                 }
 
-                _context.prev = 95;
-                _context.next = 98;
+                _context.prev = 97;
+                _context.next = 100;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 98:
-                _context.next = 100;
+              case 100:
+                _context.next = 102;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 100:
-                _context.next = 105;
+              case 102:
+                _context.next = 107;
                 break;
 
-              case 102:
-                _context.prev = 102;
-                _context.t2 = _context["catch"](95);
+              case 104:
+                _context.prev = 104;
+                _context.t2 = _context["catch"](97);
                 console.log('exception while setting up prod environment: ' + _context.t2);
 
-              case 105:
-                _context.next = 121;
+              case 107:
+                _context.next = 123;
                 break;
 
-              case 107:
+              case 109:
                 // check if not too old
                 newwebappprodenvtime = new Date(boot_webapp.updatetime).getTime();
 
                 if (!(webapp_firstboot.time < newwebappprodenvtime)) {
-                  _context.next = 121;
+                  _context.next = 123;
                   break;
                 }
 
-                _context.prev = 109;
-                _context.next = 112;
+                _context.prev = 111;
+                _context.next = 114;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 112:
+              case 114:
                 this_boot[webapp_name].last_update = newwebappprodenvtime;
                 this_boot[webapp_name].initial_time = webapp_firstboot.initial_time ? webapp_firstboot.initial_time : this_boot[webapp_name].time;
-                _context.next = 116;
+                _context.next = 118;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 116:
-                _context.next = 121;
+              case 118:
+                _context.next = 123;
                 break;
 
-              case 118:
-                _context.prev = 118;
-                _context.t3 = _context["catch"](109);
+              case 120:
+                _context.prev = 120;
+                _context.t3 = _context["catch"](111);
                 console.log('exception while setting up prod environment: ' + _context.t3);
 
-              case 121:
+              case 123:
                 // read query string parameters for start conditions
                 start = {};
                 url = window.location.href;
@@ -427,21 +440,21 @@ var App = /*#__PURE__*/function (_React$Component) {
                 start.sessionuuid = sessionuuid;
                 start.wallet = wallet;
                 this.setVariable('start_conditions', start);
-                _context.next = 133;
+                _context.next = 135;
                 return this.checkBrowser();
 
-              case 133:
+              case 135:
                 console.log('App.onLoaded setting loading to false');
                 this.setState({
                   loading: false
                 });
 
-              case 135:
+              case 137:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[62, 69], [76, 85], [95, 102], [109, 118]]);
+        }, _callee, this, [[64, 71], [78, 87], [97, 104], [111, 120]]);
       }));
 
       function onLoaded() {
@@ -941,11 +954,21 @@ var App = /*#__PURE__*/function (_React$Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       console.log('App.componentDidMount called for: ' + this.app_id);
+
+      if (typeof App.theapp === 'undefined' || App.theapp === null) {
+        App.theapp = this;
+        App.theapp_id = this.app_id;
+      }
     }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       console.log('App.componentWillUnmount called for: ' + this.app_id);
+
+      if (App.theapp_id == this.app_id) {
+        App.theapp = null;
+        App.theapp_id = null;
+      }
     } // render
 
   }, {

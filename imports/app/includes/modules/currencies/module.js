@@ -97,6 +97,9 @@ var Module = /*#__PURE__*/function () {
     } //
     // hooks
     //
+    //
+    // Wallet functions
+    //
 
   }, {
     key: "_canWalletHandleScheme",
@@ -112,10 +115,10 @@ var Module = /*#__PURE__*/function () {
       }
     }
   }, {
-    key: "_createDummyWalletSession",
+    key: "_createDummyProxySession",
     value: function () {
-      var _createDummyWalletSession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(walletsession) {
-        var global, Session, fetchsession;
+      var _createDummyProxySession2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(session) {
+        var global, Session, dummysession;
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -124,18 +127,18 @@ var Module = /*#__PURE__*/function () {
                 // we set it to the correct instance before calling _getEthereumTransaction and other methods
                 global = this.global;
                 Session = global.getModuleClass('common', 'Session');
-                fetchsession = new Session(global);
-                fetchsession.setSessionUUID(walletsession.getSessionUUID()); // serving as placeholder for authkey
+                dummysession = new Session(global);
+                dummysession.setSessionUUID(session.getSessionUUID()); // serving as placeholder for authkey
 
-                fetchsession.DUMMY_SESSION_UUID = walletsession.guid();
-                fetchsession.DUMMY_SESSION_WALLET = walletsession; // point to walletsession properties (avoid storage to make this session unharmful)
+                dummysession.DUMMY_SESSION_UUID = session.guid();
+                dummysession.DUMMY_SESSION_ORG = session; // point to session properties (avoid storage to make this session unharmful)
 
-                fetchsession.authkey = walletsession.authkey;
-                fetchsession.authkey_server_access_instance = walletsession.authkey_server_access_instance;
-                fetchsession.cryptokeymap = walletsession.cryptokeymap;
-                fetchsession.user = walletsession.user;
-                fetchsession.xtraconfig = walletsession.xtraconfig;
-                return _context.abrupt("return", fetchsession);
+                dummysession.authkey = session.authkey;
+                dummysession.authkey_server_access_instance = session.authkey_server_access_instance;
+                dummysession.cryptokeymap = session.cryptokeymap;
+                dummysession.user = session.user;
+                dummysession.xtraconfig = session.xtraconfig;
+                return _context.abrupt("return", dummysession);
 
               case 12:
               case "end":
@@ -145,11 +148,11 @@ var Module = /*#__PURE__*/function () {
         }, _callee, this);
       }));
 
-      function _createDummyWalletSession(_x) {
-        return _createDummyWalletSession2.apply(this, arguments);
+      function _createDummyProxySession(_x) {
+        return _createDummyProxySession2.apply(this, arguments);
       }
 
-      return _createDummyWalletSession;
+      return _createDummyProxySession;
     }() //
     // Currencies functions
     //

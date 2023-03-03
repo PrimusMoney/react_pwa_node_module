@@ -1,6 +1,6 @@
 {
   "name": "@primusmoney/react_pwa",
-  "version": "0.35.02",
+  "version": "0.35.03",
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@p2pmoney-org/ethereum_erc721": "0.30.11",
-    "@primusmoney/react_client_wallet": "^0.30.16"
+    "@primusmoney/react_client_wallet": "^0.30.20"
   },
   "devDependencies": {
     "chai": "^4.2.0",

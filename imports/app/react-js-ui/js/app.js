@@ -78,7 +78,7 @@ var App = /*#__PURE__*/function (_React$Component) {
     _this.app_id = 'app-' + app_id;
     console.log('App constructor called for: ' + _this.app_id);
     _this.exec_env = App.EXEC_ENV;
-    _this.current_version = '0.25.06.2023.03.03';
+    _this.current_version = '0.25.07.2023.03.04';
     App.theapp = _assertThisInitialized(_this);
     App.theapp_id = _this.app_id;
     _this.basename = App.BASE_NAME ? App.BASE_NAME : "my-pwa";
@@ -106,7 +106,7 @@ var App = /*#__PURE__*/function (_React$Component) {
     key: "onLoaded",
     value: function () {
       var _onLoaded = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-        var _globalscope, React_Client_Wallet, react_client_wallet, react_client_wallet_init, mvcmodule, clientglobal, Client, clientmodule, subdomain, boot_webapp, boot_time, updatetime, cleanurl, default_first_boot, this_boot, newprodenvtime, webapp_name, webapp_firstboot, newwebappprodenvtime, start, url, urlParams, sessionuuid, wallet;
+        var _globalscope, React_Client_Wallet, react_client_wallet, mvcmodule, clientglobal, Client, clientmodule, subdomain, boot_webapp, boot_time, updatetime, cleanurl, default_first_boot, this_boot, newprodenvtime, webapp_name, webapp_firstboot, newwebappprodenvtime, start, url, urlParams, sessionuuid, wallet;
 
         return _regeneratorRuntime().wrap(function _callee$(_context) {
           while (1) {
@@ -115,7 +115,6 @@ var App = /*#__PURE__*/function (_React$Component) {
                 _globalscope = window;
                 console.log('App.onLoaded called for: ' + this.app_id); // mvc module
                 // @primusmoney/react_client_wallet
-                //var React_Client_Wallet = require('@primusmoney/react_client_wallet');
 
                 _context.next = 4;
                 return Promise.resolve().then(function () {
@@ -130,7 +129,6 @@ var App = /*#__PURE__*/function (_React$Component) {
                 return react_client_wallet.init();
 
               case 8:
-                react_client_wallet_init = _context.sent;
                 // mvc module (used by some ModuleObject for communicating with app)
                 mvcmodule = react_client_wallet.getMvcAPI();
                 clientglobal = react_client_wallet.getGlobalObject(); // set app object
@@ -144,7 +142,8 @@ var App = /*#__PURE__*/function (_React$Component) {
                 } // set client module
 
 
-                Client = require('../../js/src/web-client.js')["default"];
+                Client = require('../../js/src/web-client.js')["default"]; // in our webapp chunk
+
                 clientmodule = Client.getObject();
 
                 if (this.exec_env === 'prod') {
@@ -154,10 +153,12 @@ var App = /*#__PURE__*/function (_React$Component) {
                 } // load additional modules (currencies api)
 
 
-                require('../../includes/mvc-api/module-load.js'); // boot webapp (before initializing clientmodule)
-                // GET subdomain (if any)
+                _context.next = 18;
+                return Promise.resolve().then(function () {
+                  return _interopRequireWildcard(require('../../includes/mvc-api/module-load.js'));
+                });
 
-
+              case 18:
                 _context.next = 20;
                 return this.getSubDomain();
 
@@ -213,8 +214,13 @@ var App = /*#__PURE__*/function (_React$Component) {
               case 39:
                 this.mvcmodule.setClientModuleObject(clientmodule); // create mvc myquote
 
-                require('./src/model/myquote/module-load.js');
+                _context.next = 42;
+                return Promise.resolve().then(function () {
+                  return _interopRequireWildcard(require('./src/model/myquote/module-load.js'));
+                });
 
+              case 42:
+                // in another chunk because of '@p2pmoney-org/ethereum_erc721'
                 this.mvcmyquote = clientglobal.getModuleObject('mvc-myquote');
                 this.mvcmypwa = clientglobal.getModuleObject('mvc-myquote');
 
@@ -224,33 +230,33 @@ var App = /*#__PURE__*/function (_React$Component) {
                 } // set cleanurl as root uri for contracts in mvcmyquote
 
 
-                _context.next = 46;
+                _context.next = 47;
                 return this.getCleanUrl();
 
-              case 46:
+              case 47:
                 cleanurl = _context.sent;
-                _context.next = 49;
+                _context.next = 50;
                 return this.mvcmyquote.setContractPathRootUri(cleanurl);
 
-              case 49:
+              case 50:
                 if (boot_webapp) {
-                  _context.next = 53;
+                  _context.next = 54;
                   break;
                 }
 
-                _context.next = 52;
+                _context.next = 53;
                 return this.mvcmyquote.loadConfig('boot-webapp');
 
-              case 52:
+              case 53:
                 boot_webapp = _context.sent;
 
-              case 53:
+              case 54:
                 this.boot_webapp = boot_webapp ? boot_webapp : {}; // load Root routes depending on what sub-apps are enabled
 
-                _context.next = 56;
+                _context.next = 57;
                 return _root2["default"].loadRoutes(this);
 
-              case 56:
+              case 57:
                 if (this.exec_env == 'dev') {
                   console.log('App.onLoaded execution environment is DEV'); // put app in simplestore for debugging purposes
 
@@ -278,81 +284,81 @@ var App = /*#__PURE__*/function (_React$Component) {
                   version: this.current_version,
                   time: Date.now()
                 };
-                _context.next = 62;
+                _context.next = 63;
                 return this.mvcmyquote.readSettings(['firstboot'], default_first_boot);
 
-              case 62:
+              case 63:
                 this.settings['firstboot'] = _context.sent;
 
                 if (!(this.settings['firstboot'].initprod !== true)) {
-                  _context.next = 76;
+                  _context.next = 77;
                   break;
                 }
 
-                _context.prev = 64;
-                _context.next = 67;
+                _context.prev = 65;
+                _context.next = 68;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 67:
-                _context.next = 69;
+              case 68:
+                _context.next = 70;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 69:
-                _context.next = 74;
+              case 70:
+                _context.next = 75;
                 break;
 
-              case 71:
-                _context.prev = 71;
-                _context.t0 = _context["catch"](64);
+              case 72:
+                _context.prev = 72;
+                _context.t0 = _context["catch"](65);
                 console.log('exception while setting up prod environment: ' + _context.t0);
 
-              case 74:
-                _context.next = 123;
+              case 75:
+                _context.next = 124;
                 break;
 
-              case 76:
+              case 77:
                 // check if not too old
                 newprodenvtime = new Date(this.updatetime).getTime();
 
                 if (!(this.settings['firstboot'].time < newprodenvtime)) {
-                  _context.next = 92;
+                  _context.next = 93;
                   break;
                 }
 
-                _context.prev = 78;
-                _context.next = 81;
+                _context.prev = 79;
+                _context.next = 82;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 81:
+              case 82:
                 this_boot.last_update = newprodenvtime;
                 this_boot.initial_time = this.settings['firstboot'].initial_time ? this.settings['firstboot'].initial_time : this.settings['firstboot'].time;
-                _context.next = 85;
+                _context.next = 86;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 85:
-                _context.next = 90;
+              case 86:
+                _context.next = 91;
                 break;
 
-              case 87:
-                _context.prev = 87;
-                _context.t1 = _context["catch"](78);
+              case 88:
+                _context.prev = 88;
+                _context.t1 = _context["catch"](79);
                 console.log('exception while setting up prod environment: ' + _context.t1);
 
-              case 90:
-                _context.next = 123;
+              case 91:
+                _context.next = 124;
                 break;
 
-              case 92:
+              case 93:
                 if (!boot_webapp) {
-                  _context.next = 123;
+                  _context.next = 124;
                   break;
                 }
 
@@ -367,68 +373,68 @@ var App = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!(webapp_firstboot.initprod !== true)) {
-                  _context.next = 109;
+                  _context.next = 110;
                   break;
                 }
 
-                _context.prev = 97;
-                _context.next = 100;
+                _context.prev = 98;
+                _context.next = 101;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 100:
-                _context.next = 102;
+              case 101:
+                _context.next = 103;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 102:
-                _context.next = 107;
+              case 103:
+                _context.next = 108;
                 break;
 
-              case 104:
-                _context.prev = 104;
-                _context.t2 = _context["catch"](97);
+              case 105:
+                _context.prev = 105;
+                _context.t2 = _context["catch"](98);
                 console.log('exception while setting up prod environment: ' + _context.t2);
 
-              case 107:
-                _context.next = 123;
+              case 108:
+                _context.next = 124;
                 break;
 
-              case 109:
+              case 110:
                 // check if not too old
                 newwebappprodenvtime = new Date(boot_webapp.updatetime).getTime();
 
                 if (!(webapp_firstboot.time < newwebappprodenvtime)) {
-                  _context.next = 123;
+                  _context.next = 124;
                   break;
                 }
 
-                _context.prev = 111;
-                _context.next = 114;
+                _context.prev = 112;
+                _context.next = 115;
                 return this.mvcmyquote.initProdEnvironment()["catch"](function (err) {
                   console.log('error while setting up prod environment: ' + err);
                 });
 
-              case 114:
+              case 115:
                 this_boot[webapp_name].last_update = newwebappprodenvtime;
                 this_boot[webapp_name].initial_time = webapp_firstboot.initial_time ? webapp_firstboot.initial_time : this_boot[webapp_name].time;
-                _context.next = 118;
+                _context.next = 119;
                 return this.mvcmyquote.putSettings(['firstboot'], this_boot)["catch"](function (err) {
                   console.log('error while saving firstboot setting: ' + err);
                 });
 
-              case 118:
-                _context.next = 123;
+              case 119:
+                _context.next = 124;
                 break;
 
-              case 120:
-                _context.prev = 120;
-                _context.t3 = _context["catch"](111);
+              case 121:
+                _context.prev = 121;
+                _context.t3 = _context["catch"](112);
                 console.log('exception while setting up prod environment: ' + _context.t3);
 
-              case 123:
+              case 124:
                 // read query string parameters for start conditions
                 start = {};
                 url = window.location.href;
@@ -440,21 +446,21 @@ var App = /*#__PURE__*/function (_React$Component) {
                 start.sessionuuid = sessionuuid;
                 start.wallet = wallet;
                 this.setVariable('start_conditions', start);
-                _context.next = 135;
+                _context.next = 136;
                 return this.checkBrowser();
 
-              case 135:
+              case 136:
                 console.log('App.onLoaded setting loading to false');
                 this.setState({
                   loading: false
                 });
 
-              case 137:
+              case 138:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, this, [[64, 71], [78, 87], [97, 104], [111, 120]]);
+        }, _callee, this, [[65, 72], [79, 88], [98, 105], [112, 121]]);
       }));
 
       function onLoaded() {

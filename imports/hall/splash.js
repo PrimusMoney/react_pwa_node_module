@@ -7,15 +7,15 @@ exports["default"] = void 0;
 
 var _react = _interopRequireDefault(require("react"));
 
-var _RiseLoader = _interopRequireDefault(require("react-spinners/RiseLoader"));
+var _RingLoader = _interopRequireDefault(require("react-spinners/RingLoader"));
 
-require("./hall-screen.css");
+require("./splash.css");
 
 var _logo = _interopRequireDefault(require("./assets/logo512.png"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function HallScreen(_ref) {
+function Splash(_ref) {
   var exec_env = _ref.exec_env,
       version = _ref.version,
       msg = _ref.msg;
@@ -23,21 +23,21 @@ function HallScreen(_ref) {
   var the_version = version;
   var the_msg = msg ? msg : 'loading....';
   return /*#__PURE__*/_react["default"].createElement("div", {
-    className: "HallScreen"
+    className: "SplashScreen"
   }, /*#__PURE__*/_react["default"].createElement("div", {
-    className: "HallContainer"
+    className: "SplashContainer"
   }, /*#__PURE__*/_react["default"].createElement("img", {
     src: _logo["default"],
-    className: "HallLogo",
+    className: "SplashLogo",
     alt: "Primus Money"
   }), /*#__PURE__*/_react["default"].createElement("div", {
-    className: "HallMessage"
+    className: "SplashMessage"
   }, the_msg), /*#__PURE__*/_react["default"].createElement("div", {
-    className: "HallLoadingBlock"
-  }, /*#__PURE__*/_react["default"].createElement(_RiseLoader["default"], null)), /*#__PURE__*/_react["default"].createElement("div", {
-    className: "HallVersionInfo"
+    className: "SplashLoadingBlock"
+  }, /*#__PURE__*/_react["default"].createElement(_RingLoader["default"], null)), /*#__PURE__*/_react["default"].createElement("div", {
+    className: "SplashVersionInfo"
   }, the_version)));
 }
 
-var _default = HallScreen;
+var _default = Splash;
 exports["default"] = _default;

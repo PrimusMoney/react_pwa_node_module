@@ -1063,9 +1063,8 @@ var CurrencyCardView = /*#__PURE__*/function (_React$Component) {
                 _context4.prev = 268;
                 _context4.t3 = _context4["catch"](11);
                 console.log('exception in CurrencyCardView.fetchNavigationState: ' + _context4.t3);
-                console.log(_context4.t3.stack);
 
-              case 272:
+              case 271:
               case "end":
                 return _context4.stop();
             }

@@ -737,26 +737,26 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_doSetWallet",
     value: function () {
       var _doSetWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(walletname, walletuuid) {
-        var _this7 = this;
-
-        var result;
         return _regeneratorRuntime().wrap(function _callee11$(_context11) {
           while (1) {
             switch (_context11.prev = _context11.next) {
               case 0:
-                result = new Promise(function (resolve, reject) {
-                  _this7.props.doSetWallet(walletname, walletuuid, function (err, res) {
-                    if (err) reject(err);else resolve(res);
-                  });
-                });
-                return _context11.abrupt("return", result);
+                this.props.doSetWallet(walletname, walletuuid); // note: doSetWallet does not have a callback for react_client_wallet 0.30.20
 
-              case 2:
+                /* const result = new Promise((resolve, reject) => { 
+                	this.props.doSetWallet(walletname, walletuuid, (err, res) => {
+                		if (err) reject(err); else resolve(res);
+                	}); 
+                });
+                
+                return result; */
+
+              case 1:
               case "end":
                 return _context11.stop();
             }
           }
-        }, _callee11);
+        }, _callee11, this);
       }));
 
       function _doSetWallet(_x23, _x24) {
@@ -795,7 +795,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
     key: "_checkWalletUnlocked",
     value: function () {
       var _checkWalletUnlocked2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee13() {
-        var _this8 = this;
+        var _this7 = this;
 
         var mvcmodule, rootsessionuuid, walletuuid, iswalletlocked, islocked;
         return _regeneratorRuntime().wrap(function _callee13$(_context13) {
@@ -833,9 +833,9 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return this._doCheckWalletLock(mvcmodule, rootsessionuuid, walletuuid)["catch"](function (err) {
                   console.log('error in Root._checkWalletLock:' + err);
 
-                  _this8.app.error(err);
+                  _this7.app.error(err);
 
-                  _this8.props.doResetWallet();
+                  _this7.props.doResetWallet();
 
                   return false;
                 });
@@ -905,16 +905,66 @@ var Root = /*#__PURE__*/function (_React$Component) {
       return _openWallet;
     }()
   }, {
-    key: "_setWallet",
+    key: "_setAsCurrentWallet",
     value: function () {
-      var _setWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(walletuuid, walletname) {
+      var _setAsCurrentWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee15(walletuuid) {
+        var mvcmodule, mvcmyquote, rootsessionuuid, wallet_list, wallet, i, _wallet, currentwalletname, currentwalletuuid, walletname;
+
         return _regeneratorRuntime().wrap(function _callee15$(_context15) {
           while (1) {
             switch (_context15.prev = _context15.next) {
               case 0:
-                return _context15.abrupt("return", this._doSetWallet(walletuuid, walletname));
+                mvcmodule = this.getMvcModuleObject();
+                mvcmyquote = this.getMvcMyQuoteObject();
+                rootsessionuuid = this.props.rootsessionuuid;
+                _context15.next = 5;
+                return mvcmyquote.getWalletList(rootsessionuuid);
 
-              case 1:
+              case 5:
+                wallet_list = _context15.sent;
+                i = 0;
+
+              case 7:
+                if (!(i < wallet_list.length)) {
+                  _context15.next = 15;
+                  break;
+                }
+
+                _wallet = wallet_list[i];
+
+                if (!(_wallet.uuid === walletuuid)) {
+                  _context15.next = 12;
+                  break;
+                }
+
+                wallet = _wallet;
+                return _context15.abrupt("break", 15);
+
+              case 12:
+                i++;
+                _context15.next = 7;
+                break;
+
+              case 15:
+                if (wallet) {
+                  _context15.next = 17;
+                  break;
+                }
+
+                return _context15.abrupt("return", Promise.reject('could not find wallet with uuid: ' + walletuuid));
+
+              case 17:
+                currentwalletname = this.props.currentwallet;
+                currentwalletuuid = this.props.currentwalletuuid;
+                walletname = wallet.name;
+
+                if (currentwalletname != walletname || currentwalletuuid != walletuuid) {
+                  this._setWallet(walletname, walletuuid);
+                }
+
+                return _context15.abrupt("return", this._doCheckWalletLock(mvcmodule, rootsessionuuid, walletuuid));
+
+              case 22:
               case "end":
                 return _context15.stop();
             }
@@ -922,7 +972,31 @@ var Root = /*#__PURE__*/function (_React$Component) {
         }, _callee15, this);
       }));
 
-      function _setWallet(_x28, _x29) {
+      function _setAsCurrentWallet(_x28) {
+        return _setAsCurrentWallet2.apply(this, arguments);
+      }
+
+      return _setAsCurrentWallet;
+    }()
+  }, {
+    key: "_setWallet",
+    value: function () {
+      var _setWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16(walletname, walletuuid) {
+        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+          while (1) {
+            switch (_context16.prev = _context16.next) {
+              case 0:
+                return _context16.abrupt("return", this._doSetWallet(walletname, walletuuid));
+
+              case 1:
+              case "end":
+                return _context16.stop();
+            }
+          }
+        }, _callee16, this);
+      }));
+
+      function _setWallet(_x29, _x30) {
         return _setWallet2.apply(this, arguments);
       }
 
@@ -931,20 +1005,20 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_resetWallet",
     value: function () {
-      var _resetWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee16() {
-        return _regeneratorRuntime().wrap(function _callee16$(_context16) {
+      var _resetWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
+        return _regeneratorRuntime().wrap(function _callee17$(_context17) {
           while (1) {
-            switch (_context16.prev = _context16.next) {
+            switch (_context17.prev = _context17.next) {
               case 0:
                 console.log('Root._resetWallet called');
                 this.props.doResetWallet();
 
               case 2:
               case "end":
-                return _context16.stop();
+                return _context17.stop();
             }
           }
-        }, _callee16, this);
+        }, _callee17, this);
       }));
 
       function _resetWallet() {
@@ -956,33 +1030,33 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDeviceWallet",
     value: function () {
-      var _getDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee17() {
+      var _getDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18() {
         var mvcmyquote, rootsessionuuid, devicewllt;
-        return _regeneratorRuntime().wrap(function _callee17$(_context17) {
+        return _regeneratorRuntime().wrap(function _callee18$(_context18) {
           while (1) {
-            switch (_context17.prev = _context17.next) {
+            switch (_context18.prev = _context18.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
-                _context17.next = 4;
+                _context18.next = 4;
                 return mvcmyquote.readSettings('devicewallet');
 
               case 4:
-                devicewllt = _context17.sent;
+                devicewllt = _context18.sent;
 
                 if (!(devicewllt && devicewllt.walletuuid)) {
-                  _context17.next = 7;
+                  _context18.next = 7;
                   break;
                 }
 
-                return _context17.abrupt("return", mvcmyquote.getWalletInfo(rootsessionuuid, devicewllt.walletuuid));
+                return _context18.abrupt("return", mvcmyquote.getWalletInfo(rootsessionuuid, devicewllt.walletuuid));
 
               case 7:
               case "end":
-                return _context17.stop();
+                return _context18.stop();
             }
           }
-        }, _callee17, this);
+        }, _callee18, this);
       }));
 
       function _getDeviceWallet() {
@@ -994,42 +1068,42 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_isDeviceWallet",
     value: function () {
-      var _isDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee18(walletuuid) {
+      var _isDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19(walletuuid) {
         var mvcmyquote, rootsessionuuid, currentwalletuuid, devicewllt, _walletuuid;
 
-        return _regeneratorRuntime().wrap(function _callee18$(_context18) {
+        return _regeneratorRuntime().wrap(function _callee19$(_context19) {
           while (1) {
-            switch (_context18.prev = _context18.next) {
+            switch (_context19.prev = _context19.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 currentwalletuuid = this.props.currentwalletuuid;
-                _context18.next = 5;
+                _context19.next = 5;
                 return mvcmyquote.readSettings('devicewallet');
 
               case 5:
-                devicewllt = _context18.sent;
+                devicewllt = _context19.sent;
                 _walletuuid = walletuuid ? walletuuid : currentwalletuuid;
 
                 if (!(devicewllt && devicewllt.walletuuid && _walletuuid === devicewllt.walletuuid)) {
-                  _context18.next = 11;
+                  _context19.next = 11;
                   break;
                 }
 
-                return _context18.abrupt("return", true);
+                return _context19.abrupt("return", true);
 
               case 11:
-                return _context18.abrupt("return", false);
+                return _context19.abrupt("return", false);
 
               case 12:
               case "end":
-                return _context18.stop();
+                return _context19.stop();
             }
           }
-        }, _callee18, this);
+        }, _callee19, this);
       }));
 
-      function _isDeviceWallet(_x30) {
+      function _isDeviceWallet(_x31) {
         return _isDeviceWallet2.apply(this, arguments);
       }
 
@@ -1038,22 +1112,22 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_openDeviceWalletPromise",
     value: function () {
-      var _openDeviceWalletPromise2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee19() {
+      var _openDeviceWalletPromise2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
         var closed, mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, walletname, password, devicewallet, devicewllt, localscheme, localschemeuuid;
-        return _regeneratorRuntime().wrap(function _callee19$(_context19) {
+        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
           while (1) {
-            switch (_context19.prev = _context19.next) {
+            switch (_context20.prev = _context20.next) {
               case 0:
                 if (!(this.closingwallet === true && this.closedevicewalletpromise)) {
-                  _context19.next = 6;
+                  _context20.next = 6;
                   break;
                 }
 
-                _context19.next = 3;
+                _context20.next = 3;
                 return this.closedevicewalletpromise;
 
               case 3:
-                closed = _context19.sent;
+                closed = _context20.sent;
                 // reset closing elements
                 this.closingwallet = false;
                 this.closedevicewalletpromise = null;
@@ -1063,25 +1137,25 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletname = 'devicewallet';
-                _context19.next = 12;
+                _context20.next = 12;
                 return this._getDeviceWallet();
 
               case 12:
-                devicewallet = _context19.sent;
+                devicewallet = _context20.sent;
 
                 if (!(devicewallet && devicewallet.uuid)) {
-                  _context19.next = 23;
+                  _context20.next = 23;
                   break;
                 }
 
-                _context19.next = 16;
+                _context20.next = 16;
                 return mvcmyquote.readSettings('devicewallet');
 
               case 16:
-                devicewllt = _context19.sent;
+                devicewllt = _context20.sent;
                 walletuuid = devicewllt.walletuuid;
                 password = devicewllt.password;
-                _context19.next = 21;
+                _context20.next = 21;
                 return this._doOpenWallet(mvcmodule, rootsessionuuid, walletuuid, walletname, password)["catch"](function (err) {
                   console.log('error in Root._openDeviceWallet: ' + err);
                   throw err;
@@ -1089,32 +1163,32 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 21:
                 this.devicewalletuuid = walletuuid;
-                return _context19.abrupt("return", devicewallet);
+                return _context20.abrupt("return", devicewallet);
 
               case 23:
                 // we generate a password
                 password = this.app.guid(); // and create a wallet
 
-                _context19.next = 26;
+                _context20.next = 26;
                 return mvcmyquote.getDefaultLocalSchemeInfo(rootsessionuuid);
 
               case 26:
-                localscheme = _context19.sent;
+                localscheme = _context20.sent;
                 localschemeuuid = localscheme.uuid;
-                _context19.next = 30;
+                _context20.next = 30;
                 return mvcmyquote.makeWallet(rootsessionuuid, walletname, localschemeuuid, password)["catch"](function (err) {
                   console.log('error in Root._openDeviceWallet: ' + err);
                 });
 
               case 30:
-                devicewallet = _context19.sent;
+                devicewallet = _context20.sent;
 
                 if (devicewallet) {
-                  _context19.next = 33;
+                  _context20.next = 33;
                   break;
                 }
 
-                return _context19.abrupt("return", Promise.reject('could not create wallet for device'));
+                return _context20.abrupt("return", Promise.reject('could not create wallet for device'));
 
               case 33:
                 walletuuid = devicewallet.uuid; // we save device wallet info in the settings
@@ -1122,27 +1196,27 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 devicewllt = {};
                 devicewllt.walletuuid = walletuuid;
                 devicewllt.password = password;
-                _context19.next = 39;
+                _context20.next = 39;
                 return mvcmyquote.putSettings('devicewallet', devicewllt);
 
               case 39:
                 this.devicewalletuuid = walletuuid; // then open wallet
 
-                _context19.next = 42;
+                _context20.next = 42;
                 return this._doOpenWallet(mvcmodule, rootsessionuuid, walletuuid, walletname, password)["catch"](function (err) {
                   console.log('error in Root._openDeviceWallet: ' + err);
                   throw err;
                 });
 
               case 42:
-                return _context19.abrupt("return", devicewallet);
+                return _context20.abrupt("return", devicewallet);
 
               case 43:
               case "end":
-                return _context19.stop();
+                return _context20.stop();
             }
           }
-        }, _callee19, this);
+        }, _callee20, this);
       }));
 
       function _openDeviceWalletPromise() {
@@ -1154,31 +1228,31 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_openDeviceWallet",
     value: function () {
-      var _openDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee20() {
-        return _regeneratorRuntime().wrap(function _callee20$(_context20) {
+      var _openDeviceWallet2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21() {
+        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
           while (1) {
-            switch (_context20.prev = _context20.next) {
+            switch (_context21.prev = _context21.next) {
               case 0:
                 console.log('Root._openDeviceWallet called'); // to make _openDeviceWallet re-entrant, we store and return a single promise
 
                 if (!(this.openingdevicewallet === true && this.opendevicewalletpromise)) {
-                  _context20.next = 3;
+                  _context21.next = 3;
                   break;
                 }
 
-                return _context20.abrupt("return", this.opendevicewalletpromise);
+                return _context21.abrupt("return", this.opendevicewalletpromise);
 
               case 3:
                 this.openingdevicewallet = true;
                 this.opendevicewalletpromise = this._openDeviceWalletPromise();
-                return _context20.abrupt("return", this.opendevicewalletpromise);
+                return _context21.abrupt("return", this.opendevicewalletpromise);
 
               case 6:
               case "end":
-                return _context20.stop();
+                return _context21.stop();
             }
           }
-        }, _callee20, this);
+        }, _callee21, this);
       }));
 
       function _openDeviceWallet() {
@@ -1190,7 +1264,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_closeDeviceWallet",
     value: function _closeDeviceWallet() {
-      var _this9 = this;
+      var _this8 = this;
 
       console.log('Root._closeDeviceWallet called');
 
@@ -1212,14 +1286,14 @@ var Root = /*#__PURE__*/function (_React$Component) {
           // set immediately
 
           this.closedevicewalletpromise = mvcmyquote.lockWallet(rootsessionuuid, currentwalletuuid).then(function () {
-            _this9.props.doResetWallet();
+            _this8.props.doResetWallet();
 
-            _this9.closingwallet = false;
+            _this8.closingwallet = false;
             console.log('Root._closeDeviceWallet wallet is closed');
             return true;
           })["catch"](function (err) {
             console.log('error in Root._closeDeviceWallet ' + err);
-            _this9.closingwallet = false;
+            _this8.closingwallet = false;
             return true;
           });
         }
@@ -1230,30 +1304,30 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_doOpenCard",
     value: function () {
-      var _doOpenCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee21(mvcmodule, sessionuuid, walletuuid, carduuid) {
-        var _this10 = this;
+      var _doOpenCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22(mvcmodule, sessionuuid, walletuuid, carduuid) {
+        var _this9 = this;
 
         var result;
-        return _regeneratorRuntime().wrap(function _callee21$(_context21) {
+        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
           while (1) {
-            switch (_context21.prev = _context21.next) {
+            switch (_context22.prev = _context22.next) {
               case 0:
                 result = new Promise(function (resolve, reject) {
-                  _this10.props.doOpenCard(mvcmodule, sessionuuid, walletuuid, carduuid, function (err, res) {
+                  _this9.props.doOpenCard(mvcmodule, sessionuuid, walletuuid, carduuid, function (err, res) {
                     if (err) reject(err);else resolve(res);
                   });
                 });
-                return _context21.abrupt("return", result);
+                return _context22.abrupt("return", result);
 
               case 2:
               case "end":
-                return _context21.stop();
+                return _context22.stop();
             }
           }
-        }, _callee21);
+        }, _callee22);
       }));
 
-      function _doOpenCard(_x31, _x32, _x33, _x34) {
+      function _doOpenCard(_x32, _x33, _x34, _x35) {
         return _doOpenCard2.apply(this, arguments);
       }
 
@@ -1262,20 +1336,20 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_resetCard",
     value: function () {
-      var _resetCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee22() {
-        return _regeneratorRuntime().wrap(function _callee22$(_context22) {
+      var _resetCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23() {
+        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
           while (1) {
-            switch (_context22.prev = _context22.next) {
+            switch (_context23.prev = _context23.next) {
               case 0:
                 console.log('Root._resetCard called');
                 this.props.doResetCard();
 
               case 2:
               case "end":
-                return _context22.stop();
+                return _context23.stop();
             }
           }
-        }, _callee22, this);
+        }, _callee23, this);
       }));
 
       function _resetCard() {
@@ -1287,55 +1361,8 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_openCard",
     value: function () {
-      var _openCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee23(carduuid) {
+      var _openCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(carduuid) {
         var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, success;
-        return _regeneratorRuntime().wrap(function _callee23$(_context23) {
-          while (1) {
-            switch (_context23.prev = _context23.next) {
-              case 0:
-                mvcmodule = this.getMvcModuleObject();
-                mvcmyquote = this.getMvcMyQuoteObject();
-                rootsessionuuid = this.props.rootsessionuuid;
-                walletuuid = this.props.currentwalletuuid;
-
-                if (walletuuid) {
-                  _context23.next = 6;
-                  break;
-                }
-
-                return _context23.abrupt("return");
-
-              case 6:
-                // we open the card, this sets it as current card in redux
-                success = true;
-                _context23.next = 9;
-                return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {
-                  console.log('error in Root._openCard: ' + err);
-                  success = false;
-                });
-
-              case 9:
-                return _context23.abrupt("return", success);
-
-              case 10:
-              case "end":
-                return _context23.stop();
-            }
-          }
-        }, _callee23, this);
-      }));
-
-      function _openCard(_x35) {
-        return _openCard2.apply(this, arguments);
-      }
-
-      return _openCard;
-    }()
-  }, {
-    key: "_openCurrencyCard",
-    value: function () {
-      var _openCurrencyCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee24(currencyuuid) {
-        var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, card, carduuid;
         return _regeneratorRuntime().wrap(function _callee24$(_context24) {
           while (1) {
             switch (_context24.prev = _context24.next) {
@@ -1353,33 +1380,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 return _context24.abrupt("return");
 
               case 6:
-                _context24.next = 8;
-                return mvcmyquote.getCurrencyCard(rootsessionuuid, walletuuid, currencyuuid)["catch"](function (err) {
-                  console.log('error in Root._openCurrencyCard: ' + err);
-                });
-
-              case 8:
-                card = _context24.sent;
-
-                if (card) {
-                  _context24.next = 11;
-                  break;
-                }
-
-                return _context24.abrupt("return", Promise.reject('could not find main card for currency ' + currencyuuid));
-
-              case 11:
                 // we open the card, this sets it as current card in redux
-                carduuid = card.uuid;
-                _context24.next = 14;
+                success = true;
+                _context24.next = 9;
                 return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {
-                  console.log('error in Root._openCurrencyCard: ' + err);
+                  console.log('error in Root._openCard: ' + err);
+                  success = false;
                 });
 
-              case 14:
-                return _context24.abrupt("return", card);
+              case 9:
+                return _context24.abrupt("return", success);
 
-              case 15:
+              case 10:
               case "end":
                 return _context24.stop();
             }
@@ -1387,7 +1399,69 @@ var Root = /*#__PURE__*/function (_React$Component) {
         }, _callee24, this);
       }));
 
-      function _openCurrencyCard(_x36) {
+      function _openCard(_x36) {
+        return _openCard2.apply(this, arguments);
+      }
+
+      return _openCard;
+    }()
+  }, {
+    key: "_openCurrencyCard",
+    value: function () {
+      var _openCurrencyCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25(currencyuuid) {
+        var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, card, carduuid;
+        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+          while (1) {
+            switch (_context25.prev = _context25.next) {
+              case 0:
+                mvcmodule = this.getMvcModuleObject();
+                mvcmyquote = this.getMvcMyQuoteObject();
+                rootsessionuuid = this.props.rootsessionuuid;
+                walletuuid = this.props.currentwalletuuid;
+
+                if (walletuuid) {
+                  _context25.next = 6;
+                  break;
+                }
+
+                return _context25.abrupt("return");
+
+              case 6:
+                _context25.next = 8;
+                return mvcmyquote.getCurrencyCard(rootsessionuuid, walletuuid, currencyuuid)["catch"](function (err) {
+                  console.log('error in Root._openCurrencyCard: ' + err);
+                });
+
+              case 8:
+                card = _context25.sent;
+
+                if (card) {
+                  _context25.next = 11;
+                  break;
+                }
+
+                return _context25.abrupt("return", Promise.reject('could not find main card for currency ' + currencyuuid));
+
+              case 11:
+                // we open the card, this sets it as current card in redux
+                carduuid = card.uuid;
+                _context25.next = 14;
+                return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {
+                  console.log('error in Root._openCurrencyCard: ' + err);
+                });
+
+              case 14:
+                return _context25.abrupt("return", card);
+
+              case 15:
+              case "end":
+                return _context25.stop();
+            }
+          }
+        }, _callee25, this);
+      }));
+
+      function _openCurrencyCard(_x37) {
         return _openCurrencyCard2.apply(this, arguments);
       }
 
@@ -1396,96 +1470,96 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_createCurrencyCard",
     value: function () {
-      var _createCurrencyCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee25(currencyuuid, signingkey, options) {
+      var _createCurrencyCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(currencyuuid, signingkey, options) {
         var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, card, validprivatekey, validaddress, carduuid;
-        return _regeneratorRuntime().wrap(function _callee25$(_context25) {
+        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
           while (1) {
-            switch (_context25.prev = _context25.next) {
+            switch (_context26.prev = _context26.next) {
               case 0:
                 console.log('Root._createCurrencyCard');
 
                 if (currencyuuid) {
-                  _context25.next = 3;
+                  _context26.next = 3;
                   break;
                 }
 
-                return _context25.abrupt("return", Promise.reject('no currency uuid defined'));
+                return _context26.abrupt("return", Promise.reject('no currency uuid defined'));
 
               case 3:
                 if (signingkey) {
-                  _context25.next = 5;
+                  _context26.next = 5;
                   break;
                 }
 
-                return _context25.abrupt("return", Promise.reject('no private key defined'));
+                return _context26.abrupt("return", Promise.reject('no private key defined'));
 
               case 5:
                 mvcmodule = this.getMvcModuleObject();
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
-                _context25.next = 11;
+                _context26.next = 11;
                 return mvcmyquote.isValidPrivateKey(rootsessionuuid, signingkey);
 
               case 11:
-                validprivatekey = _context25.sent;
+                validprivatekey = _context26.sent;
 
                 if (!validprivatekey) {
-                  _context25.next = 18;
+                  _context26.next = 18;
                   break;
                 }
 
-                _context25.next = 15;
+                _context26.next = 15;
                 return mvcmyquote.createCurrencyCard(rootsessionuuid, walletuuid, currencyuuid, signingkey)["catch"](function (err) {
                   console.log('error in Root._createCurrencyCard: ' + err);
                 });
 
               case 15:
-                card = _context25.sent;
-                _context25.next = 26;
+                card = _context26.sent;
+                _context26.next = 26;
                 break;
 
               case 18:
                 if (!(options && options.allow_readonly === true)) {
-                  _context25.next = 26;
+                  _context26.next = 26;
                   break;
                 }
 
-                _context25.next = 21;
+                _context26.next = 21;
                 return mvcmyquote.isValidAddress(rootsessionuuid, signingkey);
 
               case 21:
-                validaddress = _context25.sent;
+                validaddress = _context26.sent;
 
                 if (!validaddress) {
-                  _context25.next = 26;
+                  _context26.next = 26;
                   break;
                 }
 
-                _context25.next = 25;
+                _context26.next = 25;
                 return mvcmyquote.createReadOnlyCurrencyCard(rootsessionuuid, walletuuid, currencyuuid, signingkey)["catch"](function (err) {
                   console.log('error in Root._createCurrencyCard: ' + err);
                 });
 
               case 25:
-                card = _context25.sent;
+                card = _context26.sent;
 
               case 26:
                 if (card) {
-                  _context25.next = 29;
+                  _context26.next = 29;
                   break;
                 }
 
                 this.app.alert('Could not create card from private key or address');
-                return _context25.abrupt("return");
+                return _context26.abrupt("return");
 
               case 29:
                 if (!(options && options.maincard === true)) {
-                  _context25.next = 32;
+                  _context26.next = 32;
                   break;
                 }
 
-                _context25.next = 32;
+                _context26.next = 32;
                 return mvcmyquote.setCurrencyCard(rootsessionuuid, walletuuid, currencyuuid, card.uuid)["catch"](function (err) {
                   console.log('error in Root._createCurrencyCard: ' + err);
                 });
@@ -1493,23 +1567,23 @@ var Root = /*#__PURE__*/function (_React$Component) {
               case 32:
                 // we open the card, this sets it as current card in redux
                 carduuid = card.uuid;
-                _context25.next = 35;
+                _context26.next = 35;
                 return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {
                   console.log('error in Root._createCurrencyCard: ' + err);
                 });
 
               case 35:
-                return _context25.abrupt("return", card);
+                return _context26.abrupt("return", card);
 
               case 36:
               case "end":
-                return _context25.stop();
+                return _context26.stop();
             }
           }
-        }, _callee25, this);
+        }, _callee26, this);
       }));
 
-      function _createCurrencyCard(_x37, _x38, _x39) {
+      function _createCurrencyCard(_x38, _x39, _x40) {
         return _createCurrencyCard2.apply(this, arguments);
       }
 
@@ -1518,32 +1592,32 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getCurrencyFeeLevel",
     value: function () {
-      var _getCurrencyFeeLevel2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee26(currencyuuid) {
+      var _getCurrencyFeeLevel2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27(currencyuuid) {
         var boot_webapp, mvcmyquote, rootsessionuuid, walletuuid, schemeinfo, schemesoverload, i;
-        return _regeneratorRuntime().wrap(function _callee26$(_context26) {
+        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
           while (1) {
-            switch (_context26.prev = _context26.next) {
+            switch (_context27.prev = _context27.next) {
               case 0:
                 boot_webapp = this.app.boot_webapp;
 
                 if (!boot_webapp.schemes) {
-                  _context26.next = 17;
+                  _context27.next = 17;
                   break;
                 }
 
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
-                _context26.next = 7;
+                _context27.next = 7;
                 return mvcmyquote.getCurrencyScheme(rootsessionuuid, walletuuid, currencyuuid)["catch"](function (err) {
                   console.log('error in Root._getCurrencyFeeLevel: ' + err);
                 });
 
               case 7:
-                schemeinfo = _context26.sent;
+                schemeinfo = _context27.sent;
 
                 if (!schemeinfo) {
-                  _context26.next = 17;
+                  _context27.next = 17;
                   break;
                 }
 
@@ -1552,31 +1626,31 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 11:
                 if (!(i < schemesoverload.length)) {
-                  _context26.next = 17;
+                  _context27.next = 17;
                   break;
                 }
 
                 if (!(schemesoverload[i].uuid == schemeinfo.uuid)) {
-                  _context26.next = 14;
+                  _context27.next = 14;
                   break;
                 }
 
-                return _context26.abrupt("return", schemesoverload[i].ethnodeserver ? schemesoverload[i].ethnodeserver.feelevel : null);
+                return _context27.abrupt("return", schemesoverload[i].ethnodeserver ? schemesoverload[i].ethnodeserver.feelevel : null);
 
               case 14:
                 i++;
-                _context26.next = 11;
+                _context27.next = 11;
                 break;
 
               case 17:
               case "end":
-                return _context26.stop();
+                return _context27.stop();
             }
           }
-        }, _callee26, this);
+        }, _callee27, this);
       }));
 
-      function _getCurrencyFeeLevel(_x40) {
+      function _getCurrencyFeeLevel(_x41) {
         return _getCurrencyFeeLevel2.apply(this, arguments);
       }
 
@@ -1585,70 +1659,70 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_createLocalCard",
     value: function () {
-      var _createLocalCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee27(web3providerurl, signingkey) {
+      var _createLocalCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee28(web3providerurl, signingkey) {
         var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, card, carduuid;
-        return _regeneratorRuntime().wrap(function _callee27$(_context27) {
+        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
           while (1) {
-            switch (_context27.prev = _context27.next) {
+            switch (_context28.prev = _context28.next) {
               case 0:
                 console.log('Root._createLocalCard');
 
                 if (web3providerurl) {
-                  _context27.next = 3;
+                  _context28.next = 3;
                   break;
                 }
 
-                return _context27.abrupt("return", Promise.reject('no web3 provider url defined'));
+                return _context28.abrupt("return", Promise.reject('no web3 provider url defined'));
 
               case 3:
                 if (signingkey) {
-                  _context27.next = 5;
+                  _context28.next = 5;
                   break;
                 }
 
-                return _context27.abrupt("return", Promise.reject('no private key defined'));
+                return _context28.abrupt("return", Promise.reject('no private key defined'));
 
               case 5:
                 mvcmodule = this.getMvcModuleObject();
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
-                _context27.next = 11;
+                _context28.next = 11;
                 return mvcmyquote.createCard(rootsessionuuid, walletuuid, web3providerurl, signingkey)["catch"](function (err) {
                   console.log('error in Root._createLocalCard: ' + err);
                 });
 
               case 11:
-                card = _context27.sent;
+                card = _context28.sent;
 
                 if (card) {
-                  _context27.next = 15;
+                  _context28.next = 15;
                   break;
                 }
 
                 this.app.alert('Could not create card from private key');
-                return _context27.abrupt("return");
+                return _context28.abrupt("return");
 
               case 15:
                 // we open the card, this sets it as current card in redux
                 carduuid = card.uuid;
-                _context27.next = 18;
+                _context28.next = 18;
                 return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, carduuid)["catch"](function (err) {
                   console.log('error in Root._createLocalCard: ' + err);
                 });
 
               case 18:
-                return _context27.abrupt("return", card);
+                return _context28.abrupt("return", card);
 
               case 19:
               case "end":
-                return _context27.stop();
+                return _context28.stop();
             }
           }
-        }, _callee27, this);
+        }, _callee28, this);
       }));
 
-      function _createLocalCard(_x41, _x42) {
+      function _createLocalCard(_x42, _x43) {
         return _createLocalCard2.apply(this, arguments);
       }
 
@@ -1657,11 +1731,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_openLocalCard",
     value: function () {
-      var _openLocalCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee28(schemeuuid, address) {
+      var _openLocalCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee29(schemeuuid, address) {
         var mvcmodule, mvcmyquote, rootsessionuuid, walletuuid, card;
-        return _regeneratorRuntime().wrap(function _callee28$(_context28) {
+        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
           while (1) {
-            switch (_context28.prev = _context28.next) {
+            switch (_context29.prev = _context29.next) {
               case 0:
                 mvcmodule = this.getMvcModuleObject();
                 mvcmyquote = this.getMvcMyQuoteObject();
@@ -1669,44 +1743,44 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 walletuuid = this.props.currentwalletuuid;
 
                 if (walletuuid) {
-                  _context28.next = 6;
+                  _context29.next = 6;
                   break;
                 }
 
-                return _context28.abrupt("return");
+                return _context29.abrupt("return");
 
               case 6:
-                _context28.next = 8;
+                _context29.next = 8;
                 return mvcmyquote.getCardInfoFromAddressOnScheme(rootsessionuuid, walletuuid, schemeuuid, address);
 
               case 8:
-                card = _context28.sent;
+                card = _context29.sent;
 
                 if (card) {
-                  _context28.next = 11;
+                  _context29.next = 11;
                   break;
                 }
 
-                return _context28.abrupt("return", Promise.reject('could not find curency card for address ' + address));
+                return _context29.abrupt("return", Promise.reject('could not find curency card for address ' + address));
 
               case 11:
-                _context28.next = 13;
+                _context29.next = 13;
                 return this._doOpenCard(mvcmodule, rootsessionuuid, walletuuid, card.uuid)["catch"](function (err) {
                   console.log('error in Root._openLocalCard: ' + err);
                 });
 
               case 13:
-                return _context28.abrupt("return", card);
+                return _context29.abrupt("return", card);
 
               case 14:
               case "end":
-                return _context28.stop();
+                return _context29.stop();
             }
           }
-        }, _callee28, this);
+        }, _callee29, this);
       }));
 
-      function _openLocalCard(_x43, _x44) {
+      function _openLocalCard(_x44, _x45) {
         return _openLocalCard2.apply(this, arguments);
       }
 
@@ -1729,22 +1803,22 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "fetchNavigationState",
     value: function () {
-      var _fetchNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee29() {
+      var _fetchNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee30() {
         var app_start_conditions, start_url, mvcmodule, rootsessionuuid, valid;
-        return _regeneratorRuntime().wrap(function _callee29$(_context29) {
+        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
           while (1) {
-            switch (_context29.prev = _context29.next) {
+            switch (_context30.prev = _context30.next) {
               case 0:
                 console.log('Root.fetchNavigationState called');
                 app_start_conditions = this.app.getVariable('start_conditions');
 
                 if (!(app_start_conditions && app_start_conditions.treated != true)) {
-                  _context29.next = 7;
+                  _context30.next = 7;
                   break;
                 }
 
                 start_url = app_start_conditions.url;
-                _context29.next = 6;
+                _context30.next = 6;
                 return this.app.gotoUrl(start_url)["catch"](function (err) {
                   console.log('error in Root.fetchNavigationState: ' + err);
                 });
@@ -1758,50 +1832,50 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 rootsessionuuid = this.props.rootsessionuuid;
 
                 if (!rootsessionuuid) {
-                  _context29.next = 19;
+                  _context30.next = 19;
                   break;
                 }
 
-                _context29.next = 12;
+                _context30.next = 12;
                 return this._doCheckSession(mvcmodule, rootsessionuuid)["catch"](function (err) {
                   if (err === 'ERR_SESSION_NOT_FOUND') valid = false;
                 });
 
               case 12:
-                valid = _context29.sent;
+                valid = _context30.sent;
 
                 if (!(valid == false)) {
-                  _context29.next = 17;
+                  _context30.next = 17;
                   break;
                 }
 
-                _context29.next = 16;
+                _context30.next = 16;
                 return this._doFetchBlankSession(mvcmodule)["catch"](function (err) {
                   console.log('error in Root.componentDidMount: ' + err);
                 });
 
               case 16:
-                rootsessionuuid = _context29.sent;
+                rootsessionuuid = _context30.sent;
 
               case 17:
-                _context29.next = 22;
+                _context30.next = 22;
                 break;
 
               case 19:
-                _context29.next = 21;
+                _context30.next = 21;
                 return this._doFetchBlankSession(mvcmodule)["catch"](function (err) {
                   console.log('error in Root.componentDidMount: ' + err);
                 });
 
               case 21:
-                rootsessionuuid = _context29.sent;
+                rootsessionuuid = _context30.sent;
 
               case 22:
               case "end":
-                return _context29.stop();
+                return _context30.stop();
             }
           }
-        }, _callee29, this);
+        }, _callee30, this);
       }));
 
       function fetchNavigationState() {
@@ -1813,11 +1887,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "checkNavigationState",
     value: function () {
-      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee30() {
+      var _checkNavigationState = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee31() {
         var fetchNavigationStatePromise, data;
-        return _regeneratorRuntime().wrap(function _callee30$(_context30) {
+        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
           while (1) {
-            switch (_context30.prev = _context30.next) {
+            switch (_context31.prev = _context31.next) {
               case 0:
                 console.log('Root.checkNavigationState called'); // use navigation promises to be re-entrant
 
@@ -1829,23 +1903,23 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 } // retrieve data
 
 
-                _context30.next = 5;
+                _context31.next = 5;
                 return fetchNavigationStatePromise;
 
               case 5:
-                data = _context30.sent;
+                data = _context31.sent;
                 // use data to set internal state
                 this.setState({
                   loading: false
                 });
-                return _context30.abrupt("return");
+                return _context31.abrupt("return");
 
               case 8:
               case "end":
-                return _context30.stop();
+                return _context31.stop();
             }
           }
-        }, _callee30, this);
+        }, _callee31, this);
       }));
 
       function checkNavigationState() {
@@ -1867,25 +1941,25 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onRefreshPage",
     value: function () {
-      var _onRefreshPage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee31() {
+      var _onRefreshPage = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee32() {
         var lastrefresh;
-        return _regeneratorRuntime().wrap(function _callee31$(_context31) {
+        return _regeneratorRuntime().wrap(function _callee32$(_context32) {
           while (1) {
-            switch (_context31.prev = _context31.next) {
+            switch (_context32.prev = _context32.next) {
               case 0:
                 console.log('Root.onRefreshPage called');
                 lastrefresh = Date.now();
-                _context31.next = 4;
+                _context32.next = 4;
                 return this._setState({
                   lastrefresh: lastrefresh
                 });
 
               case 4:
               case "end":
-                return _context31.stop();
+                return _context32.stop();
             }
           }
-        }, _callee31, this);
+        }, _callee32, this);
       }));
 
       function onRefreshPage() {
@@ -1897,10 +1971,10 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "onResetSession",
     value: function () {
-      var _onResetSession = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee32() {
-        return _regeneratorRuntime().wrap(function _callee32$(_context32) {
+      var _onResetSession = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33() {
+        return _regeneratorRuntime().wrap(function _callee33$(_context33) {
           while (1) {
-            switch (_context32.prev = _context32.next) {
+            switch (_context33.prev = _context33.next) {
               case 0:
                 console.log('Root.onResetSession pressed!');
                 this.setState({
@@ -1910,10 +1984,10 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 3:
               case "end":
-                return _context32.stop();
+                return _context33.stop();
             }
           }
-        }, _callee32, this);
+        }, _callee33, this);
       }));
 
       function onResetSession() {
@@ -1931,7 +2005,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "renderRoute",
     value: function renderRoute() {
-      var _this11 = this;
+      var _this10 = this;
 
       if (this.state.loading) {
         return /*#__PURE__*/_react["default"].createElement("div", {
@@ -1954,9 +2028,9 @@ var Root = /*#__PURE__*/function (_React$Component) {
           return /*#__PURE__*/_react["default"].createElement(_reactRouterDom.Route, {
             path: route.path,
             key: route.name,
-            element: /*#__PURE__*/_react["default"].createElement(RouteScreen, _extends({}, _this11.props, {
-              app: _this11.app,
-              root: _this11,
+            element: /*#__PURE__*/_react["default"].createElement(RouteScreen, _extends({}, _this10.props, {
+              app: _this10.app,
+              root: _this10,
               route: route
             }))
           });
@@ -1998,25 +2072,25 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_gotoRoute",
     value: function () {
-      var _gotoRoute2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee33(route, params) {
+      var _gotoRoute2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34(route, params) {
         var dataobj, newparams, path;
-        return _regeneratorRuntime().wrap(function _callee33$(_context33) {
+        return _regeneratorRuntime().wrap(function _callee34$(_context34) {
           while (1) {
-            switch (_context33.prev = _context33.next) {
+            switch (_context34.prev = _context34.next) {
               case 0:
                 if (!(route == 'dataobject')) {
-                  _context33.next = 11;
+                  _context34.next = 11;
                   break;
                 }
 
-                _context33.next = 3;
+                _context34.next = 3;
                 return this._getDataObjectFromCallParams(params);
 
               case 3:
-                dataobj = _context33.sent;
+                dataobj = _context34.sent;
 
                 if (!dataobj) {
-                  _context33.next = 10;
+                  _context34.next = 10;
                   break;
                 }
 
@@ -2024,11 +2098,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   dataobject: dataobj,
                   action: params.action
                 };
-                _context33.next = 8;
+                _context34.next = 8;
                 return this.app.gotoMyQuotePage(newparams);
 
               case 8:
-                _context33.next = 11;
+                _context34.next = 11;
                 break;
 
               case 10:
@@ -2039,23 +2113,23 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 console.log('Root.gotoRoute called asking to jump to ' + path);
 
                 if (!path) {
-                  _context33.next = 17;
+                  _context34.next = 17;
                   break;
                 }
 
                 this.routehistory.push(path);
-                _context33.next = 17;
+                _context34.next = 17;
                 return this.app.refreshPage();
 
               case 17:
               case "end":
-                return _context33.stop();
+                return _context34.stop();
             }
           }
-        }, _callee33, this);
+        }, _callee34, this);
       }));
 
-      function _gotoRoute(_x45, _x46) {
+      function _gotoRoute(_x46, _x47) {
         return _gotoRoute2.apply(this, arguments);
       }
 
@@ -2064,11 +2138,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectFromComposedHash",
     value: function () {
-      var _getDataObjectFromComposedHash2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee34(txhash, currencyuuid) {
+      var _getDataObjectFromComposedHash2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35(txhash, currencyuuid) {
         var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret;
-        return _regeneratorRuntime().wrap(function _callee34$(_context34) {
+        return _regeneratorRuntime().wrap(function _callee35$(_context35) {
           while (1) {
-            switch (_context34.prev = _context34.next) {
+            switch (_context35.prev = _context35.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
@@ -2080,28 +2154,28 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 params.push(walletuuid);
                 params.push(txhash);
                 params.push(currencyuuid);
-                _context34.next = 11;
+                _context35.next = 11;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromComposedHash_asynchook', result, params);
 
               case 11:
-                ret = _context34.sent;
+                ret = _context35.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context34.next = 14;
+                  _context35.next = 14;
                   break;
                 }
 
-                return _context34.abrupt("return", result.dataobject);
+                return _context35.abrupt("return", result.dataobject);
 
               case 14:
               case "end":
-                return _context34.stop();
+                return _context35.stop();
             }
           }
-        }, _callee34, this);
+        }, _callee35, this);
       }));
 
-      function _getDataObjectFromComposedHash(_x47, _x48) {
+      function _getDataObjectFromComposedHash(_x48, _x49) {
         return _getDataObjectFromComposedHash2.apply(this, arguments);
       }
 
@@ -2110,18 +2184,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectFromUrlParams",
     value: function () {
-      var _getDataObjectFromUrlParams2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee35(urlParams) {
+      var _getDataObjectFromUrlParams2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee36(urlParams) {
         var dataobject, currencyuuid, txhash, card, pos, tokenid;
-        return _regeneratorRuntime().wrap(function _callee35$(_context35) {
+        return _regeneratorRuntime().wrap(function _callee36$(_context36) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context36.prev = _context36.next) {
               case 0:
                 if (urlParams) {
-                  _context35.next = 2;
+                  _context36.next = 2;
                   break;
                 }
 
-                return _context35.abrupt("return");
+                return _context36.abrupt("return");
 
               case 2:
                 currencyuuid = urlParams.get('ccy');
@@ -2129,39 +2203,39 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 card = urlParams.get('card');
 
                 if (!txhash) {
-                  _context35.next = 18;
+                  _context36.next = 18;
                   break;
                 }
 
                 pos = txhash ? txhash.indexOf('-') : -1;
 
                 if (!(pos == -1)) {
-                  _context35.next = 13;
+                  _context36.next = 13;
                   break;
                 }
 
-                _context35.next = 10;
+                _context36.next = 10;
                 return this.app.getMyQuoteDataObject(txhash, currencyuuid);
 
               case 10:
-                dataobject = _context35.sent;
-                _context35.next = 16;
+                dataobject = _context36.sent;
+                _context36.next = 16;
                 break;
 
               case 13:
-                _context35.next = 15;
+                _context36.next = 15;
                 return this._getDataObjectFromComposedHash(txhash, currencyuuid);
 
               case 15:
-                dataobject = _context35.sent;
+                dataobject = _context36.sent;
 
               case 16:
-                _context35.next = 24;
+                _context36.next = 24;
                 break;
 
               case 18:
                 if (!card) {
-                  _context35.next = 24;
+                  _context36.next = 24;
                   break;
                 }
 
@@ -2169,28 +2243,28 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 tokenid = urlParams.get('tokenid');
 
                 if (!tokenid) {
-                  _context35.next = 24;
+                  _context36.next = 24;
                   break;
                 }
 
-                _context35.next = 23;
+                _context36.next = 23;
                 return this._getDataObjectFromCard(currencyuuid, card, tokenid);
 
               case 23:
-                dataobject = _context35.sent;
+                dataobject = _context36.sent;
 
               case 24:
-                return _context35.abrupt("return", dataobject);
+                return _context36.abrupt("return", dataobject);
 
               case 25:
               case "end":
-                return _context35.stop();
+                return _context36.stop();
             }
           }
-        }, _callee35, this);
+        }, _callee36, this);
       }));
 
-      function _getDataObjectFromUrlParams(_x49) {
+      function _getDataObjectFromUrlParams(_x50) {
         return _getDataObjectFromUrlParams2.apply(this, arguments);
       }
 
@@ -2199,48 +2273,48 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectFromCallParams",
     value: function () {
-      var _getDataObjectFromCallParams2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee36(params) {
+      var _getDataObjectFromCallParams2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee37(params) {
         var dataobject, currencyuuid, txhash, pos;
-        return _regeneratorRuntime().wrap(function _callee36$(_context36) {
+        return _regeneratorRuntime().wrap(function _callee37$(_context37) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context37.prev = _context37.next) {
               case 0:
                 currencyuuid = params.currencyuuid;
                 txhash = params.txhash;
                 pos = txhash ? txhash.indexOf('-') : -1; // TODO: look if there is a '-' in the transaction hash
 
                 if (!(pos == -1)) {
-                  _context36.next = 9;
+                  _context37.next = 9;
                   break;
                 }
 
-                _context36.next = 6;
+                _context37.next = 6;
                 return this.app.getMyQuoteDataObject(txhash, currencyuuid);
 
               case 6:
-                dataobject = _context36.sent;
-                _context36.next = 12;
+                dataobject = _context37.sent;
+                _context37.next = 12;
                 break;
 
               case 9:
-                _context36.next = 11;
+                _context37.next = 11;
                 return this._getDataObjectFromComposedHash(txhash, currencyuuid);
 
               case 11:
-                dataobject = _context36.sent;
+                dataobject = _context37.sent;
 
               case 12:
-                return _context36.abrupt("return", dataobject);
+                return _context37.abrupt("return", dataobject);
 
               case 13:
               case "end":
-                return _context36.stop();
+                return _context37.stop();
             }
           }
-        }, _callee36, this);
+        }, _callee37, this);
       }));
 
-      function _getDataObjectFromCallParams(_x50) {
+      function _getDataObjectFromCallParams(_x51) {
         return _getDataObjectFromCallParams2.apply(this, arguments);
       }
 
@@ -2288,21 +2362,21 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_gotoUrl",
     value: function () {
-      var _gotoUrl2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee37(url) {
+      var _gotoUrl2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee38(url) {
         var cleanurl, mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, URL, queryobject, dataobject_routes, sessionuuid, route, _params, urlParams, dataobject, querystring, app_start_conditions, _params2, routings, types, routing, i, param_name;
 
-        return _regeneratorRuntime().wrap(function _callee37$(_context37) {
+        return _regeneratorRuntime().wrap(function _callee38$(_context38) {
           while (1) {
-            switch (_context37.prev = _context37.next) {
+            switch (_context38.prev = _context38.next) {
               case 0:
-                _context37.next = 2;
+                _context38.next = 2;
                 return this.app.getCleanUrl();
 
               case 2:
-                cleanurl = _context37.sent;
+                cleanurl = _context38.sent;
 
                 if (!(url && url.startsWith(cleanurl) !== true)) {
-                  _context37.next = 19;
+                  _context38.next = 19;
                   break;
                 }
 
@@ -2317,22 +2391,22 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 params.push(url);
                 params.push(rootsessionuuid);
                 params.push(walletuuid);
-                _context37.next = 14;
+                _context38.next = 14;
                 return mvcmyquote.invokeAsyncHooks('gotoUrl_asynchook', result, params);
 
               case 14:
-                ret = _context37.sent;
+                ret = _context38.sent;
 
                 if (!(ret && result.jump === false)) {
-                  _context37.next = 17;
+                  _context38.next = 17;
                   break;
                 }
 
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 17:
                 window.location.href = url;
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 19:
                 // look if a session, route or transaction is defined in the url
@@ -2344,7 +2418,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 sessionuuid = queryobject.sessionuuid;
 
                 if (!sessionuuid) {
-                  _context37.next = 27;
+                  _context38.next = 27;
                   break;
                 }
 
@@ -2356,7 +2430,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 this.app.gotoRoute('login', {
                   sessionuuid: sessionuuid
                 });
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 27:
                 //
@@ -2364,7 +2438,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 route = queryobject.route;
 
                 if (!(route && dataobject_routes.includes(route) !== true)) {
-                  _context37.next = 32;
+                  _context38.next = 32;
                   break;
                 }
 
@@ -2372,11 +2446,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 // and we don't follow routes reserved for dataobject here
                 _params = Object.assign({}, queryobject);
                 this.app.gotoRoute(route, _params);
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 32:
                 if (!url) {
-                  _context37.next = 41;
+                  _context38.next = 41;
                   break;
                 }
 
@@ -2385,27 +2459,27 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 querystring = querystring.indexOf('#') > 0 ? querystring.split('#')[0] : querystring; // remove trailing anchor
 
                 urlParams = new URLSearchParams(querystring);
-                _context37.next = 38;
+                _context38.next = 38;
                 return this._getDataObjectFromUrlParams(urlParams);
 
               case 38:
-                dataobject = _context37.sent;
-                _context37.next = 46;
+                dataobject = _context38.sent;
+                _context38.next = 46;
                 break;
 
               case 41:
                 // initial url
                 app_start_conditions = this.app.getVariable('start_conditions');
                 urlParams = app_start_conditions.urlParams;
-                _context37.next = 45;
+                _context38.next = 45;
                 return this.app.getStartDataObject();
 
               case 45:
-                dataobject = _context37.sent;
+                dataobject = _context38.sent;
 
               case 46:
                 if (!dataobject) {
-                  _context37.next = 60;
+                  _context38.next = 60;
                   break;
                 }
 
@@ -2414,7 +2488,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 };
 
                 if (!dataobject.type) {
-                  _context37.next = 57;
+                  _context38.next = 57;
                   break;
                 }
 
@@ -2422,7 +2496,7 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 types = Object.keys(routings);
 
                 if (!types.includes(dataobject.type)) {
-                  _context37.next = 57;
+                  _context38.next = 57;
                   break;
                 }
 
@@ -2435,10 +2509,10 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 }
 
                 this.app.gotoRoute(routing.path, _params2);
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 57:
-                return _context37.abrupt("return");
+                return _context38.abrupt("return");
 
               case 60:
                 // no route and no data object
@@ -2446,13 +2520,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 61:
               case "end":
-                return _context37.stop();
+                return _context38.stop();
             }
           }
-        }, _callee37, this);
+        }, _callee38, this);
       }));
 
-      function _gotoUrl(_x51) {
+      function _gotoUrl(_x52) {
         return _gotoUrl2.apply(this, arguments);
       }
 
@@ -2461,80 +2535,80 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_gotoMyQuotePage",
     value: function () {
-      var _gotoMyQuotePage2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee38(params) {
+      var _gotoMyQuotePage2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee39(params) {
         var dataobj, type;
-        return _regeneratorRuntime().wrap(function _callee38$(_context38) {
+        return _regeneratorRuntime().wrap(function _callee39$(_context39) {
           while (1) {
-            switch (_context38.prev = _context38.next) {
+            switch (_context39.prev = _context39.next) {
               case 0:
                 if (params) {
-                  _context38.next = 2;
+                  _context39.next = 2;
                   break;
                 }
 
-                return _context38.abrupt("return");
+                return _context39.abrupt("return");
 
               case 2:
                 // we define the route according to the quote-order process
                 dataobj = params.dataobject;
 
                 if (dataobj) {
-                  _context38.next = 5;
+                  _context39.next = 5;
                   break;
                 }
 
-                return _context38.abrupt("return");
+                return _context39.abrupt("return");
 
               case 5:
                 type = dataobj.type;
                 params.txhash = dataobj.txhash ? dataobj.txhash : params.txhash;
-                _context38.t0 = type;
-                _context38.next = _context38.t0 === 'bounty' ? 10 : _context38.t0 === 'claim' ? 13 : _context38.t0 === 'quote' ? 16 : _context38.t0 === 'order' ? 19 : _context38.t0 === 'invoice' ? 22 : _context38.t0 === 'paymentnotice' ? 25 : 28;
+                _context39.t0 = type;
+                _context39.next = _context39.t0 === 'bounty' ? 10 : _context39.t0 === 'claim' ? 13 : _context39.t0 === 'quote' ? 16 : _context39.t0 === 'order' ? 19 : _context39.t0 === 'invoice' ? 22 : _context39.t0 === 'paymentnotice' ? 25 : 28;
                 break;
 
               case 10:
                 params.route = 'bounty';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('bounty', params));
+                return _context39.abrupt("return", this.app.gotoRoute('bounty', params));
 
               case 13:
                 params.route = 'claim';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('claim', params));
+                return _context39.abrupt("return", this.app.gotoRoute('claim', params));
 
               case 16:
                 params.route = 'quote';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('quote', params));
+                return _context39.abrupt("return", this.app.gotoRoute('quote', params));
 
               case 19:
                 params.route = 'order';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('order', params));
+                return _context39.abrupt("return", this.app.gotoRoute('order', params));
 
               case 22:
                 params.route = 'invoice';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('invoice', params));
+                return _context39.abrupt("return", this.app.gotoRoute('invoice', params));
 
               case 25:
                 params.route = 'paymentnotice';
                 params.action = params.action ? params.action : dataobj.target === 'view' ? 'view' : 'create';
-                return _context38.abrupt("return", this.app.gotoRoute('paymentnotice', params));
+                return _context39.abrupt("return", this.app.gotoRoute('paymentnotice', params));
 
               case 28:
                 params.route = type;
-                return _context38.abrupt("return", this.app.gotoRoute(type, params));
+                return _context39.abrupt("return", this.app.gotoRoute(type, params));
 
               case 30:
               case "end":
-                return _context38.stop();
+                return _context39.stop();
             }
           }
-        }, _callee38, this);
+        }, _callee39, this);
       }));
 
-      function _gotoMyQuotePage(_x52) {
+      function _gotoMyQuotePage(_x53) {
         return _gotoMyQuotePage2.apply(this, arguments);
       }
 
@@ -2543,18 +2617,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getMyQuoteDataObject",
     value: function () {
-      var _getMyQuoteDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee39(txhash, currencyuuid) {
+      var _getMyQuoteDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee40(txhash, currencyuuid) {
         var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret, dataobject;
-        return _regeneratorRuntime().wrap(function _callee39$(_context39) {
+        return _regeneratorRuntime().wrap(function _callee40$(_context40) {
           while (1) {
-            switch (_context39.prev = _context39.next) {
+            switch (_context40.prev = _context40.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context39.next = 21;
+                  _context40.next = 21;
                   break;
                 }
 
@@ -2565,46 +2639,46 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 params.push(walletuuid);
                 params.push(txhash);
                 params.push(currencyuuid);
-                _context39.next = 12;
+                _context40.next = 12;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromCurrencyTransaction_asynchook', result, params);
 
               case 12:
-                ret = _context39.sent;
+                ret = _context40.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context39.next = 15;
+                  _context40.next = 15;
                   break;
                 }
 
-                return _context39.abrupt("return", result.dataobject);
+                return _context40.abrupt("return", result.dataobject);
 
               case 15:
-                _context39.next = 17;
+                _context40.next = 17;
                 return mvcmyquote.fetchCurrencyTransaction(rootsessionuuid, walletuuid, currencyuuid, txhash)["catch"](function (err) {
                   console.log('error in Root._getMyQuoteDataObject:' + err);
                 });
 
               case 17:
-                dataobject = _context39.sent;
+                dataobject = _context40.sent;
 
                 if (!dataobject) {
-                  _context39.next = 21;
+                  _context40.next = 21;
                   break;
                 }
 
                 // add transaction hash that is the accessor to object
                 dataobject.txhash = txhash;
-                return _context39.abrupt("return", dataobject);
+                return _context40.abrupt("return", dataobject);
 
               case 21:
               case "end":
-                return _context39.stop();
+                return _context40.stop();
             }
           }
-        }, _callee39, this);
+        }, _callee40, this);
       }));
 
-      function _getMyQuoteDataObject(_x53, _x54) {
+      function _getMyQuoteDataObject(_x54, _x55) {
         return _getMyQuoteDataObject2.apply(this, arguments);
       }
 
@@ -2646,24 +2720,24 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getStartParameters",
     value: function () {
-      var _getStartParameters2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee40() {
+      var _getStartParameters2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee41() {
         var app_start_conditions, URL, url, queryobject;
-        return _regeneratorRuntime().wrap(function _callee40$(_context40) {
+        return _regeneratorRuntime().wrap(function _callee41$(_context41) {
           while (1) {
-            switch (_context40.prev = _context40.next) {
+            switch (_context41.prev = _context41.next) {
               case 0:
                 app_start_conditions = this.app.getVariable('start_conditions');
                 URL = require("url");
                 url = app_start_conditions.url;
                 queryobject = url ? URL.parse(url, true).query : {};
-                return _context40.abrupt("return", this._getPlainQueryParameters(queryobject));
+                return _context41.abrupt("return", this._getPlainQueryParameters(queryobject));
 
               case 5:
               case "end":
-                return _context40.stop();
+                return _context41.stop();
             }
           }
-        }, _callee40, this);
+        }, _callee41, this);
       }));
 
       function _getStartParameters() {
@@ -2675,56 +2749,56 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getStartDataObject",
     value: function () {
-      var _getStartDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee41() {
+      var _getStartDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee42() {
         var app_start_conditions, urlParams, start_data_obj, target;
-        return _regeneratorRuntime().wrap(function _callee41$(_context41) {
+        return _regeneratorRuntime().wrap(function _callee42$(_context42) {
           while (1) {
-            switch (_context41.prev = _context41.next) {
+            switch (_context42.prev = _context42.next) {
               case 0:
                 app_start_conditions = this.app.getVariable('start_conditions');
                 urlParams = app_start_conditions.urlParams;
                 start_data_obj = app_start_conditions.dataobject;
 
                 if (!start_data_obj) {
-                  _context41.next = 5;
+                  _context42.next = 5;
                   break;
                 }
 
-                return _context41.abrupt("return", start_data_obj);
+                return _context42.abrupt("return", start_data_obj);
 
               case 5:
                 if (!urlParams) {
-                  _context41.next = 14;
+                  _context42.next = 14;
                   break;
                 }
 
                 target = urlParams.get('route');
-                _context41.next = 9;
+                _context42.next = 9;
                 return this._getDataObjectFromUrlParams(urlParams);
 
               case 9:
-                start_data_obj = _context41.sent;
+                start_data_obj = _context42.sent;
 
                 if (start_data_obj) {
-                  _context41.next = 12;
+                  _context42.next = 12;
                   break;
                 }
 
-                return _context41.abrupt("return");
+                return _context42.abrupt("return");
 
               case 12:
                 start_data_obj.target = target;
                 app_start_conditions.dataobject = start_data_obj;
 
               case 14:
-                return _context41.abrupt("return", start_data_obj);
+                return _context42.abrupt("return", start_data_obj);
 
               case 15:
               case "end":
-                return _context41.stop();
+                return _context42.stop();
             }
           }
-        }, _callee41, this);
+        }, _callee42, this);
       }));
 
       function _getStartDataObject() {
@@ -2736,39 +2810,39 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_onEmptyStartDataObject",
     value: function () {
-      var _onEmptyStartDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee42(txhash, currencyuuid) {
+      var _onEmptyStartDataObject2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee43(txhash, currencyuuid) {
         var mvcmyquote, rootsessionuuid, walletuuid, canfetch, currency, params, nav_state;
-        return _regeneratorRuntime().wrap(function _callee42$(_context42) {
+        return _regeneratorRuntime().wrap(function _callee43$(_context43) {
           while (1) {
-            switch (_context42.prev = _context42.next) {
+            switch (_context43.prev = _context43.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
-                _context42.next = 5;
+                _context43.next = 5;
                 return mvcmyquote.canFetchTransactions(rootsessionuuid, walletuuid, currencyuuid);
 
               case 5:
-                canfetch = _context42.sent;
+                canfetch = _context43.sent;
 
                 if (!canfetch) {
-                  _context42.next = 10;
+                  _context43.next = 10;
                   break;
                 }
 
                 this.app.error('Root did not fill dataobj');
-                _context42.next = 24;
+                _context43.next = 24;
                 break;
 
               case 10:
-                _context42.next = 12;
+                _context43.next = 12;
                 return mvcmyquote.getCurrencyFromUUID(rootsessionuuid, currencyuuid);
 
               case 12:
-                currency = _context42.sent;
+                currency = _context43.sent;
 
                 if (!currency) {
-                  _context42.next = 23;
+                  _context43.next = 23;
                   break;
                 }
 
@@ -2788,11 +2862,11 @@ var Root = /*#__PURE__*/function (_React$Component) {
                   params: params
                 };
                 this.app.pushNavigationState(nav_state);
-                _context42.next = 21;
+                _context43.next = 21;
                 return this.app.gotoRoute('login', params);
 
               case 21:
-                _context42.next = 24;
+                _context43.next = 24;
                 break;
 
               case 23:
@@ -2800,13 +2874,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 24:
               case "end":
-                return _context42.stop();
+                return _context43.stop();
             }
           }
-        }, _callee42, this);
+        }, _callee43, this);
       }));
 
-      function _onEmptyStartDataObject(_x55, _x56) {
+      function _onEmptyStartDataObject(_x56, _x57) {
         return _onEmptyStartDataObject2.apply(this, arguments);
       }
 
@@ -2815,18 +2889,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_getDataObjectFromCard",
     value: function () {
-      var _getDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee43(currencyuuid, cardaddress, tokenid) {
+      var _getDataObjectFromCard2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee44(currencyuuid, cardaddress, tokenid) {
         var mvcmyquote, rootsessionuuid, walletuuid, result, params, ret;
-        return _regeneratorRuntime().wrap(function _callee43$(_context43) {
+        return _regeneratorRuntime().wrap(function _callee44$(_context44) {
           while (1) {
-            switch (_context43.prev = _context43.next) {
+            switch (_context44.prev = _context44.next) {
               case 0:
                 mvcmyquote = this.getMvcMyQuoteObject();
                 rootsessionuuid = this.props.rootsessionuuid;
                 walletuuid = this.props.currentwalletuuid;
 
                 if (!currencyuuid) {
-                  _context43.next = 16;
+                  _context44.next = 16;
                   break;
                 }
 
@@ -2838,28 +2912,28 @@ var Root = /*#__PURE__*/function (_React$Component) {
                 params.push(currencyuuid);
                 params.push(cardaddress);
                 params.push(tokenid);
-                _context43.next = 13;
+                _context44.next = 13;
                 return mvcmyquote.invokeAsyncHooks('getDataObjectFromCard_asynchook', result, params);
 
               case 13:
-                ret = _context43.sent;
+                ret = _context44.sent;
 
                 if (!(ret && result.dataobject)) {
-                  _context43.next = 16;
+                  _context44.next = 16;
                   break;
                 }
 
-                return _context43.abrupt("return", result.dataobject);
+                return _context44.abrupt("return", result.dataobject);
 
               case 16:
               case "end":
-                return _context43.stop();
+                return _context44.stop();
             }
           }
-        }, _callee43, this);
+        }, _callee44, this);
       }));
 
-      function _getDataObjectFromCard(_x57, _x58, _x59) {
+      function _getDataObjectFromCard(_x58, _x59, _x60) {
         return _getDataObjectFromCard2.apply(this, arguments);
       }
 
@@ -2892,19 +2966,19 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "_logout",
     value: function () {
-      var _logout2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee44() {
-        return _regeneratorRuntime().wrap(function _callee44$(_context44) {
+      var _logout2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee45() {
+        return _regeneratorRuntime().wrap(function _callee45$(_context45) {
           while (1) {
-            switch (_context44.prev = _context44.next) {
+            switch (_context45.prev = _context45.next) {
               case 0:
                 this.props.doResetSession();
 
               case 1:
               case "end":
-                return _context44.stop();
+                return _context45.stop();
             }
           }
-        }, _callee44, this);
+        }, _callee45, this);
       }));
 
       function _logout() {
@@ -2932,18 +3006,18 @@ var Root = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "loadRoutes",
     value: function () {
-      var _loadRoutes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee45(app) {
+      var _loadRoutes = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee46(app) {
         var Routes, extra_routes, i;
-        return _regeneratorRuntime().wrap(function _callee45$(_context45) {
+        return _regeneratorRuntime().wrap(function _callee46$(_context46) {
           while (1) {
-            switch (_context45.prev = _context45.next) {
+            switch (_context46.prev = _context46.next) {
               case 0:
                 Routes = require('./routes/routes.js');
-                _context45.next = 3;
+                _context46.next = 3;
                 return Routes["default"].getRoutes(app);
 
               case 3:
-                extra_routes = _context45.sent;
+                extra_routes = _context46.sent;
 
                 for (i = 0; i < extra_routes.length; i++) {
                   Root.routes.push(extra_routes[i]);
@@ -2951,13 +3025,13 @@ var Root = /*#__PURE__*/function (_React$Component) {
 
               case 5:
               case "end":
-                return _context45.stop();
+                return _context46.stop();
             }
           }
-        }, _callee45);
+        }, _callee46);
       }));
 
-      function loadRoutes(_x60) {
+      function loadRoutes(_x61) {
         return _loadRoutes.apply(this, arguments);
       }
 

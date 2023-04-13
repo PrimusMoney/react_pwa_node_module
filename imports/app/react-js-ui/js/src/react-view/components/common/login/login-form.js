@@ -428,7 +428,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     key: "_getWalletForScheme",
     value: function () {
       var _getWalletForScheme2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(params) {
-        var mvcmodule, mvcmyquote, rootsessionuuid, childsessionuuid, schemeuuid, username, password, persistedwallet, result, prms, ret, walletlist, i, wallet, walletinfo, unlocked, currentwalletname, currentwalletuuid, walletname, walletuuid, islocked;
+        var mvcmodule, mvcmyquote, rootsessionuuid, childsessionuuid, schemeuuid, username, password, persistedwallet, result, prms, ret, walletlist, i, wallet, walletinfo, unlocked, currentwalletname, currentwalletuuid, walletname, walletuuid;
         return _regeneratorRuntime().wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
@@ -555,7 +555,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 return _context4.abrupt("return");
 
               case 49:
-                _context4.next = 70;
+                _context4.next = 68;
                 break;
 
               case 51:
@@ -595,19 +595,13 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
                 currentwalletuuid = this.props.currentwalletuuid;
                 walletname = persistedwallet.name;
                 walletuuid = persistedwallet.uuid;
-                if (currentwalletname != walletname || currentwalletuuid == walletuuid) this.props.doSetWallet(walletname, walletuuid);
-                _context4.next = 69;
-                return this._doCheckWalletLock(mvcmodule, rootsessionuuid, walletuuid)["catch"](function (err) {
-                  console.log('error in LoginForm._getWalletForScheme:' + err);
-                });
+                _context4.next = 68;
+                return this.app.setAsCurrentWallet(walletuuid);
 
-              case 69:
-                islocked = _context4.sent;
-
-              case 70:
+              case 68:
                 return _context4.abrupt("return", persistedwallet);
 
-              case 71:
+              case 69:
               case "end":
                 return _context4.stop();
             }
@@ -1435,6 +1429,7 @@ var LoginForm = /*#__PURE__*/function (_React$Component) {
     key: "_getLoginSchemeList",
     value: function _getLoginSchemeList() {
       // built-in logins
+      // Note: for oauth2, provider is not used, only the provider in the schemeuuid is taken into account
       var schemeList = [{
         name: 'facebook',
         label: 'facebook',
